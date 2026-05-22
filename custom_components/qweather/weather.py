@@ -35,7 +35,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     coordinator: QWeatherUpdateCoordinator = entry.runtime_data
 
     async_add_entities([
-        HeFengWeather(coordinator, entry.unique_id, QWEATHER_WEATHER_DESCRIPTION)
+        HeFengWeather(coordinator, entry, QWEATHER_WEATHER_DESCRIPTION)
     ])
 
 
@@ -51,21 +51,21 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
     _attr_native_visibility_unit = UnitOfLength.KILOMETERS
     _attr_native_wind_speed_unit = UnitOfSpeed.KILOMETERS_PER_HOUR
 
-    def __init__(self, coordinator, unique_id: str, description: WeatherEntityDescription):
+    def __init__(self, coordinator, entry, description: WeatherEntityDescription):
         super().__init__(coordinator)
-
+    
         self.entity_description = description
-
-        self._attr_unique_id = f"{unique_id}_{description.key}"
-
+    
+        self._attr_unique_id = f"{entry.entry_id}_{description.key}"
+    
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, unique_id)},
+            identifiers={(DOMAIN, entry.entry_id)},
             name="QWeather Pro",
             manufacturer=MANUFACTURER,
             entry_type=DeviceEntryType.SERVICE,
             sw_version=coordinator.version,
         )
-
+    
         self._attr_supported_features = (
             WeatherEntityFeature.FORECAST_DAILY |
             WeatherEntityFeature.FORECAST_HOURLY
