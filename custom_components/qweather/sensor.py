@@ -82,10 +82,9 @@ SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
 async def async_setup_entry(hass, entry, async_add_entities):
     """设置平台实体."""
     coordinator: QWeatherUpdateCoordinator = entry.runtime_data
-    unique_id = entry.unique_id or entry.entry_id
 
     async_add_entities(
-        QWeatherSensor(coordinator, unique_id, description)
+        QWeatherSensor(coordinator, entry, description)
         for description in SENSOR_DESCRIPTIONS
     )
 
@@ -94,17 +93,17 @@ class QWeatherSensor(CoordinatorEntity[QWeatherUpdateCoordinator], SensorEntity)
 
     _attr_has_entity_name = True
 
-    def __init__(self, coordinator, unique_id, description):
+    def __init__(self, coordinator, entry, description):
         super().__init__(coordinator)
 
         self.entity_description = description
 
-        self._attr_unique_id = f"{unique_id}_{description.key}"
+        self._attr_unique_id = f"{entry.entry_id}_{description.key}"
 
         self._attr_translation_key = description.translation_key
 
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, unique_id)},
+            identifiers={(DOMAIN, entry.entry_id)},
             name="QWeather Pro",
             manufacturer=MANUFACTURER,
             entry_type=DeviceEntryType.SERVICE,
