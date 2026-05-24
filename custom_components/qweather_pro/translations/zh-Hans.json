@@ -6,7 +6,7 @@
         "data": {
           "host": "API 服务器地址",
           "name": "集成名称",
-          "location_id": "地理位置 (经纬度或城市名)",
+          "location_id": "地理位置建议输入‘经度,纬度’（经度在前）或城市ID，以获得最精准的预报。",
           "use_token": "使用 JWT 认证 (推荐，更安全)",
           "api_key": "普通 API Key (使用 JWT 则留空)"
         }

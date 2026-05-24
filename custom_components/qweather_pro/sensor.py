@@ -79,9 +79,13 @@ SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
     ),
 )
 
-async def async_setup_entry(hass, entry, async_add_entities):
+async def async_setup_entry(
+    hass: HomeAssistant, 
+    entry: QWeatherConfigEntry,
+    async_add_entities: AddEntitiesCallback
+) -> None:
     """设置平台实体."""
-    coordinator: QWeatherUpdateCoordinator = entry.runtime_data
+    coordinator = entry.runtime_data
 
     async_add_entities(
         QWeatherSensor(coordinator, entry, description)
@@ -104,7 +108,7 @@ class QWeatherSensor(CoordinatorEntity[QWeatherUpdateCoordinator], SensorEntity)
 
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
-            name="QWeather Pro",
+            name=f"QWeather Pro {entry.title}",
             manufacturer=MANUFACTURER,
             entry_type=DeviceEntryType.SERVICE,
             sw_version=coordinator.version,

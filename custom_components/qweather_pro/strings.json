@@ -6,7 +6,7 @@
         "data": {
           "host": "API Host",
           "name": "Integration Name",
-          "location_id": "Location (Lon,Lat or City name)",
+          "location_id": "It is recommended to enter your location as 'longitude,latitude' (longitude first) or a city ID to obtain the most accurate forecast.",
           "use_token": "Use JWT Authentication (Recommended)",
           "api_key": "Ordinary API Key (Leave blank if using JWT)"
         }

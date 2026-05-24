@@ -1,5 +1,5 @@
 /**
- * QWeather Dashboard Card - Professional Full Version
+ * QWeather Dashboard Card - Professional Full Version (2026.5 Optimized)
  */
 
 (async () => {
@@ -22,7 +22,7 @@
       };
     }
 
-    static getStubConfig() { return { entity: "weather.qweather_pro_weather" }; }
+    static getStubConfig() { return { entity: "" }; }
 
     constructor() {
       super();
@@ -33,18 +33,30 @@
     }
 
     setConfig(config) {
-      this.config = { entity: "weather.qweather_pro_weather", ...config };
+      this.config = { ...config };
     }
 
     set hass(hass) {
       this._hass = hass;
-      const entityId = this.config.entity;
-      const state = hass.states[entityId];
+      
+      let entityId = this.config.entity;
+      
+      if (!entityId || !hass.states[entityId]) {
+        // 动态查找第一个符合前缀的实体
+        const autoEntity = Object.keys(hass.states).find(
+          (e) => e.startsWith("weather.qweather_pro_")
+        );
+        if (autoEntity) {
+          entityId = autoEntity;
+          // 隐式更新配置，这样卡片就能正常工作
+          this.config.entity = entityId;
+        }
+      }
 
+      const state = hass.states[entityId];
       if (state && this._weather !== state) {
-        const oldId = this._weather?.entity_id;
         this._weather = state;
-        if (oldId !== entityId) this._subscribeForecasts();
+        this._subscribeForecasts();
       }
     }
 
@@ -52,6 +64,7 @@
       this._clearSubs();
       const entityId = this.config.entity;
       try {
+        // HA 2024.3+ 推荐的订阅方式
         const subD = await this._hass.connection.subscribeMessage(
           (msg) => { this._forecastDaily = msg.forecast; this.requestUpdate(); },
           { type: "weather/subscribe_forecast", entity_id: entityId, forecast_type: "daily" }
@@ -63,7 +76,7 @@
           { type: "weather/subscribe_forecast", entity_id: entityId, forecast_type: "hourly" }
         );
         this._unsubs.push(subH);
-      } catch (e) { console.error("订阅失败", e); }
+      } catch (e) { console.error("QWeather订阅失败", e); }
     }
 
     _clearSubs() { while (this._unsubs.length) { const unsub = this._unsubs.pop(); if (unsub) unsub(); } }
@@ -96,7 +109,8 @@
       const isDaily = this._selectedTab === 'daily';
       const forecast = isDaily ? this._forecastDaily : this._forecastHourly;
       
-      const aqiVal = attr.aqi?.aqi || attr.aqi || '--';
+      // 匹配新版 Coordinator 的 aqi 对象结构
+      const aqiVal = attr.aqi?.aqi || '--';
       const aqiCat = attr.aqi?.category || '';
 
       return html`
@@ -113,28 +127,28 @@
               </div>
             </div>
             <div class="header-right">
-              <div class="current-temp">${Math.round(attr.temperature)}<span>°C</span></div>
+              <div class="current-temp">${Math.round(attr.temperature || this._weather.state)}<span>°C</span></div>
               <div class="update-time">${attr.update_time?.split(' ')[1] || ''} 更新</div>
             </div>
           </div>
 
-          <!-- 2. 预警 -->
+          <!-- 2. 气象预警 (支持多预警滚动/列表) -->
           ${attr.warning?.length > 0 ? attr.warning.map(w => html`
-            <div class="warning-section">
-              <ha-icon icon="mdi:alert-circle"></ha-icon>
+            <div class="warning-section" style="background-color: ${this._getWarningColor(w.level)}">
+              <ha-icon icon="mdi:alert-decagram"></ha-icon>
               <div>
                 <div style="font-weight: bold;">${w.title}</div>
-                <div style="font-size: 12px; margin-top: 2px;">${w.text}</div>
+                <div class="warning-text">${w.text}</div>
               </div>
             </div>
           `) : ''}
 
-          <!-- 3. 简报 -->
+          <!-- 3. 智能简报 -->
           <div class="briefing-box">
             <div class="brief-item">
-              <ha-icon icon="mdi:bullseye-arrow"></ha-icon>
+              <ha-icon icon="mdi:clock-fast"></ha-icon>
               <div class="brief-content">
-                <span class="brief-label">分钟降水：</span>
+                <span class="brief-label">降水简报：</span>
                 <span class="brief-value">${attr.minutely_summary || '未来两小时无降水'}</span>
               </div>
             </div>
@@ -147,32 +161,32 @@
             </div>
           </div>
 
-          <!-- 4. 2x2 网格 -->
+          <!-- 4. 2x2 核心指标网格 -->
           <div class="attributes-grid">
             ${this._renderAttr('mdi:water-percent', '湿度', `${attr.humidity}%`)}
-            ${this._renderAttr('mdi:gauge', '气压', `${attr.pressure}hPa`)}
-            ${this._renderAttr('mdi:weather-windy', '风速', `${attr.windscale || attr.wind_speed}级`)}
+            ${this._renderAttr('mdi:gauge', '气压', `${Math.round(attr.pressure)} hPa`)}
+            ${this._renderAttr('mdi:weather-windy', '风力', `${attr.wind_scale || '--'} 级`)}
             ${this._renderAttr('mdi:air-filter', '空气质量', `${aqiVal} ${aqiCat}`.trim())}
           </div>
 
           <!-- 5. 选项卡 -->
           <div class="tabs">
-            <div class="tab ${isDaily ? 'active' : ''}" @click=${(e) => this._handleTabClick(e, 'daily')}>每日预报</div>
-            <div class="tab ${!isDaily ? 'active' : ''}" @click=${(e) => this._handleTabClick(e, 'hourly')}>小时预报</div>
+            <div class="tab ${isDaily ? 'active' : ''}" @click=${(e) => this._handleTabClick(e, 'daily')}>7日预报</div>
+            <div class="tab ${!isDaily ? 'active' : ''}" @click=${(e) => this._handleTabClick(e, 'hourly')}>24小时预报</div>
           </div>
 
           <!-- 6. 滚动预报列表 -->
           <div class="forecast-scroll-container">
             ${(!forecast || forecast.length === 0) 
-              ? html`<div class="data-loading">正在订阅数据...</div>` 
-              : forecast.slice(0, isDaily ? 7 : 24).map(item => html`
+              ? html`<div class="data-loading">正在接收订阅数据...</div>` 
+              : forecast.map(item => html`
                 <div class="f-row">
                   <div class="f-date">
                     ${isDaily ? this._formatDate(item.datetime) : this._formatTime(item.datetime)}
                   </div>
                   <div class="f-icon-box">
                     <img class="f-icon" src="${this._getIcon(item.icon)}">
-                    ${isDaily ? html`<span class="f-condition-text">${item.text || ''}</span>` : ''}
+                    ${isDaily ? html`<span class="f-condition-text">${item.condition_cn || ''}</span>` : ''}
                   </div>
                   <div class="f-temp">
                     ${Math.round(item.temperature)}°
@@ -196,6 +210,11 @@
       `;
     }
 
+    _getWarningColor(level) {
+      const colors = { '蓝色': '#2196f3', '黄色': '#ffeb3b', '橙色': '#ff9800', '红色': '#f44336' };
+      return colors[level] || 'var(--error-color)';
+    }
+
     _handleMoreInfo() {
       const event = new CustomEvent("hass-more-info", {
         detail: { entityId: this.config.entity },
@@ -207,7 +226,8 @@
     static get styles() {
       return css`
         :host { display: block; --primary-color: #03a9f4; }
-        ha-card { padding: 18px; cursor: pointer; border-radius: 12px; }
+        ha-card { padding: 18px; cursor: pointer; border-radius: 12px; transition: all 0.3s; }
+        ha-card:hover { box-shadow: var(--ha-card-box-shadow, 0 4px 10px rgba(0,0,0,0.12)); }
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
         .header-left { display: flex; align-items: center; }
@@ -221,10 +241,10 @@
         .city-name { font-size: 13px; color: var(--secondary-text-color); }
         .current-temp { font-size: 34px; font-weight: 300; line-height: 1; }
         .current-temp span { font-size: 16px; vertical-align: top; margin-left: 2px; }
-        .update-time { font-size: 11px; color: var(--secondary-text-color); margin-top: 4px; }
+        .update-time { font-size: 11px; color: var(--secondary-text-color); margin-top: 4px; text-align: right; }
 
-        .warning-section { background-color: var(--error-color); color: white; padding: 12px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px; }
-        .warning-section ha-icon { color: white; --mdc-icon-size: 22px; }
+        .warning-section { color: #333; padding: 10px; border-radius: 8px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px; border: 1px solid rgba(0,0,0,0.1); }
+        .warning-text { font-size: 12px; opacity: 0.9; margin-top: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
         .briefing-box { background: var(--secondary-background-color); padding: 12px; border-radius: 10px; margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px; }
         .brief-item { display: flex; align-items: center; gap: 10px; }
@@ -239,35 +259,23 @@
         .attr-value { font-size: 14px; font-weight: 500; }
 
         .tabs { display: flex; border-bottom: 1px solid var(--divider-color); margin-bottom: 16px; }
-        .tab { padding: 10px 20px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--secondary-text-color); border-bottom: 2px solid transparent; }
+        .tab { padding: 10px 16px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--secondary-text-color); border-bottom: 2px solid transparent; }
         .tab.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
 
-        /* --- 滚动容器核心样式 --- */
-        .forecast-scroll-container {
-          max-height: 280px; /* 限制最高显示约 6-7 行 */
-          overflow-y: auto;
-          overflow-x: hidden;
-          padding-right: 4px;
-        }
-        
-        /* 美化滚动条 */
+        .forecast-scroll-container { max-height: 320px; overflow-y: auto; padding-right: 4px; }
         .forecast-scroll-container::-webkit-scrollbar { width: 4px; }
-        .forecast-scroll-container::-webkit-scrollbar-track { background: transparent; }
-        .forecast-scroll-container::-webkit-scrollbar-thumb { 
-          background: var(--divider-color); 
-          border-radius: 4px; 
-        }
+        .forecast-scroll-container::-webkit-scrollbar-thumb { background: var(--divider-color); border-radius: 4px; }
 
         .f-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--divider-color); }
         .f-row:last-child { border-bottom: none; }
-        .f-date { width: 80px; font-size: 13px; }
-        .f-icon-box { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .f-icon { width: 24px; height: 24px; }
-        .f-condition-text { font-size: 12px; color: var(--secondary-text-color); }
-        .f-temp { width: 90px; text-align: right; font-size: 13px; font-weight: 500; }
-        .f-low { color: var(--secondary-text-color); margin-left: 4px; }
+        .f-date { width: 70px; font-size: 13px; }
+        .f-icon-box { flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .f-icon { width: 26px; height: 26px; }
+        .f-condition-text { font-size: 12px; color: var(--secondary-text-color); width: 40px; }
+        .f-temp { width: 80px; text-align: right; font-size: 13px; font-weight: 500; }
+        .f-low { color: var(--secondary-text-color); margin-left: 6px; }
 
-        .data-loading { padding: 30px; text-align: center; font-size: 13px; color: var(--secondary-text-color); font-style: italic; }
+        .data-loading { padding: 30px; text-align: center; font-size: 13px; color: var(--secondary-text-color); }
         .attribution { text-align: center; font-size: 9px; color: var(--secondary-text-color); margin-top: 16px; opacity: 0.6; }
         .loading { padding: 40px; text-align: center; }
       `;
@@ -279,8 +287,8 @@
   window.customCards = window.customCards || [];
   window.customCards.push({
     type: "qweather-card",
-    name: "和风天气Pro",
+    name: "QWeather Pro Card",
     preview: true,
-    description: "具备专业气象预警与简报的高性能Pro级卡片"
+    description: "具备专业气象预警与分钟级降水简报的高性能卡片"
   });
 })();

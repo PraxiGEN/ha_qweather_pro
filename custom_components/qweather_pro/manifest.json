@@ -1,16 +1,16 @@
 {
-  "domain": "qweather",
+  "domain": "qweather_pro",
   "name": "和风天气 Pro",
   "codeowners": ["@hzonz"],
   "config_flow": true,
   "dependencies": ["http"],
-  "documentation": "https://github.com/hzonz/qweather_pro",
+  "documentation": "https://github.com/hzonz/ha_qweather_pro",
   "integration_type": "service",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/hzonz/qweather_pro/issues",
+  "issue_tracker": "https://github.com/hzonz/ha_qweather_pro/issues",
   "requirements": [
     "PyJWT>=2.4.0",
     "cryptography>=41.0.0"
   ],
-  "version": "1.0.2"
+  "version": "1.0.3"
 }

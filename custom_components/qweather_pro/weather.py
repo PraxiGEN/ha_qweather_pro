@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
+
 from homeassistant.components.weather import (
     Forecast,
     WeatherEntity,
@@ -22,25 +24,24 @@ from .coordinator import QWeatherUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
+# 定义天气描述符
 QWEATHER_WEATHER_DESCRIPTION = WeatherEntityDescription(
     key="weather",
-    name="Weather",                 # 英文实体名（用于 entity_id）
-    translation_key="weather",      # 翻译键（用于 UI）
+    name="Weather", 
+    translation_key="weather",
     icon="mdi:weather-partly-cloudy",
 )
-
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """通过配置条目设置天气实体."""
     coordinator: QWeatherUpdateCoordinator = entry.runtime_data
-
+    # 标题已经在 config_flow 中确定为城市名
     async_add_entities([
         HeFengWeather(coordinator, entry, QWEATHER_WEATHER_DESCRIPTION)
     ])
 
-
 class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity):
-    """和风天气实体类（官方规范版）."""
+    """和风天气实体类."""
 
     entity_description: WeatherEntityDescription
     _attr_has_entity_name = True
@@ -53,25 +54,25 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
 
     def __init__(self, coordinator, entry, description: WeatherEntityDescription):
         super().__init__(coordinator)
-    
         self.entity_description = description
-    
+
         self._attr_unique_id = f"{entry.entry_id}_{description.key}"
-    
+        
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
-            name="QWeather Pro",
+            name=f"QWeather Pro {entry.title}",
             manufacturer=MANUFACTURER,
             entry_type=DeviceEntryType.SERVICE,
-            sw_version=coordinator.version,
+            sw_version=str(coordinator.version or "1.0.0"),
         )
     
+        # 4. 声明支持的功能
         self._attr_supported_features = (
             WeatherEntityFeature.FORECAST_DAILY |
             WeatherEntityFeature.FORECAST_HOURLY
         )
 
-    # --- 当前天气数据 ---
+    # --- 当前天气核心数据 (映射自 coordinator.py 新结构) ---
 
     @property
     def condition(self) -> str | None:
@@ -94,7 +95,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
         return self.coordinator.data.get("now", {}).get("windSpeed")
 
     @property
-    def wind_bearing(self) -> float | str | None:
+    def wind_bearing(self) -> float | None:
         return self.coordinator.data.get("now", {}).get("wind360")
 
     @property
@@ -109,7 +110,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
     def cloud_coverage(self) -> float | None:
         return self.coordinator.data.get("now", {}).get("cloud")
 
-    # --- 预报 ---
+    # --- 预报数据直接返回 ---
 
     async def async_forecast_daily(self) -> list[Forecast] | None:
         return self.coordinator.data.get("daily")
@@ -117,16 +118,17 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
     async def async_forecast_hourly(self) -> list[Forecast] | None:
         return self.coordinator.data.get("hourly")
 
-    # --- 扩展属性 ---
+    # --- 扩展属性：这里是重点更新部分 ---
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> dict[str, Any]:
         data = self.coordinator.data
         if not data:
             return {}
 
         now = data.get("now", {})
 
+        # 基础属性
         attrs = {
             "attribution": ATTRIBUTION,
             "city": data.get("city"),
@@ -147,13 +149,15 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
             "hourly_summary": data.get("hourly_summary"),
         }
 
-        if data.get("aqi"):
-            attrs["aqi"] = data.get("aqi")
-        if data.get("warning"):
-            attrs["warning"] = data.get("warning")
-        if data.get("indices"):
-            attrs["suggestion"] = data.get("indices")
+        # 复杂对象数据
+        if aqi := data.get("aqi"):
+            attrs["aqi"] = aqi
+        if warnings := data.get("warning"):
+            attrs["warning"] = warnings
+        if indices := data.get("indices"):
+            attrs["suggestion"] = indices
 
+        # 自定义 UI 标志
         if self.coordinator.entry.options.get(CONF_CUSTOM_UI):
             attrs["custom_ui_more_info"] = "qweather-more-info"
 
