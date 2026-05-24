@@ -28,9 +28,9 @@ CONF_DAILYSTEPS: Final = "dailysteps"
 CONF_LIFEINDEX: Final = "lifeindex"
 
 # --- 补全缺失的常量 (用于 Coordinator 和 OptionsFlow) ---
-CONF_ALERT: Final = "alert"          # <--- 修复 ImportError 的关键
-CONF_GIRD: Final = "gird"            # 对应网格天气选项
-CONF_CUSTOM_UI: Final = "custom_ui"  # 对应自定义 UI 选项
+CONF_ALERT: Final = "alert"
+CONF_GIRD: Final = "gird"
+CONF_CUSTOM_UI: Final = "custom_ui"
 
 # --- 属性扩展键名 ---
 ATTR_UPDATE_TIME: Final = "update_time"
