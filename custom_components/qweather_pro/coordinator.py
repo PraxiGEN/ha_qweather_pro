@@ -42,7 +42,7 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self.entry = entry
         self.version = version
         self.location = entry.data.get(CONF_LOCATION_ID)
-        self.city_name: str | None = None
+        self.city_name = entry.title
         
         update_interval = self.entry.options.get(CONF_UPDATE_INTERVAL, 15)
         super().__init__(
@@ -118,10 +118,6 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             tasks.append(self._async_fetch_data("minutely/5m"))
             task_map.append("minutely")
 
-        if not self.city_name:
-            tasks.append(self._async_fetch_city_name_internal())
-            task_map.append("city")
-
         # ... 并发执行请求 ...
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -180,7 +176,7 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "aqi": air_now,
             "warning": warning_list,
             "indices": self._parse_indices(indices_list),
-            "city": self.city_name or "未知地点",
+            "city": self.city_name,
             "minutely_summary": minutely_raw.get("summary", "暂无降水预报"),
             "hourly_summary": hourly_summary,
             "update_time": dt_util.now().strftime("%Y-%m-%d %H:%M:%S"),
