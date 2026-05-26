@@ -27,23 +27,36 @@ class QWeatherSensorEntityDescription(SensorEntityDescription):
 SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
     QWeatherSensorEntityDescription(
         key="aqi",
-        name="AQI",
+        # name="AQI",
         translation_key="aqi",
         icon="mdi:air-filter",
         value_fn=lambda data: data.get("aqi", {}).get("category", "未知"),
         attr_fn=lambda data: {
-            "pm2p5": data.get("aqi", {}).get("pm2p5"),
-            "pm10": data.get("aqi", {}).get("pm10"),
-            "no2": data.get("aqi", {}).get("no2"),
-            "so2": data.get("aqi", {}).get("so2"),
-            "o3": data.get("aqi", {}).get("o3"),
-            "co": data.get("aqi", {}).get("co"),
-            "primary": data.get("aqi", {}).get("primary"),
+            # 基础数据
+            "aqi_value": (aqi := data.get("aqi", {})).get("aqi"),
+            "aqi_level": aqi.get("level"),
+            "primary_pollutant": aqi.get("primary", "无"),
+
+            # 污染物浓度 (带单位，且增加空值保护)
+            # 使用 get(..., '--') 确保在数据缺失时不会显示 'None μg/m3'
+            "pm2p5": f"{aqi.get('pm2p5', '--')} {aqi.get('pm2p5_unit', 'μg/m3')}",
+            "pm10": f"{aqi.get('pm10', '--')} {aqi.get('pm10_unit', 'μg/m3')}",
+            "no2": f"{aqi.get('no2', '--')} {aqi.get('no2_unit', 'ppb')}",
+            "so2": f"{aqi.get('so2', '--')} {aqi.get('so2_unit', 'ppb')}",
+            "o3": f"{aqi.get('o3', '--')} {aqi.get('o3_unit', 'ppb')}",
+            "co": f"{aqi.get('co', '--')} {aqi.get('co_unit', 'ppm')}",
+
+            # 健康建议 (V1 接口的精华字段)
+            "health_effect": aqi.get("health_effect", "暂无数据"),
+            "health_advice": aqi.get("health_advice", "请参考当地气象部门建议"),
+
+            # 监测站信息
+            "stations": aqi.get("stations", []),
         },
     ),
     QWeatherSensorEntityDescription(
         key="today_temp_range",
-        name="Today Temperature Range",
+        # name="Today Temperature Range",
         translation_key="today_temp_range",
         icon="mdi:thermometer-lines",
         value_fn=lambda data: (
@@ -52,27 +65,31 @@ SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
             if (daily := data.get("daily")) else "未知"
         ),
         attr_fn=lambda data: {
-            "max_temp": daily[0].get("native_temperature") if (daily := data.get("daily")) else None,
-            "min_temp": daily[0].get("native_templow") if (daily := data.get("daily")) else None,
+            "max_temp": f"{daily[0].get('native_temperature')}°C" if (daily := data.get("daily")) and len(daily) > 0 else None,
+            "min_temp": f"{daily[0].get('native_templow')}°C" if (daily := data.get("daily")) and len(daily) > 0 else None,
         },
     ),
     QWeatherSensorEntityDescription(
-        key="warning_count",
-        name="Warning Count",
-        translation_key="warning_count",
+        key="warning_info",
+        translation_key="warning_info",
         icon="mdi:alert-decagram",
-        value_fn=lambda data: len(data.get("warning", [])),
+        value_fn=lambda data: data.get("warning", [{}])[0].get("title", "无预警") if data.get("warning") else "无预警",
+        attr_fn=lambda data: {
+            "alerts": data.get("warning", [])
+        },
     ),
     QWeatherSensorEntityDescription(
         key="precipitation_summary",
-        name="Precipitation Summary",
         translation_key="precipitation_summary",
         icon="mdi:message-text-clock",
-        value_fn=lambda data: data.get("minutely_summary"),
+        value_fn=lambda data: data.get("minutely_summary", "未来两小时无降水"),
+        attr_fn=lambda data: {
+            "detail": data.get("minutely_detail", [])
+        },
     ),
     QWeatherSensorEntityDescription(
         key="weather_summary",
-        name="Weather Summary",
+        # name="Weather Summary",
         translation_key="weather_summary",
         icon="mdi:weather-partly-cloudy",
         value_fn=lambda data: data.get("hourly_summary"),
@@ -106,13 +123,7 @@ class QWeatherSensor(CoordinatorEntity[QWeatherUpdateCoordinator], SensorEntity)
 
         self._attr_translation_key = description.translation_key
 
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, entry.entry_id)},
-            name=f"QWeather Pro {entry.title}",
-            manufacturer=MANUFACTURER,
-            entry_type=DeviceEntryType.SERVICE,
-            sw_version=coordinator.version,
-        )
+        self._attr_device_info = coordinator.device_info
 
     @property
     def native_value(self) -> Any:

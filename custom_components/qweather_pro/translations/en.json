@@ -55,7 +55,7 @@
       "aqi": {
         "name": "Air Quality"
       },
-      "warning_count": {
+      "warning_info": {
         "name": "Weather Warnings"
       },
       "today_temp_range": {

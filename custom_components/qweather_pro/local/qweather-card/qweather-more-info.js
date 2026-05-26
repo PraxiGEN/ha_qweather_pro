@@ -28,7 +28,7 @@
 
       // 数据清洗：处理 AQI 对象结构
       const aqiVal = attr.aqi?.aqi || '--';
-      const aqiCat = attr.aqi?.category || '未知';
+      const aqiCat = attr.aqi?.aqi_category || '未知';
 
        // 指数筛选
       const primaryTypes = ["comf", "drsg", "uv", "sport", "flu", "cw", "dc", "trav"];

@@ -55,7 +55,7 @@
       "aqi": {
         "name": "空气质量"
       },
-      "warning_count": {
+      "warning_info": {
         "name": "气象预警"
       },
       "today_temp_range": {
