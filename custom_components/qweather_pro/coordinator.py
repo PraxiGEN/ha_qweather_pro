@@ -321,7 +321,7 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
             identifiers={(DOMAIN, self.entry.entry_id)},
             name=f"QWeather Pro {self.entry.title}",
-            translation_key="qweather_pro",
+            # translation_key="qweather_pro",
             manufacturer="QWeather Pro",
             model="Advanced Weather Engine",
             sw_version=str(self.version),
