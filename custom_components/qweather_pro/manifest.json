@@ -9,8 +9,9 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/hzonz/ha_qweather_pro/issues",
   "requirements": [
-    "PyJWT>=2.4.0",
-    "cryptography>=41.0.0"
+    "pyjwt",
+    "cryptography",
+    "tenacity"
   ],
-  "version": "1.0.6"
+  "version": "1.0.7"
 }

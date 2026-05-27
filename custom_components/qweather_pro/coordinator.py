@@ -8,7 +8,7 @@ from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 import homeassistant.util.dt as dt_util
@@ -52,8 +52,12 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self.version = version
         self.location = entry.data.get(CONF_LOCATION_ID)
         self.city_name = entry.title
-        
-        # 1. 挂载已剥离的 API 客户端
+        self._consecutive_failures = 0 # 追踪连续失败次数
+
+        update_min = entry.options.get(CONF_UPDATE_INTERVAL, 15)
+        self._base_interval = timedelta(minutes=update_min)
+
+        # 1. 初始化 API 客户端
         self.api = QWeatherAPI(
             session=async_get_clientsession(hass), 
             api_key=entry.data.get(CONF_API_KEY),
@@ -64,10 +68,9 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             host=entry.data.get("host", "api.qweather.com")
         )
 
-        update_interval = entry.options.get(CONF_UPDATE_INTERVAL, 15)
         super().__init__(
             hass, LOGGER, name=DOMAIN,
-            update_interval=timedelta(minutes=update_interval),
+            update_interval=self._base_interval,
         )
         
         # 2. 初始化本地持久化缓存
@@ -162,16 +165,33 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             task_map.append("indices")
 
         # --- B. 并发执行与结果合并 ---
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        try:
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            success_any = False
 
-        for i, res in enumerate(results):
-            category = task_map[i]
-            if isinstance(res, dict) and (res.get("code") == "200" or "metadata" in res):
-                self._cache_data[category] = res
-                self._last_update_times[category] = now_ts
-            elif isinstance(res, Exception):
-                LOGGER.error("QWeather 抓取端点 '%s' 异常: %s", category, res)
-            # 这里的隐式逻辑是：如果失败了，保留 _cache_data 里的旧值，不更新 update_time
+            for i, res in enumerate(results):
+                category = task_map[i]
+                if isinstance(res, dict) and (res.get("code") == "200" or "metadata" in res):
+                    self._cache_data[category] = res
+                    self._last_update_times[category] = now_ts
+                    success_any = True
+                elif isinstance(res, Exception):
+                    LOGGER.debug("和风天气：端点 %s 刷新跳过或失败: %s", category, res)
+
+            if success_any:
+                if self._consecutive_failures > 0:
+                    LOGGER.info("和风天气：通信已恢复正常，回归标准刷新频率")
+                self._consecutive_failures = 0
+                self.update_interval = self._base_interval
+            else:
+                raise UpdateFailed("所有 API 抓取任务均失败")
+
+        except Exception as err:
+            self._consecutive_failures += 1
+            # 连续失败 2 次以上进入 1 小时退让期
+            if self._consecutive_failures >= 2:
+                self.update_interval = timedelta(hours=1)
+                LOGGER.warning("和风天气：持续连接失败，进入退让模式（1小时/次），错误: %s", err)
 
         # --- C. 数据解析 (组装返回字典) ---
         c = self._cache_data

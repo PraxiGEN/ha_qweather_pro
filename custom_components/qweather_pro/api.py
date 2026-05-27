@@ -8,6 +8,7 @@ from typing import Any
 import jwt
 from aiohttp import ClientSession
 from cryptography.hazmat.primitives import serialization
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 from .const import DOMAIN, LOGGER
 
@@ -31,6 +32,15 @@ class QWeatherAPI:
         self.key_id = key_id
         self.private_key = private_key
         self.host = host
+
+    @retry(
+        wait=wait_exponential(multiplier=2, min=1, max=10), # 等待时间：1s, 2s, 4s, 8s, 10s...
+        stop=stop_after_attempt(3), # 最多重试 3 次
+        retry_error_callback=lambda retry_state: LOGGER.error(
+            "和风天气 API 请求在 %s 次尝试后彻底失败: %s",
+            retry_state.attempt_number, retry_state.outcome.exception()
+        )
+    )
 
     def _generate_jwt(self) -> str | None:
         """生成符合 EdDSA 算法的 JWT 签名."""
