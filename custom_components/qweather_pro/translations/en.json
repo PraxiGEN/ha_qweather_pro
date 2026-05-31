@@ -3,9 +3,9 @@
     "step": {
       "user": {
         "title": "Configure QWeather Pro",
+        "description": " ### Setup Steps \n **Go to the [QWeather Console](https://console.qweather.com):** \n 1. In Settings, copy your **API Host** and fill it into the **API Host** field below. \n 2. Go to Project Management → Create Project, then add credentials to the project: choose either **JSON Web Token** or **API KEY**. \n 3. For the location field, it is recommended to enter latitude & longitude (Gaode/AMap coordinates) or a [City ID](https://github.com/qwd/LocationList/blob/master/China-City-List-latest.csv), Defaults to the Home Assistant latitude and longitude. \n Note: **API KEY** authentication does not provide sufficient security and is subject to request limits. It is recommended to use **JSON Web Token (JWT)** for better security and stability!",
         "data": {
           "host": "API Host",
-          "name": "Integration Name",
           "location_id": "It is recommended to enter your location as 'longitude,latitude' (longitude first) or a city ID to obtain the most accurate forecast.",
           "use_token": "Use JWT Authentication (Recommended)",
           "api_key": "Ordinary API Key (Leave blank if using JWT)"

@@ -8,12 +8,17 @@
 
 - 标准模式：获取普通的 API KEY。
 - JWT 模式 (推荐)：在项目中添加 JSON Web Token 凭据。
+- 获取 API host。 （个人 API服务地址）
 
 ### 步骤2：在Home Assistant中添加集成
 
 1. 进入 配置 -> 设备与服务 -> 添加集成。
 2. 搜索并选择 QWeather Pro。
-3. 如果选择 JWT 认证，集成会自动为您生成一段 公钥 (Public Key)：
+3. 在配置界面填写以下基础信息:
+     - API 服务器地址 `API host`。
+     - 地理位置，自动获取HA默认经纬度，可选城市ID。
+     - 普通 API key。
+4. 如果选择 JWT 认证，集成会自动为您生成一段 公钥 (Public Key)：
     - 复制该公钥。
     - 粘贴到和风天气控制台的凭据设置中。
     - 在 HA 中填入生成的 Project ID 和 Key ID 即可完成绑定。
