@@ -17,7 +17,7 @@
 - Cold‑start self‑healing: Fixes the long‑standing issue where entities remain “permanently unknown” after HA restarts due to network unavailability. If the initial refresh fails, the integration will retry aggressively until the first valid data is obtained, instead of waiting for long update intervals.
 
 ### 📍 Geographic Data Normalization
-- Multi‑mode input conversion: The location field now supports “city name”, “city ID”, and “latitude/longitude”. Regardless of what the user enters, the integration automatically standardizes it into precise coordinates during configuration.
+- Multi‑mode input conversion: The location field now supports “city name”, “city ID”, and “latitude/longitude”. Regardless of what the user enters, the integration automatically standardizes it into precise coordinates during configuration. **"Only supports the Chinese language."**
 - Coordinate‑driven API requests: To fully leverage the precision of V1 Alerts and V1 Air Quality APIs (1×1 km resolution), all backend requests are now unified under coordinate‑based queries, eliminating issues caused by city‑ID‑based requests.
 
 ### 📊 Platinum‑grade Data Alignment (Professional Data)
