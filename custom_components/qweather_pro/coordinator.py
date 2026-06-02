@@ -2,9 +2,8 @@
 from __future__ import annotations
 
 import asyncio
-import logging
 import time
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
@@ -19,7 +18,7 @@ from .const import (
     DOMAIN, CONF_API_KEY, CONF_LOCATION_ID, CONF_USE_TOKEN,
     CONF_PROJECT_ID, CONF_KEY_ID, CONF_PRIVATE_KEY, CONF_UPDATE_INTERVAL,
     SUGGESTION_TYPE_MAP, CONF_DAILYSTEPS, CONF_HOURLYSTEPS, 
-    CONF_ALERT, CONF_GIRD, CONF_LIFEINDEX, DEFAULT_UPDATE_INTERVAL, LOGGER
+    CONF_GIRD, DEFAULT_UPDATE_INTERVAL, LANGUAGE_MAP, LOGGER
 )
 from .condition import CONDITION_MAP
 
@@ -104,12 +103,21 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def _async_update_data(self) -> dict[str, Any]:
         """主抓取任务：调用 api.py 进行多端点并发请求."""
+
+        # 国际化语言适配
+        ha_lang = self.hass.config.language # 例如 "zh-Hans" 或 "fr"
+        qweather_lang = LANGUAGE_MAP.get(ha_lang, "en") # 匹配不到则默认英文        
+        restricted_lang = "zh" if ha_lang.startswith("zh") else "en"
+        is_zh = ha_lang.startswith("zh")
+        is_en = ha_lang.startswith("en")
+
         now_ts = time.time()
         tasks = []
         task_map = []
 
         options = self.entry.options
         use_grid = options.get(CONF_GIRD, False)
+        api_type = "grid-weather" if options.get(CONF_GIRD, False) else "weather"
 
         # 预处理坐标参数
         try:
@@ -121,47 +129,46 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         
         # 实况天气 (根据开关选择格点或标准)
         if use_grid:
-            tasks.append(self.api.get_grid_weather_now(lat, lon))
+            tasks.append(self.api.get_grid_weather_now(lat, lon, qweather_lang))
         else:
-            tasks.append(self.api.get_weather_now(lat, lon))
+            tasks.append(self.api.get_weather_now(lat, lon, qweather_lang))
         task_map.append("now")
 
         # 逐日预报 (带 TTL 保护)
         if self._should_update("daily", TTL_DAILY):
             d_val = int(options.get(CONF_DAILYSTEPS, 7))
             if use_grid:
-                tasks.append(self.api.get_grid_forecast(lat, lon, f"{d_val}d"))
+                tasks.append(self.api.get_grid_forecast(lat, lon, f"{d_val}d", qweather_lang))
             else:
-                tasks.append(self.api.get_forecast(lat, lon, f"{d_val}d"))
+                tasks.append(self.api.get_forecast(lat, lon, f"{d_val}d", qweather_lang))
             task_map.append("daily")
 
         # 逐小时预报 (带 TTL 保护)
         if self._should_update("hourly", TTL_HOURLY):
             h_val = int(options.get(CONF_HOURLYSTEPS, 24))
             if use_grid:
-                tasks.append(self.api.get_grid_hourly(lat, lon, f"{h_val}h"))
+                tasks.append(self.api.get_grid_hourly(lat, lon, f"{h_val}h", qweather_lang))
             else:
-                tasks.append(self.api.get_hourly(lat, lon, f"{h_val}h"))
+                tasks.append(self.api.get_hourly(lat, lon, f"{h_val}h", qweather_lang))
             task_map.append("hourly")
 
         # 分钟降水
         if self._should_update("minutely", TTL_MINUTELY):
-            tasks.append(self.api.get_minutely(lat, lon))
+            tasks.append(self.api.get_minutely(lat, lon, restricted_lang))
             task_map.append("minutely")
 
         # 预警
-        if options.get(CONF_ALERT, True):
-            tasks.append(self.api.get_warning_v1(lat, lon))
-            task_map.append("warning")
+        tasks.append(self.api.get_warning_v1(lat, lon, qweather_lang))
+        task_map.append("warning")
 
         # 专业空气质量 (格点模式下通常由实况提供基础AQI，此处强制调用V1专业接口)
         if not use_grid and self._should_update("air", TTL_AIR):
-            tasks.append(self.api.get_air_v1(lat, lon))
+            tasks.append(self.api.get_air_v1(lat, lon, qweather_lang))
             task_map.append("air")
 
         # 生活指数
-        if options.get(CONF_LIFEINDEX, True) and self._should_update("indices", TTL_INDICES):
-            tasks.append(self.api.get_indices(lat, lon))
+        if self._should_update("indices", TTL_INDICES):
+            tasks.append(self.api.get_indices(lat, lon, restricted_lang))
             task_map.append("indices")
 
         # ---并发执行与结果合并 ---
@@ -199,10 +206,18 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         # ---数据解析 (组装返回字典) ---
         c = self._cache_data
         
+        # 安全提取各列表变量 (确保变量在任何语言下都已定义)
+        now_raw = c.get("now", {}).get("now", {})
+        daily_list = c.get("daily", {}).get("daily", [])
+        hourly_list = c.get("hourly", {}).get("hourly", [])
+        air_raw = c.get("air", {})
+        warning_raw = c.get("warning", {}).get("alerts", [])
+        indices_list = c.get("indices", {}).get("daily", [])
+        minutely_raw = c.get("minutely", {})
+
         # 预警深度解析
-        alert_raw = c.get("warning", {}).get("alerts", [])
         parsed_warnings = []
-        for a in alert_raw:
+        for a in warning_raw:
             parsed_warnings.append({
                 "id": a.get("id"),
                 "sender": a.get("senderName"),
@@ -216,20 +231,32 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             })
 
         # 小时级摘要合成
-        hourly_list = c.get("hourly", {}).get("hourly", [])
-        hourly_summary = "The weather has been stable recently"
-        if hourly_list:
+        if is_zh:
+            hourly_summary = "近期天气平稳"
+            prefix = "未来6小时："
+            separator = "转"
+        else:
+            # 默认为英文，即使是法语等也会准备英文摘要，但 sensor 层会拦截不显示
+            hourly_summary = "The weather will remain stable"
+            prefix = "Next 6 hours: "
+            separator = " to "
+
+        # ---只有中英文才执行耗时的字符串合成 ---
+        if (is_zh or is_en) and hourly_list:
             unique_texts = []
+            # 只取未来 6 小时的数据
             for h in hourly_list[:6]:
                 txt = h.get("text")
-                if txt and txt not in unique_texts: unique_texts.append(txt)
-            hourly_summary = f"未来6小时：{'转'.join(unique_texts)}"
+                if txt and txt not in unique_texts:
+                    unique_texts.append(txt)
+            
+            if unique_texts:
+                hourly_summary = f"{prefix}{separator.join(unique_texts)}"
+        elif not (is_zh or is_en):
+            # 非中英语言，不生成摘要
+            hourly_summary = None
 
-        now_raw = c.get("now", {}).get("now", {})
-        minutely_raw = c.get("minutely", {})
-
-        # ---针对 V1 空气质量的深度解析逻辑 ---
-        air_raw = c.get("air", {})
+        # 针对 V1 空气质量的深度解析逻辑
         parsed_air = {}
         if "indexes" in air_raw and air_raw["indexes"]:
             idx = air_raw["indexes"][0] # 默认取第一项（通常是本地标准）
@@ -264,6 +291,7 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     parsed_air[code] = conc.get("value")
                     parsed_air[f"{code}_unit"] = conc.get("unit")
 
+        # 组装最终返回结构 (确保 0 丢失)
         return {
             "now": {
                 "temp": self._to_f(now_raw.get("temp")),
@@ -283,11 +311,11 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 "cloud": self._to_f(now_raw.get("cloud"), 0.0),
                 "dew": self._to_f(now_raw.get("dew")),
             },
-            "daily": self._parse_daily(c.get("daily", {}).get("daily", [])),
+            "daily": self._parse_daily(daily_list),
             "hourly": self._parse_hourly(hourly_list),
             "aqi": parsed_air,
             "warning": parsed_warnings,
-            "indices": self._parse_indices(c.get("indices", {}).get("daily", [])),
+            "indices": self._parse_indices(indices_list),
             "city": self.city_name,
             "minutely_summary": minutely_raw.get("summary", "No precipitation in the next two hours"),
             "minutely_detail": minutely_raw.get("minutely", []),

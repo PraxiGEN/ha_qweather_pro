@@ -1,13 +1,10 @@
 """QWeather (和风天气) 配置流实现 ."""
 from __future__ import annotations
 
-import logging
 import asyncio
-import time
 from typing import Any
 
 import voluptuous as vol
-import jwt
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
 
@@ -25,16 +22,17 @@ from .const import (
     CONF_LOCATION_ID,
     CONF_HOURLYSTEPS,
     CONF_DAILYSTEPS,
-    CONF_LIFEINDEX,
     CONF_UPDATE_INTERVAL,
     CONF_PROJECT_ID,
     CONF_KEY_ID,
     CONF_PRIVATE_KEY,
-    CONF_ALERT,
     CONF_GIRD,
     CONF_CUSTOM_UI,
-    LOGGER,
+    MANUFACTURER,
     DEFAULT_UPDATE_INTERVAL,
+    LANGUAGE_MAP,
+    LOGGER,
+    
 )
 
 class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -115,6 +113,9 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """核心验证逻辑：实现地理数据标准化，强制转换为标准经纬度存储."""
         errors: dict[str, str] = {}
         session = async_get_clientsession(self.hass)
+
+        ha_lang = self.hass.config.language
+        qweather_lang = LANGUAGE_MAP.get(ha_lang, "en")        
         
         user_host = config_data[CONF_HOST].strip()
         config_data[CONF_HOST] = user_host
@@ -124,7 +125,7 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if any(domain in user_host for domain in deprecated_domains):
             errors["base"] = "api_host_deprecated"
 
-        city_title = "和风天气"
+        city_title = MANUFACTURER
         normalized_coords = ""
         
         # 准备 API 实例进行位置验证与标准化
@@ -141,7 +142,7 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             try:
                 # 调用城市搜索，支持模糊名称、ID、坐标
-                res = await api.city_lookup(raw_loc)
+                res = await api.city_lookup(raw_loc, lang=qweather_lang)
                 
                 if res.get("code") == "200" and res.get("location"):
                     location_info = res["location"][0]
@@ -187,8 +188,6 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 CONF_UPDATE_INTERVAL: DEFAULT_UPDATE_INTERVAL,
                 CONF_DAILYSTEPS: "7",
                 CONF_HOURLYSTEPS: "24",
-                CONF_ALERT: True,
-                CONF_LIFEINDEX: True,
                 CONF_GIRD: False,
                 CONF_CUSTOM_UI: False,
             }
@@ -252,7 +251,7 @@ class QWeatherOptionsFlow(config_entries.OptionsFlow):
                     default=str(options.get(CONF_DAILYSTEPS, 7))
                 ): selector.SelectSelector(
                     selector.SelectSelectorConfig(
-                        options=["3", "7", "10", "15"],
+                        options=["3", "7", "10", "15", "30"],
                         mode=selector.SelectSelectorMode.DROPDOWN
                     )
                 ),
@@ -267,8 +266,6 @@ class QWeatherOptionsFlow(config_entries.OptionsFlow):
                     )
                 ),
                 # 4. 开关项
-                vol.Required(CONF_ALERT, default=options.get(CONF_ALERT, True)): selector.BooleanSelector(),
-                vol.Required(CONF_LIFEINDEX, default=options.get(CONF_LIFEINDEX, True)): selector.BooleanSelector(),
                 vol.Required(CONF_GIRD, default=options.get(CONF_GIRD, False)): selector.BooleanSelector(),
                 vol.Required(CONF_CUSTOM_UI, default=options.get(CONF_CUSTOM_UI, False)): selector.BooleanSelector(),
             }),

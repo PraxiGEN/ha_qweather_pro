@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import asyncio
-import logging
 import time
 from typing import Any
 
@@ -117,50 +116,50 @@ class QWeatherAPI:
             raise # 触发重试
 
     # --- 城市搜索 ---
-    async def city_lookup(self, location: str):
+    async def city_lookup(self, location: str, lang: str):
         """城市搜索：支持名称、ID 或 坐标."""
-        return await self.request("v2", "city/lookup", {"location": location, "range": "cn"})
+        return await self.request("v2", "city/lookup", {"location": location, "range": "cn", "lang": lang})
 
     # --- 标准天气 API (基于观测站) ---
-    async def get_weather_now(self, lat: str, lon: str):
+    async def get_weather_now(self, lat: str, lon: str, lang: str):
         """获取实况天气."""
-        return await self.request("v7", "weather/now", {"location": f"{lon},{lat}"})
+        return await self.request("v7", "weather/now", {"location": f"{lon},{lat}", "lang": lang})
 
-    async def get_forecast(self, lat: str, lon: str, days: str):
-        """获取逐日预报 (days 支持 3d/7d/10d/15d)."""
-        return await self.request("v7", f"weather/{days}", {"location": f"{lon},{lat}"})
+    async def get_forecast(self, lat: str, lon: str, days: str, lang: str):
+        """获取逐日预报 (days 支持 3d/7d/10d/15d/30d)."""
+        return await self.request("v7", f"weather/{days}", {"location": f"{lon},{lat}", "lang": lang})
 
-    async def get_hourly(self, lat: str, lon: str, hours: str):
+    async def get_hourly(self, lat: str, lon: str, hours: str, lang: str):
         """获取逐小时预报 (hours 支持 24h/72h/168h)."""
-        return await self.request("v7", f"weather/{hours}", {"location": f"{lon},{lat}"})
+        return await self.request("v7", f"weather/{hours}", {"location": f"{lon},{lat}", "lang": lang})
 
     # --- 格点天气 API (基于数值模式，高精度坐标) ---
-    async def get_grid_weather_now(self, lat: str, lon: str):
+    async def get_grid_weather_now(self, lat: str, lon: str, lang: str):
         """格点实况天气."""
-        return await self.request("v7", "grid-weather/now", {"location": f"{lon},{lat}"})
+        return await self.request("v7", "grid-weather/now", {"location": f"{lon},{lat}", "lang": lang})
 
-    async def get_grid_forecast(self, lat: str, lon: str, days: str):
+    async def get_grid_forecast(self, lat: str, lon: str, days: str, lang: str):
         """格点每日预报 (支持 3d/7d)."""
-        return await self.request("v7", f"grid-weather/{days}", {"location": f"{lon},{lat}"})
+        return await self.request("v7", f"grid-weather/{days}", {"location": f"{lon},{lat}", "lang": lang})
 
-    async def get_grid_hourly(self, lat: str, lon: str, hours: str):
+    async def get_grid_hourly(self, lat: str, lon: str, hours: str, lang: str):
         """格点逐小时预报 (支持 24h/72h)."""
-        return await self.request("v7", f"grid-weather/{hours}", {"location": f"{lon},{lat}"})
+        return await self.request("v7", f"grid-weather/{hours}", {"location": f"{lon},{lat}", "lang": lang})
 
     # --- 空气质量与预警 (V1 强制坐标路径) ---
-    async def get_air_v1(self, lat: str, lon: str):
+    async def get_air_v1(self, lat: str, lon: str, lang: str):
         """V1 专业空气质量."""
-        return await self.request("airquality/v1", "current/{lat}/{lon}", {"lat": lat, "lon": lon})
+        return await self.request("airquality/v1", "current/{lat}/{lon}", {"lat": lat, "lon": lon, "lang": lang})
 
-    async def get_warning_v1(self, lat: str, lon: str):
+    async def get_warning_v1(self, lat: str, lon: str, lang: str):
         """V1 气象预警."""
-        return await self.request("weatheralert/v1", "current/{lat}/{lon}", {"lat": lat, "lon": lon, "localTime": "true"})
+        return await self.request("weatheralert/v1", "current/{lat}/{lon}", {"lat": lat, "lon": lon, "localTime": "true", "lang": lang})
 
     # ---辅助数据 ---
-    async def get_indices(self, lat: str, lon: str):
+    async def get_indices(self, lat: str, lon: str, lang: str):
         """获取生活指数."""
-        return await self.request("v7", "indices/1d", {"location": f"{lon},{lat}", "type": "0"})
+        return await self.request("v7", "indices/1d", {"location": f"{lon},{lat}", "type": "0", "lang": lang})
 
-    async def get_minutely(self, lat: str, lon: str):
+    async def get_minutely(self, lat: str, lon: str, lang: str):
         """获取分钟级降水."""
-        return await self.request("v7", "minutely/5m", {"location": f"{lon},{lat}"})
+        return await self.request("v7", "minutely/5m", {"location": f"{lon},{lat}", "lang": lang})

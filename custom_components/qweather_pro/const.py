@@ -32,8 +32,6 @@ CONF_PRIVATE_KEY: Final = "private_key"
 CONF_UPDATE_INTERVAL: Final = "update_interval"
 CONF_HOURLYSTEPS: Final = "hourlysteps"
 CONF_DAILYSTEPS: Final = "dailysteps"
-CONF_LIFEINDEX: Final = "lifeindex"
-CONF_ALERT: Final = "alert"
 CONF_GIRD: Final = "gird"
 CONF_CUSTOM_UI: Final = "custom_ui"
 
@@ -54,29 +52,53 @@ SUGGESTION_TYPE_MAP: Final[dict[str, str]] = {
     "13": "mu",      "14": "dc",      "15": "ptfc",    "16": "fsh",
 }
 
-# --- 天气状况图标映射 (QWeather Icon -> HA Weather State) ---
-# 这是 Weather 实体正常显示 condition 的核心
-CONDITION_MAP: Final[dict[str, str]] = {
-    "100": "sunny",          # 晴
-    "101": "cloudy",         # 多云
-    "102": "cloudy",         # 少云
-    "103": "cloudy",         # 晴间多云
-    "104": "cloudy",         # 阴
-    "150": "clear-night",    # 晴(夜)
-    "151": "cloudy",         # 多云(夜)
-    "152": "cloudy",         # 少云(夜)
-    "153": "cloudy",         # 晴间多云(夜)
-    "300": "rainy",          # 阵雨
-    "301": "rainy",          # 强阵雨
-    "302": "lightning-rainy",# 雷阵雨
-    "305": "rainy",          # 小雨
-    "306": "rainy",          # 中雨
-    "307": "rainy",          # 大雨
-    "315": "rainy",          # 暴雨
-    "400": "snowy",          # 小雪
-    "401": "snowy",          # 中雪
-    "402": "snowy",          # 大雪
-    "500": "fog",            # 薄雾
-    "501": "fog",            # 雾
-    "502": "hail",           # 霾
+# HA 语言代码映射到和风天气语言代码
+# 涵盖了和风天气支持的所有 30+ 种语言
+LANGUAGE_MAP: Final[dict[str, str]] = {
+    # 中文系列
+    "zh-Hans": "zh",       # 简体中文
+    "zh-Hant": "zh-hant",  # 繁体中文
+    "zh-HK": "zh-hant",    # 香港繁体
+    "zh-TW": "zh-hant",    # 台湾繁体
+
+    # 英文
+    "en": "en",
+    "en-GB": "en",
+    "en-US": "en",
+
+    # 欧洲语系
+    "de": "de",            # 德语
+    "es": "es",            # 西班牙语
+    "fr": "fr",            # 法语
+    "it": "it",            # 意大利语
+    "nl": "nl",            # 荷兰语
+    "el": "el",            # 希腊语
+    "sv": "sv",            # 瑞典语
+    "pl": "pl",            # 波兰语
+    "tr": "tr",            # 土耳其语
+    "cs": "cs",            # 捷克语
+    "et": "et",            # 爱沙尼亚语
+    "fi": "fi",            # 芬兰语
+    "is": "is",            # 冰岛语
+    "nb": "nb",            # 挪威语 (Bokmål)
+    "no": "nb",            # 挪威语回退
+
+    # 亚洲语系
+    "ja": "ja",            # 日语
+    "ko": "ko",            # 韩语
+    "ru": "ru",            # 俄语
+    "hi": "hi",            # 印地语
+    "th": "th",            # 泰语
+    "vi": "vi",            # 越南语
+    "ms": "ms",            # 马来语
+    "id": "id",            # 印尼语
+    "fil": "fil",          # 菲律宾语
+
+    # 中东/其他
+    "ar": "ar",            # 阿拉伯语
+    "he": "he",            # 希伯来语
+    "pt": "pt",            # 葡萄牙语
+    "pt-BR": "pt",         # 巴西葡萄牙语
+    "bn": "bn",            # 孟加拉语
+    "la": "la",            # 拉丁语
 }

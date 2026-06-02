@@ -1,0 +1,194 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "QWeather Pro の設定",
+        "description": "### ⚙️ 設定手順 \n **[QWeather コンソール](https://console.qweather.com) にアクセス：** \n 1. 設定で **API Host** をコピーし、下の **API Host** に入力します。 \n 2. プロジェクト管理 → プロジェクトを作成し、プロジェクトに認証情報を追加します：**JSON Web Token** または **API KEY** を選択可能。\n 3. 位置情報は経度・緯度 (WGS-84) のみ対応。例：116.40,39.90。 \n 位置情報はデフォルトで HA の経緯度が使用されます。 \n #### 注：**API KEY** 認証は十分な安全性を提供できず、リクエスト数の制限を受けます。**JSON Web Token (JWT)** の使用を推奨します！",
+        "data": {
+          "host": "API サーバーアドレス (API Host)",
+          "location_id": "位置情報（経度が先、経緯度のみ対応）。",
+          "use_token": "JWT 認証を使用（推奨・より安全）",
+          "api_key": "通常の API Key（JWT を使用する場合は空欄）"
+        }
+      },
+      "jwt_setup": {
+        "title": "JWT セキュリティ認証の設定",
+        "description": "システムは自動的に公開鍵を生成しました。\n\n**操作手順：**\n1. 下の枠内の**公開鍵**をコピーします。\n2. [QWeather コンソール](https://console.qweather.com) にアクセスし、プロジェクトに認証情報を追加し、**JSON Web Token** を選択して公開鍵を貼り付けます。\n\n```text\n{public_key}\n```\n\n完了後、下の **プロジェクト ID** と **認証情報 ID** を入力してください。",
+        "data": {
+          "project_id": "プロジェクト ID (Project ID)",
+          "key_id": "認証情報 ID (Key ID)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "サーバーに接続できません",
+      "invalid_auth": "認証に失敗しました",
+      "jwt_error": "JWT 署名に失敗しました",
+      "api_key_missing": "標準モードには API Key が必要です",
+      "location_not_found": "位置情報が見つかりません",
+      "api_host_deprecated": "公開 API は廃止されました。新しい API Host を使用してください"
+    },
+    "abort": {
+      "already_configured": "この位置情報はすでに設定されています"
+    }
+  },
+
+  "options": {
+    "step": {
+      "init": {
+        "title": "オプション設定",
+        "description": "### 💡 使用説明\n- 日次天気予報は **3d/7d/15d/30d** を選択可能。グリッド日次予報は **3d/7d** のみ対応。 \n- 時間別予報は **24h/72h/168h** を選択可能。グリッド時間別予報は **24h/72h** のみ対応。\n- **グリッド天気**：高精度グリッド API を有効にすると、一部の観測データ（例：**視程**）が提供されず、カード上では `--` と表示されます。",
+        "data": {
+          "update_interval": "データ更新間隔（分）",
+          "dailysteps": "日次予報日数 (3-30)",
+          "hourlysteps": "時間別予報時間数 (24-168)",
+          "gird": "高精度グリッド天気を使用 (V7 Grid API)",
+          "custom_ui": "カスタム UI を有効化"
+        }
+      }
+    }
+  },
+
+  "entity": {
+    "sensor": {
+      "aqi": {
+        "name": "空気質",
+        "state": {
+          "Unknown": "不明"
+        },
+        "state_attributes": {
+          "aqi_value": { "name": "AQI 値" },
+          "aqi_level": { "name": "空気質レベル" },
+          "primary_pollutant": {
+            "name": "主要汚染物質",
+            "state": {
+              "None": "なし"
+            }
+          },
+          "pm2p5": { "name": "PM2.5" },
+          "pm10": { "name": "PM10" },
+          "no2": { "name": "二酸化窒素 (NO₂)" },
+          "so2": { "name": "二酸化硫黄 (SO₂)" },
+          "o3": { "name": "オゾン (O₃)" },
+          "co": { "name": "一酸化炭素 (CO)" },
+          "health_effect": {
+            "name": "健康への影響",
+            "state": {
+              "No data available": "データなし",
+              "Please refer to the recommendations of the local meteorological authorities": "地域の気象当局の推奨を参照してください"
+            }
+          },
+          "health_advice": { "name": "健康アドバイス" },
+          "stations": {
+            "name": "観測所情報",
+            "state": {
+              "No monitoring station information available": "観測所情報なし"
+            }
+          }
+        },
+        "unit_of_measurement": {
+          "μg/m³": "マイクログラム/立方メートル",
+          "mg/m³": "ミリグラム/立方メートル"
+        }
+      },
+
+      "warning_info": {
+        "name": "気象警報",
+        "state": {
+          "Without warning": "警報なし"
+        },
+        "state_attributes": {
+          "id": { "name": "警報 ID" },
+          "sender": { "name": "発表者" },
+          "issued": { "name": "発表時間" },
+          "title": { "name": "警報タイトル" },
+          "text": { "name": "警報内容" },
+          "instruction": { "name": "対処指示" },
+          "level": {
+            "name": "警報レベル",
+            "state": {
+              "moderate": "中程度",
+              "severe": "深刻",
+              "extreme": "極端"
+            }
+          },
+          "color": {
+            "name": "警報色",
+            "state": {
+              "blue": "青",
+              "yellow": "黄",
+              "orange": "橙",
+              "red": "赤"
+            }
+          },
+          "type_name": { "name": "警報タイプ名" }
+        }
+      },
+
+      "today_temp_range": {
+        "name": "今日の気温範囲",
+        "state": {
+          "Unknown": "不明"
+        },
+        "state_attributes": {
+          "max_temp": { "name": "最高気温" },
+          "min_temp": { "name": "最低気温" }
+        }
+      },
+
+      "precipitation_summary": {
+        "name": "降水概要",
+        "state": {
+          "No precipitation in the next two hours": "今後2時間は降水なし"
+        },
+        "state_attributes": {
+          "detail": { "name": "詳細" }
+        }
+      },
+
+      "weather_summary": {
+        "name": "天気概要",
+        "state": {
+          "The weather has been stable recently": "最近の天気は安定しています"
+        }
+      }
+    },
+
+    "weather": {
+      "weather": {
+        "name": "天気",
+        "state_attributes": {
+          "qweather_icon": { "name": "天気アイコン" },
+          "update_time": { "name": "更新時間" },
+          "obs_time": { "name": "観測時間" },
+          "condition_cn": { "name": "天気状況（中国語）" },
+          "wind_dir": { "name": "風向" },
+          "cloud": { "name": "雲量" },
+          "dew": { "name": "露点温度" },
+          "precip": { "name": "降水量" },
+          "precip_probability": { "name": "降水確率" },
+          "feels_like": { "name": "体感温度" },
+          "wind_scale": { "name": "風力レベル" },
+          "sunrise": { "name": "日の出" },
+          "sunset": { "name": "日の入り" },
+          "moon_phase": { "name": "月相" },
+          "moonrise": { "name": "月の出" },
+          "moonset": { "name": "月の入り" },
+          "minutely_summary": { "name": "1分ごとの天気概要" },
+          "hourly_summary": { "name": "1時間ごとの天気概要" },
+          "aqi": { "name": "空気質指数" },
+          "city": { "name": "都市" },
+          "warning": { "name": "警報情報" },
+          "suggestion": { "name": "生活指数アドバイス" }
+        },
+        "unit_of_measurement": {
+          "°C": "摂氏度",
+          "mmHg": "ミリメートル水銀柱",
+          "km/h": "キロメートル/時",
+          "km": "キロメートル",
+          "mm": "ミリメートル"
+        }
+      }
+    }
+  }
+}

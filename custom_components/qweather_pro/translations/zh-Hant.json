@@ -1,0 +1,194 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "配置和風天氣 Pro",
+        "description": "### ⚙️ 添加步驟 \n **前往[和風天氣控制台](https://console.qweather.com):** \n 1. 在設定中複製 **API Host** 並填寫下方的 **API Host**。 \n 2. 專案管理 → 建立專案，並在專案中新增憑證：可選 **JSON Web Token** 和 **API KEY**。\n 3. 地理位置僅支援經緯度 (WGS-84)，例如：116.40,39.90。 \n 地理位置預設為 HA 經緯度。 \n #### 注：**API KEY** 認證方式無法提供足夠的安全性，使用 **API KEY** 認證方式將受請求量限制，建議使用 **JSON Web Token (JWT)** 認證方式！",
+        "data": {
+          "host": "API 伺服器地址 (API Host)",
+          "location_id": "地理位置 僅支援經緯度（經度在前）。",
+          "use_token": "使用 JWT 認證（推薦，更安全）",
+          "api_key": "一般 API Key（使用 JWT 則留空）"
+        }
+      },
+      "jwt_setup": {
+        "title": "配置 JWT 安全認證",
+        "description": "系統已自動為您生成公鑰。\n\n**操作步驟：**\n1. 複製下方框中的**公鑰**。\n2. 前往[和風天氣控制台](https://console.qweather.com)，在專案中新增憑證，選擇 **JSON Web Token** 並貼上公鑰。\n\n```text\n{public_key}\n```\n\n完成後，請填寫下方的 **專案 ID** 和 **憑證 ID**。",
+        "data": {
+          "project_id": "專案 ID (Project ID)",
+          "key_id": "憑證 ID (Key ID)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "無法連接到伺服器",
+      "invalid_auth": "身份驗證失敗",
+      "jwt_error": "JWT 簽名失敗",
+      "api_key_missing": "標準模式需要 API Key",
+      "location_not_found": "找不到該地理位置",
+      "api_host_deprecated": "公共 API 已廢棄，請使用新的 API Host"
+    },
+    "abort": {
+      "already_configured": "該地理位置已被配置"
+    }
+  },
+
+  "options": {
+    "step": {
+      "init": {
+        "title": "配置選項",
+        "description": "### 💡 使用說明\n- 每日天氣預報可選擇 **3d/7d/15d/30d** 天，格點逐日預報僅支援 **3d/7d** 天。 \n- 逐小時預報可選擇 **24h/72h/168h** 小時，格點逐小時預報僅支援 **24h/72h** 小時。\n- **格點天氣**：啟用高精度格點 API 後，部分實測資料（如**能見度**）將無法提供，卡片中將顯示為 `--`。",
+        "data": {
+          "update_interval": "資料更新頻率（分鐘）",
+          "dailysteps": "逐日預報天數 (3-30)",
+          "hourlysteps": "逐小時預報小時數 (24-168)",
+          "gird": "使用高精度格點天氣 (V7 Grid API)",
+          "custom_ui": "啟用自訂前端 UI 支援"
+        }
+      }
+    }
+  },
+
+  "entity": {
+    "sensor": {
+      "aqi": {
+        "name": "空氣品質",
+        "state": {
+          "Unknown": "未知"
+        },
+        "state_attributes": {
+          "aqi_value": { "name": "AQI 數值" },
+          "aqi_level": { "name": "空氣品質等級" },
+          "primary_pollutant": {
+            "name": "主要污染物",
+            "state": {
+              "None": "無"
+            }
+          },
+          "pm2p5": { "name": "PM2.5" },
+          "pm10": { "name": "PM10" },
+          "no2": { "name": "二氧化氮 (NO₂)" },
+          "so2": { "name": "二氧化硫 (SO₂)" },
+          "o3": { "name": "臭氧 (O₃)" },
+          "co": { "name": "一氧化碳 (CO)" },
+          "health_effect": {
+            "name": "健康影響",
+            "state": {
+              "No data available": "暫無資料",
+              "Please refer to the recommendations of the local meteorological authorities": "請參考當地氣象部門建議"
+            }
+          },
+          "health_advice": { "name": "健康建議" },
+          "stations": {
+            "name": "監測站資訊",
+            "state": {
+              "No monitoring station information available": "暫無監測站資訊"
+            }
+          }
+        },
+        "unit_of_measurement": {
+          "μg/m³": "微克/立方公尺",
+          "mg/m³": "毫克/立方公尺"
+        }
+      },
+
+      "warning_info": {
+        "name": "氣象預警",
+        "state": {
+          "Without warning": "無預警"
+        },
+        "state_attributes": {
+          "id": { "name": "預警 ID" },
+          "sender": { "name": "預警發布者" },
+          "issued": { "name": "預警發布時間" },
+          "title": { "name": "預警標題" },
+          "text": { "name": "預警內容" },
+          "instruction": { "name": "預警處置建議" },
+          "level": {
+            "name": "預警級別",
+            "state": {
+              "moderate": "中等",
+              "severe": "嚴重",
+              "extreme": "極端"
+            }
+          },
+          "color": {
+            "name": "預警顏色",
+            "state": {
+              "blue": "藍色",
+              "yellow": "黃色",
+              "orange": "橙色",
+              "red": "紅色"
+            }
+          },
+          "type_name": { "name": "預警類型名稱" }
+        }
+      },
+
+      "today_temp_range": {
+        "name": "今日溫度範圍",
+        "state": {
+          "Unknown": "未知"
+        },
+        "state_attributes": {
+          "max_temp": { "name": "最高溫度" },
+          "min_temp": { "name": "最低溫度" }
+        }
+      },
+
+      "precipitation_summary": {
+        "name": "降水簡報",
+        "state": {
+          "No precipitation in the next two hours": "未來兩小時無降水"
+        },
+        "state_attributes": {
+          "detail": { "name": "細節" }
+        }
+      },
+
+      "weather_summary": {
+        "name": "天氣概況",
+        "state": {
+          "The weather has been stable recently": "近期天氣平穩"
+        }
+      }
+    },
+
+    "weather": {
+      "weather": {
+        "name": "天氣",
+        "state_attributes": {
+          "qweather_icon": { "name": "天氣圖示" },
+          "update_time": { "name": "資料更新時間" },
+          "obs_time": { "name": "實況觀測時間" },
+          "condition_cn": { "name": "天氣狀況（中文）" },
+          "wind_dir": { "name": "風向" },
+          "cloud": { "name": "雲量" },
+          "dew": { "name": "露點溫度" },
+          "precip": { "name": "降水量" },
+          "precip_probability": { "name": "降水機率" },
+          "feels_like": { "name": "體感溫度" },
+          "wind_scale": { "name": "風力等級" },
+          "sunrise": { "name": "日出時間" },
+          "sunset": { "name": "日落時間" },
+          "moon_phase": { "name": "月相" },
+          "moonrise": { "name": "月出時間" },
+          "moonset": { "name": "月落時間" },
+          "minutely_summary": { "name": "分鐘級天氣摘要" },
+          "hourly_summary": { "name": "小時級天氣摘要" },
+          "aqi": { "name": "空氣品質指數" },
+          "city": { "name": "城市" },
+          "warning": { "name": "預警資訊" },
+          "suggestion": { "name": "生活指數建議" }
+        },
+        "unit_of_measurement": {
+          "°C": "攝氏度",
+          "mmHg": "毫米汞柱",
+          "km/h": "公里/小時",
+          "km": "公里",
+          "mm": "毫米"
+        }
+      }
+    }
+  }
+}

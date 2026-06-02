@@ -1,0 +1,194 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "QWeather Pro configureren",
+        "description": "### ⚙️ Configuratiestappen \n **Ga naar de [QWeather Console](https://console.qweather.com):** \n 1. Kopieer in de instellingen de **API Host** en vul deze hieronder in. \n 2. Projectbeheer → Maak een project aan en voeg referenties toe: **JSON Web Token** of **API KEY**.\n 3. Locatie ondersteunt alleen breedte‑ en lengtegraad (WGS‑84). Voorbeeld: 116.40,39.90. \n De standaardlocatie gebruikt de HA‑coördinaten. \n #### Opmerking: **API KEY**‑authenticatie biedt onvoldoende beveiliging en is onderhevig aan limieten. Het wordt aanbevolen om **JSON Web Token (JWT)** te gebruiken!",
+        "data": {
+          "host": "API‑serveradres (API Host)",
+          "location_id": "Locatie — alleen breedte-/lengtegraad (lengtegraad eerst).",
+          "use_token": "JWT‑authenticatie gebruiken (aanbevolen, veiliger)",
+          "api_key": "Standaard API Key (leeg laten bij gebruik van JWT)"
+        }
+      },
+      "jwt_setup": {
+        "title": "JWT‑beveiligingsauthenticatie instellen",
+        "description": "Het systeem heeft automatisch een openbare sleutel gegenereerd.\n\n**Stappen:**\n1. Kopieer de **openbare sleutel** hieronder.\n2. Ga naar de [QWeather Console](https://console.qweather.com), voeg referenties toe aan het project, kies **JSON Web Token** en plak de sleutel.\n\n```text\n{public_key}\n```\n\nVul vervolgens **Project ID** en **Key ID** hieronder in.",
+        "data": {
+          "project_id": "Project‑ID (Project ID)",
+          "key_id": "Sleutel‑ID (Key ID)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Kan geen verbinding maken met de server",
+      "invalid_auth": "Authenticatie mislukt",
+      "jwt_error": "JWT‑ondertekening mislukt",
+      "api_key_missing": "Standaardmodus vereist een API Key",
+      "location_not_found": "Locatie niet gevonden",
+      "api_host_deprecated": "Publieke API is verouderd, gebruik een nieuwe API Host"
+    },
+    "abort": {
+      "already_configured": "Deze locatie is al geconfigureerd"
+    }
+  },
+
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configuratie‑opties",
+        "description": "### 💡 Gebruiksinstructies\n- Dagelijkse voorspellingen ondersteunen **3d/7d/15d/30d**, rastervoorspellingen alleen **3d/7d**. \n- Uurlijkse voorspellingen ondersteunen **24h/72h/168h**, rastervoorspellingen alleen **24h/72h**.\n- **Rasterweer**: na het inschakelen van de hoge‑precisie Grid API zijn sommige observatiegegevens (zoals **zichtbaarheid**) niet beschikbaar en worden weergegeven als `--`.",
+        "data": {
+          "update_interval": "Update-interval (minuten)",
+          "dailysteps": "Aantal dagen voor dagelijkse voorspelling (3‑30)",
+          "hourlysteps": "Aantal uren voor uurlijkse voorspelling (24‑168)",
+          "gird": "Hoge‑precisie rasterweer gebruiken (V7 Grid API)",
+          "custom_ui": "Aangepaste UI‑ondersteuning inschakelen"
+        }
+      }
+    }
+  },
+
+  "entity": {
+    "sensor": {
+      "aqi": {
+        "name": "Luchtkwaliteit",
+        "state": {
+          "Unknown": "Onbekend"
+        },
+        "state_attributes": {
+          "aqi_value": { "name": "AQI‑waarde" },
+          "aqi_level": { "name": "Luchtkwaliteitsniveau" },
+          "primary_pollutant": {
+            "name": "Primaire verontreinigende stof",
+            "state": {
+              "None": "Geen"
+            }
+          },
+          "pm2p5": { "name": "PM2.5" },
+          "pm10": { "name": "PM10" },
+          "no2": { "name": "Stikstofdioxide (NO₂)" },
+          "so2": { "name": "Zwaveldioxide (SO₂)" },
+          "o3": { "name": "Ozon (O₃)" },
+          "co": { "name": "Koolmonoxide (CO)" },
+          "health_effect": {
+            "name": "Gezondheidseffecten",
+            "state": {
+              "No data available": "Geen gegevens beschikbaar",
+              "Please refer to the recommendations of the local meteorological authorities": "Raadpleeg de aanbevelingen van de lokale meteorologische autoriteiten"
+            }
+          },
+          "health_advice": { "name": "Gezondheidsadvies" },
+          "stations": {
+            "name": "Stationsinformatie",
+            "state": {
+              "No monitoring station information available": "Geen stationsinformatie beschikbaar"
+            }
+          }
+        },
+        "unit_of_measurement": {
+          "μg/m³": "microgram/m³",
+          "mg/m³": "milligram/m³"
+        }
+      },
+
+      "warning_info": {
+        "name": "Weeralarm",
+        "state": {
+          "Without warning": "Geen waarschuwing"
+        },
+        "state_attributes": {
+          "id": { "name": "Alarm‑ID" },
+          "sender": { "name": "Afzender" },
+          "issued": { "name": "Uitgiftetijd" },
+          "title": { "name": "Alarmtitel" },
+          "text": { "name": "Alarmtekst" },
+          "instruction": { "name": "Instructies" },
+          "level": {
+            "name": "Alarmniveau",
+            "state": {
+              "moderate": "Matig",
+              "severe": "Ernstig",
+              "extreme": "Extreem"
+            }
+          },
+          "color": {
+            "name": "Alarmkleur",
+            "state": {
+              "blue": "Blauw",
+              "yellow": "Geel",
+              "orange": "Oranje",
+              "red": "Rood"
+            }
+          },
+          "type_name": { "name": "Type waarschuwing" }
+        }
+      },
+
+      "today_temp_range": {
+        "name": "Temperatuurbereik van vandaag",
+        "state": {
+          "Unknown": "Onbekend"
+        },
+        "state_attributes": {
+          "max_temp": { "name": "Maximale temperatuur" },
+          "min_temp": { "name": "Minimale temperatuur" }
+        }
+      },
+
+      "precipitation_summary": {
+        "name": "Neerslagoverzicht",
+        "state": {
+          "No precipitation in the next two hours": "Geen neerslag in de komende twee uur"
+        },
+        "state_attributes": {
+          "detail": { "name": "Details" }
+        }
+      },
+
+      "weather_summary": {
+        "name": "Weeroverzicht",
+        "state": {
+          "The weather has been stable recently": "Het weer is de laatste tijd stabiel"
+        }
+      }
+    },
+
+    "weather": {
+      "weather": {
+        "name": "Weer",
+        "state_attributes": {
+          "qweather_icon": { "name": "Weerpictogram" },
+          "update_time": { "name": "Update‑tijd" },
+          "obs_time": { "name": "Observatietijd" },
+          "condition_cn": { "name": "Weerconditie (Chinees)" },
+          "wind_dir": { "name": "Windrichting" },
+          "cloud": { "name": "Bewolking" },
+          "dew": { "name": "Dauwpunt" },
+          "precip": { "name": "Neerslag" },
+          "precip_probability": { "name": "Kans op neerslag" },
+          "feels_like": { "name": "Gevoelstemperatuur" },
+          "wind_scale": { "name": "Windkracht" },
+          "sunrise": { "name": "Zonsopkomst" },
+          "sunset": { "name": "Zonsondergang" },
+          "moon_phase": { "name": "Maanfase" },
+          "moonrise": { "name": "Maanopkomst" },
+          "moonset": { "name": "Maanondergang" },
+          "minutely_summary": { "name": "Per‑minuut overzicht" },
+          "hourly_summary": { "name": "Uurlijkse samenvatting" },
+          "aqi": { "name": "Luchtkwaliteitsindex" },
+          "city": { "name": "Stad" },
+          "warning": { "name": "Waarschuwing" },
+          "suggestion": { "name": "Leefstijladvies" }
+        },
+        "unit_of_measurement": {
+          "°C": "graden Celsius",
+          "mmHg": "millimeter kwik",
+          "km/h": "km/u",
+          "km": "kilometer",
+          "mm": "millimeter"
+        }
+      }
+    }
+  }
+}
