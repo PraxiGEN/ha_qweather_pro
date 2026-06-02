@@ -1,0 +1,194 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "QWeather Pro 설정",
+        "description": "### ⚙️ 설정 단계 \n **[QWeather 콘솔](https://console.qweather.com)로 이동:** \n 1. 설정에서 **API Host**를 복사하여 아래 **API Host** 입력란에 붙여넣습니다. \n 2. 프로젝트 관리 → 프로젝트 생성 후, 인증 정보를 추가합니다: **JSON Web Token** 또는 **API KEY** 선택 가능.\n 3. 위치 정보는 경도·위도 (WGS-84)만 지원합니다. 예: 116.40,39.90. \n 위치 정보는 기본적으로 HA의 경도·위도를 사용합니다. \n #### 참고: **API KEY** 인증 방식은 보안성이 충분하지 않으며 요청 제한이 적용됩니다. **JSON Web Token (JWT)** 사용을 권장합니다!",
+        "data": {
+          "host": "API 서버 주소 (API Host)",
+          "location_id": "위치 정보 (경도 우선, 경·위도만 지원).",
+          "use_token": "JWT 인증 사용 (권장, 더 안전함)",
+          "api_key": "일반 API Key (JWT 사용 시 비워두기)"
+        }
+      },
+      "jwt_setup": {
+        "title": "JWT 보안 인증 설정",
+        "description": "시스템이 자동으로 공개 키를 생성했습니다.\n\n**설정 단계:**\n1. 아래 상자에 있는 **공개 키**를 복사합니다.\n2. [QWeather 콘솔](https://console.qweather.com)에 접속하여 프로젝트에 인증 정보를 추가하고, **JSON Web Token**을 선택한 뒤 공개 키를 붙여넣습니다.\n\n```text\n{public_key}\n```\n\n완료 후 아래에 **프로젝트 ID**와 **인증 정보 ID**를 입력하세요.",
+        "data": {
+          "project_id": "프로젝트 ID (Project ID)",
+          "key_id": "인증 정보 ID (Key ID)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "서버에 연결할 수 없습니다",
+      "invalid_auth": "인증 실패",
+      "jwt_error": "JWT 서명 실패",
+      "api_key_missing": "표준 모드에는 API Key가 필요합니다",
+      "location_not_found": "해당 위치를 찾을 수 없습니다",
+      "api_host_deprecated": "공용 API는 더 이상 지원되지 않습니다. 새로운 API Host를 사용하세요"
+    },
+    "abort": {
+      "already_configured": "해당 위치는 이미 구성되어 있습니다"
+    }
+  },
+
+  "options": {
+    "step": {
+      "init": {
+        "title": "옵션 설정",
+        "description": "### 💡 사용 안내\n- 일일 예보는 **3d/7d/15d/30d** 선택 가능하며, 그리드 일일 예보는 **3d/7d**만 지원합니다. \n- 시간별 예보는 **24h/72h/168h** 선택 가능하며, 그리드 시간별 예보는 **24h/72h**만 지원합니다.\n- **그리드 날씨**: 고정밀 그리드 API를 활성화하면 일부 관측 데이터(예: **가시거리**)가 제공되지 않으며 카드에는 `--`로 표시됩니다.",
+        "data": {
+          "update_interval": "데이터 업데이트 주기 (분)",
+          "dailysteps": "일일 예보 일수 (3-30)",
+          "hourlysteps": "시간별 예보 시간 (24-168)",
+          "gird": "고정밀 그리드 날씨 사용 (V7 Grid API)",
+          "custom_ui": "사용자 정의 UI 지원 활성화"
+        }
+      }
+    }
+  },
+
+  "entity": {
+    "sensor": {
+      "aqi": {
+        "name": "대기질",
+        "state": {
+          "Unknown": "알 수 없음"
+        },
+        "state_attributes": {
+          "aqi_value": { "name": "AQI 값" },
+          "aqi_level": { "name": "대기질 등급" },
+          "primary_pollutant": {
+            "name": "주요 오염물질",
+            "state": {
+              "None": "없음"
+            }
+          },
+          "pm2p5": { "name": "PM2.5" },
+          "pm10": { "name": "PM10" },
+          "no2": { "name": "이산화질소 (NO₂)" },
+          "so2": { "name": "이산화황 (SO₂)" },
+          "o3": { "name": "오존 (O₃)" },
+          "co": { "name": "일산화탄소 (CO)" },
+          "health_effect": {
+            "name": "건강 영향",
+            "state": {
+              "No data available": "데이터 없음",
+              "Please refer to the recommendations of the local meteorological authorities": "지역 기상 당국의 권고를 참고하세요"
+            }
+          },
+          "health_advice": { "name": "건강 조언" },
+          "stations": {
+            "name": "관측소 정보",
+            "state": {
+              "No monitoring station information available": "관측소 정보 없음"
+            }
+          }
+        },
+        "unit_of_measurement": {
+          "μg/m³": "마이크로그램/세제곱미터",
+          "mg/m³": "밀리그램/세제곱미터"
+        }
+      },
+
+      "warning_info": {
+        "name": "기상 경보",
+        "state": {
+          "Without warning": "경보 없음"
+        },
+        "state_attributes": {
+          "id": { "name": "경보 ID" },
+          "sender": { "name": "발표 기관" },
+          "issued": { "name": "발표 시간" },
+          "title": { "name": "경보 제목" },
+          "text": { "name": "경보 내용" },
+          "instruction": { "name": "대처 지침" },
+          "level": {
+            "name": "경보 수준",
+            "state": {
+              "moderate": "보통",
+              "severe": "심각",
+              "extreme": "극심"
+            }
+          },
+          "color": {
+            "name": "경보 색상",
+            "state": {
+              "blue": "파랑",
+              "yellow": "노랑",
+              "orange": "주황",
+              "red": "빨강"
+            }
+          },
+          "type_name": { "name": "경보 유형 이름" }
+        }
+      },
+
+      "today_temp_range": {
+        "name": "오늘의 온도 범위",
+        "state": {
+          "Unknown": "알 수 없음"
+        },
+        "state_attributes": {
+          "max_temp": { "name": "최고 기온" },
+          "min_temp": { "name": "최저 기온" }
+        }
+      },
+
+      "precipitation_summary": {
+        "name": "강수 요약",
+        "state": {
+          "No precipitation in the next two hours": "향후 2시간 동안 강수 없음"
+        },
+        "state_attributes": {
+          "detail": { "name": "세부 정보" }
+        }
+      },
+
+      "weather_summary": {
+        "name": "날씨 요약",
+        "state": {
+          "The weather has been stable recently": "최근 날씨가 안정적입니다"
+        }
+      }
+    },
+
+    "weather": {
+      "weather": {
+        "name": "날씨",
+        "state_attributes": {
+          "qweather_icon": { "name": "날씨 아이콘" },
+          "update_time": { "name": "업데이트 시간" },
+          "obs_time": { "name": "관측 시간" },
+          "condition_cn": { "name": "날씨 상태(중국어)" },
+          "wind_dir": { "name": "풍향" },
+          "cloud": { "name": "구름량" },
+          "dew": { "name": "이슬점 온도" },
+          "precip": { "name": "강수량" },
+          "precip_probability": { "name": "강수 확률" },
+          "feels_like": { "name": "체감 온도" },
+          "wind_scale": { "name": "풍속 등급" },
+          "sunrise": { "name": "일출" },
+          "sunset": { "name": "일몰" },
+          "moon_phase": { "name": "월상" },
+          "moonrise": { "name": "월출" },
+          "moonset": { "name": "월몰" },
+          "minutely_summary": { "name": "분 단위 날씨 요약" },
+          "hourly_summary": { "name": "시간 단위 날씨 요약" },
+          "aqi": { "name": "대기질 지수" },
+          "city": { "name": "도시" },
+          "warning": { "name": "경보 정보" },
+          "suggestion": { "name": "생활 지수 조언" }
+        },
+        "unit_of_measurement": {
+          "°C": "섭씨",
+          "mmHg": "밀리미터 수은주",
+          "km/h": "킬로미터/시간",
+          "km": "킬로미터",
+          "mm": "밀리미터"
+        }
+      }
+    }
+  }
+}

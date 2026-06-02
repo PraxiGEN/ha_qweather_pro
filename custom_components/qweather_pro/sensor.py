@@ -1,7 +1,6 @@
 """QWeather (和风天气) 传感器平台."""
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
 from typing import Any, Callable
 
@@ -12,11 +11,8 @@ from homeassistant.components.sensor import (
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, MANUFACTURER, ATTRIBUTION
+from .const import DOMAIN, ATTRIBUTION, LOGGER
 from .coordinator import QWeatherUpdateCoordinator
-
-_LOGGER = logging.getLogger(__name__)
-
 
 @dataclass(frozen=True, kw_only=True)
 class QWeatherSensorEntityDescription(SensorEntityDescription):
@@ -101,10 +97,21 @@ async def async_setup_entry(
     """设置平台实体."""
     coordinator = entry.runtime_data
 
-    async_add_entities(
-        QWeatherSensor(coordinator, entry, description)
-        for description in SENSOR_DESCRIPTIONS
-    )
+    # 获取当前系统语言
+    ha_lang = hass.config.language
+    # 判断是否为支持生成摘要的语言 (zh 或 en)
+    is_summary_supported = ha_lang.startswith(("zh", "en"))
+
+    # 构建待添加的实体列表
+    entities = []
+    for description in SENSOR_DESCRIPTIONS:
+        # 如果是天气概况实体，且语言不支持，则跳过不生成
+        if description.key == "weather_summary" and not is_summary_supported:
+            continue
+            
+        entities.append(QWeatherSensor(coordinator, entry, description))
+
+    async_add_entities(entities)
 
 class QWeatherSensor(CoordinatorEntity[QWeatherUpdateCoordinator], SensorEntity):
     """和风天气传感器（官方规范版）."""
@@ -115,11 +122,8 @@ class QWeatherSensor(CoordinatorEntity[QWeatherUpdateCoordinator], SensorEntity)
         super().__init__(coordinator)
 
         self.entity_description = description
-
         self._attr_unique_id = f"{entry.entry_id}_{description.key}"
-
         self._attr_translation_key = description.translation_key
-
         self._attr_device_info = coordinator.device_info
 
     @property

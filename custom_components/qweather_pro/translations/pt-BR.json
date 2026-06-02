@@ -1,0 +1,194 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurar QWeather Pro",
+        "description": "### ⚙️ Etapas de configuração \n **Acesse o [Console QWeather](https://console.qweather.com):** \n 1. Nas configurações, copie o **API Host** e preencha no campo abaixo. \n 2. Gerenciamento de Projetos → Criar projeto e adicionar credenciais: **JSON Web Token** ou **API KEY**.\n 3. A localização aceita apenas latitude e longitude (WGS‑84). Exemplo: 116.40,39.90. \n A localização padrão usa a latitude/longitude do HA. \n #### Nota: A autenticação com **API KEY** não oferece segurança suficiente e está sujeita a limites de requisição. Recomenda‑se usar **JSON Web Token (JWT)**!",
+        "data": {
+          "host": "Endereço do servidor API (API Host)",
+          "location_id": "Localização — apenas latitude/longitude (longitude primeiro).",
+          "use_token": "Usar autenticação JWT (recomendado, mais seguro)",
+          "api_key": "API Key padrão (deixe vazio se usar JWT)"
+        }
+      },
+      "jwt_setup": {
+        "title": "Configurar autenticação segura JWT",
+        "description": "O sistema gerou automaticamente uma chave pública.\n\n**Passos:**\n1. Copie a **chave pública** abaixo.\n2. Acesse o [Console QWeather](https://console.qweather.com), adicione credenciais ao projeto, selecione **JSON Web Token** e cole a chave pública.\n\n```text\n{public_key}\n```\n\nDepois, preencha **Project ID** e **Key ID**.",
+        "data": {
+          "project_id": "ID do Projeto (Project ID)",
+          "key_id": "ID da Credencial (Key ID)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Não foi possível conectar ao servidor",
+      "invalid_auth": "Falha na autenticação",
+      "jwt_error": "Falha na assinatura JWT",
+      "api_key_missing": "O modo padrão requer uma API Key",
+      "location_not_found": "Localização não encontrada",
+      "api_host_deprecated": "A API pública foi descontinuada, use um novo API Host"
+    },
+    "abort": {
+      "already_configured": "Esta localização já está configurada"
+    }
+  },
+
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opções de configuração",
+        "description": "### 💡 Instruções de uso\n- A previsão diária permite **3d/7d/15d/30d**, enquanto a previsão diária em grade aceita apenas **3d/7d**. \n- A previsão por hora permite **24h/72h/168h**, enquanto a previsão em grade aceita apenas **24h/72h**.\n- **Clima em grade**: ao ativar a API de grade de alta precisão, alguns dados observados (como **visibilidade**) deixarão de estar disponíveis e aparecerão como `--`.",
+        "data": {
+          "update_interval": "Intervalo de atualização (minutos)",
+          "dailysteps": "Dias de previsão diária (3‑30)",
+          "hourlysteps": "Horas de previsão por hora (24‑168)",
+          "gird": "Usar clima em grade de alta precisão (API V7 Grid)",
+          "custom_ui": "Ativar suporte a UI personalizada"
+        }
+      }
+    }
+  },
+
+  "entity": {
+    "sensor": {
+      "aqi": {
+        "name": "Qualidade do ar",
+        "state": {
+          "Unknown": "Desconhecido"
+        },
+        "state_attributes": {
+          "aqi_value": { "name": "Valor AQI" },
+          "aqi_level": { "name": "Nível de qualidade do ar" },
+          "primary_pollutant": {
+            "name": "Poluente principal",
+            "state": {
+              "None": "Nenhum"
+            }
+          },
+          "pm2p5": { "name": "PM2.5" },
+          "pm10": { "name": "PM10" },
+          "no2": { "name": "Dióxido de nitrogênio (NO₂)" },
+          "so2": { "name": "Dióxido de enxofre (SO₂)" },
+          "o3": { "name": "Ozônio (O₃)" },
+          "co": { "name": "Monóxido de carbono (CO)" },
+          "health_effect": {
+            "name": "Impacto na saúde",
+            "state": {
+              "No data available": "Nenhum dado disponível",
+              "Please refer to the recommendations of the local meteorological authorities": "Consulte as recomendações das autoridades meteorológicas locais"
+            }
+          },
+          "health_advice": { "name": "Conselhos de saúde" },
+          "stations": {
+            "name": "Informações das estações",
+            "state": {
+              "No monitoring station information available": "Nenhuma informação de estação disponível"
+            }
+          }
+        },
+        "unit_of_measurement": {
+          "μg/m³": "microgramas/m³",
+          "mg/m³": "miligramas/m³"
+        }
+      },
+
+      "warning_info": {
+        "name": "Alerta meteorológico",
+        "state": {
+          "Without warning": "Sem alerta"
+        },
+        "state_attributes": {
+          "id": { "name": "ID do alerta" },
+          "sender": { "name": "Emissor" },
+          "issued": { "name": "Hora de emissão" },
+          "title": { "name": "Título do alerta" },
+          "text": { "name": "Conteúdo do alerta" },
+          "instruction": { "name": "Instruções" },
+          "level": {
+            "name": "Nível do alerta",
+            "state": {
+              "moderate": "Moderado",
+              "severe": "Severo",
+              "extreme": "Extremo"
+            }
+          },
+          "color": {
+            "name": "Cor do alerta",
+            "state": {
+              "blue": "Azul",
+              "yellow": "Amarelo",
+              "orange": "Laranja",
+              "red": "Vermelho"
+            }
+          },
+          "type_name": { "name": "Tipo de alerta" }
+        }
+      },
+
+      "today_temp_range": {
+        "name": "Faixa de temperatura de hoje",
+        "state": {
+          "Unknown": "Desconhecido"
+        },
+        "state_attributes": {
+          "max_temp": { "name": "Temperatura máxima" },
+          "min_temp": { "name": "Temperatura mínima" }
+        }
+      },
+
+      "precipitation_summary": {
+        "name": "Resumo de precipitação",
+        "state": {
+          "No precipitation in the next two hours": "Sem precipitação nas próximas duas horas"
+        },
+        "state_attributes": {
+          "detail": { "name": "Detalhes" }
+        }
+      },
+
+      "weather_summary": {
+        "name": "Resumo do clima",
+        "state": {
+          "The weather has been stable recently": "O clima tem estado estável recentemente"
+        }
+      }
+    },
+
+    "weather": {
+      "weather": {
+        "name": "Clima",
+        "state_attributes": {
+          "qweather_icon": { "name": "Ícone do clima" },
+          "update_time": { "name": "Hora de atualização" },
+          "obs_time": { "name": "Hora de observação" },
+          "condition_cn": { "name": "Condição climática (chinês)" },
+          "wind_dir": { "name": "Direção do vento" },
+          "cloud": { "name": "Nebulosidade" },
+          "dew": { "name": "Ponto de orvalho" },
+          "precip": { "name": "Precipitação" },
+          "precip_probability": { "name": "Probabilidade de precipitação" },
+          "feels_like": { "name": "Sensação térmica" },
+          "wind_scale": { "name": "Escala do vento" },
+          "sunrise": { "name": "Nascer do sol" },
+          "sunset": { "name": "Pôr do sol" },
+          "moon_phase": { "name": "Fase da lua" },
+          "moonrise": { "name": "Nascer da lua" },
+          "moonset": { "name": "Pôr da lua" },
+          "minutely_summary": { "name": "Resumo minuto a minuto" },
+          "hourly_summary": { "name": "Resumo por hora" },
+          "aqi": { "name": "Índice de qualidade do ar" },
+          "city": { "name": "Cidade" },
+          "warning": { "name": "Alerta" },
+          "suggestion": { "name": "Recomendações de vida" }
+        },
+        "unit_of_measurement": {
+          "°C": "graus Celsius",
+          "mmHg": "milímetros de mercúrio",
+          "km/h": "km/h",
+          "km": "quilômetros",
+          "mm": "milímetros"
+        }
+      }
+    }
+  }
+}

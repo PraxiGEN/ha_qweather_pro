@@ -3,10 +3,10 @@
     "step": {
       "user": {
         "title": "Configure QWeather Pro",
-        "description": "### ⚙️ Setup Steps \n **Go to the [QWeather Console](https://console.qweather.com):** \n 1. In Settings, copy the **API Host** and fill it into the **API Host** field below. \n 2. Project Management → Create a project, then add credentials to the project: optional **JSON Web Token** and **API KEY**.\n 3. For the location, it is recommended to enter latitude and longitude (Gaode coordinates) or a city name. Optional: [City ID](https://github.com/qwd/LocationList/blob/master/China-City-List-latest.csv). \n The default location is the HA latitude and longitude. \n #### Note: **API KEY** authentication does not provide sufficient security. All requests using **API KEY** authentication are subject to rate limits. It is recommended to use **JSON Web Token (JWT)** authentication!",
+        "description": "### ⚙️ Setup Steps \n **Go to the [QWeather Console](https://console.qweather.com):** \n 1. In Settings, copy the **API Host** and fill it into the **API Host** field below. \n 2. Project Management → Create a project, then add credentials to the project: optional **JSON Web Token** and **API KEY**.\n 3. The location only supports latitude and longitude (WGS-84), for example: 116.40,39.90. \n The default location is the HA latitude and longitude. \n #### Note: **API KEY** authentication does not provide sufficient security. All requests using **API KEY** authentication are subject to rate limits. It is recommended to use **JSON Web Token (JWT)** authentication!",
         "data": {
           "host": "API Host",
-          "location_id": "Geographical location. Supports city name, city ID, or latitude and longitude (longitude first).",
+          "location_id": "Geographical location. Only supports latitude and longitude (longitude first).",
           "use_token": "Use JWT Authentication (Recommended)",
           "api_key": "Ordinary API Key (Leave blank if using JWT)"
         }
@@ -37,13 +37,11 @@
     "step": {
       "init": {
         "title": "Integration Options",
-        "description": "### 💡 Usage Notes\n- **Forecast Limits**: For the **Free Version**, Daily Forecast should be **3** or **7** days, and Hourly Forecast should be **24** hours.\n- **Grid Weather**: When using High Precision Grid API, certain observation data (e.g., **Visibility**) will not be available and will show as `--` on the card.",
+        "description": "### 💡 Instructions for Use\n- The daily weather forecast can be set to **3d/7d/15d/30d** days, while the grid-based daily forecast only supports **3d/7d** days. \n- The hourly forecast can be set to **24h/72h/168h** hours, while the grid-based hourly forecast only supports **24h/72h** hours.\n- **Grid Weather**: After enabling the high-precision grid API, some observed data (such as **visibility**) will no longer be available and will appear as `--` in the card.",
         "data": {
           "update_interval": "Update Interval (minutes)",
-          "dailysteps": "Daily Forecast Days (3-15)",
+          "dailysteps": "Daily Forecast Days (3-30)",
           "hourlysteps": "Hourly Forecast Hours (24-168)",
-          "alert": "Enable Weather Alerts",
-          "lifeindex": "Enable Life Indices",
           "gird": "Use Grid API (High Precision)",
           "custom_ui": "Enable Custom UI Support"
         }

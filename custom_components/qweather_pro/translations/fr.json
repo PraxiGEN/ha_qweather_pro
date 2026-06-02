@@ -1,0 +1,194 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configuration de QWeather Pro",
+        "description": "### ⚙️ Étapes d’ajout \n **Accédez à la [console QWeather](https://console.qweather.com) :** \n 1. Dans les paramètres, copiez **API Host** et renseignez-le ci‑dessous. \n 2. Gestion de projet → Créer un projet, puis ajoutez des identifiants : **JSON Web Token** ou **API KEY**.\n 3. La localisation ne prend en charge que la latitude et la longitude (WGS‑84). Exemple : 116.40,39.90. \n Par défaut, la localisation utilise les coordonnées de HA. \n #### Remarque : L’authentification **API KEY** n’offre pas une sécurité suffisante et est soumise à des limites de requêtes. L’utilisation du **JSON Web Token (JWT)** est recommandée !",
+        "data": {
+          "host": "Adresse du serveur API (API Host)",
+          "location_id": "Localisation — uniquement latitude/longitude (longitude en premier).",
+          "use_token": "Utiliser l’authentification JWT (recommandé, plus sécurisé)",
+          "api_key": "Clé API standard (laisser vide si JWT est utilisé)"
+        }
+      },
+      "jwt_setup": {
+        "title": "Configurer l’authentification sécurisée JWT",
+        "description": "Le système a généré automatiquement une clé publique.\n\n**Étapes :**\n1. Copiez la **clé publique** ci‑dessous.\n2. Accédez à la [console QWeather](https://console.qweather.com), ajoutez des identifiants au projet, choisissez **JSON Web Token**, puis collez la clé publique.\n\n```text\n{public_key}\n```\n\nEnsuite, renseignez **Project ID** et **Key ID** ci‑dessous.",
+        "data": {
+          "project_id": "ID du projet (Project ID)",
+          "key_id": "ID de l’identifiant (Key ID)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossible de se connecter au serveur",
+      "invalid_auth": "Échec de l’authentification",
+      "jwt_error": "Échec de la signature JWT",
+      "api_key_missing": "Le mode standard nécessite une clé API",
+      "location_not_found": "Localisation introuvable",
+      "api_host_deprecated": "L’API publique est obsolète, veuillez utiliser un nouvel API Host"
+    },
+    "abort": {
+      "already_configured": "Cette localisation est déjà configurée"
+    }
+  },
+
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options de configuration",
+        "description": "### 💡 Instructions d’utilisation\n- La prévision quotidienne peut être définie sur **3d/7d/15d/30d** ; la prévision quotidienne en grille ne prend en charge que **3d/7d**. \n- La prévision horaire peut être définie sur **24h/72h/168h** ; la prévision horaire en grille ne prend en charge que **24h/72h**.\n- **Météo en grille** : après activation de l’API haute précision, certaines données observées (ex. **visibilité**) ne seront plus disponibles et apparaîtront comme `--`.",
+        "data": {
+          "update_interval": "Fréquence de mise à jour (minutes)",
+          "dailysteps": "Jours de prévision quotidienne (3‑30)",
+          "hourlysteps": "Heures de prévision horaire (24‑168)",
+          "gird": "Utiliser la météo en grille haute précision (API V7 Grid)",
+          "custom_ui": "Activer l’interface utilisateur personnalisée"
+        }
+      }
+    }
+  },
+
+  "entity": {
+    "sensor": {
+      "aqi": {
+        "name": "Qualité de l’air",
+        "state": {
+          "Unknown": "Inconnu"
+        },
+        "state_attributes": {
+          "aqi_value": { "name": "Valeur AQI" },
+          "aqi_level": { "name": "Niveau de qualité de l’air" },
+          "primary_pollutant": {
+            "name": "Polluant principal",
+            "state": {
+              "None": "Aucun"
+            }
+          },
+          "pm2p5": { "name": "PM2.5" },
+          "pm10": { "name": "PM10" },
+          "no2": { "name": "Dioxyde d’azote (NO₂)" },
+          "so2": { "name": "Dioxyde de soufre (SO₂)" },
+          "o3": { "name": "Ozone (O₃)" },
+          "co": { "name": "Monoxyde de carbone (CO)" },
+          "health_effect": {
+            "name": "Effets sur la santé",
+            "state": {
+              "No data available": "Aucune donnée disponible",
+              "Please refer to the recommendations of the local meteorological authorities": "Veuillez consulter les recommandations des autorités météorologiques locales"
+            }
+          },
+          "health_advice": { "name": "Conseils de santé" },
+          "stations": {
+            "name": "Informations des stations",
+            "state": {
+              "No monitoring station information available": "Aucune information de station disponible"
+            }
+          }
+        },
+        "unit_of_measurement": {
+          "μg/m³": "microgrammes/m³",
+          "mg/m³": "milligrammes/m³"
+        }
+      },
+
+      "warning_info": {
+        "name": "Alerte météorologique",
+        "state": {
+          "Without warning": "Aucune alerte"
+        },
+        "state_attributes": {
+          "id": { "name": "ID de l’alerte" },
+          "sender": { "name": "Émetteur" },
+          "issued": { "name": "Heure d’émission" },
+          "title": { "name": "Titre de l’alerte" },
+          "text": { "name": "Contenu de l’alerte" },
+          "instruction": { "name": "Instructions" },
+          "level": {
+            "name": "Niveau d’alerte",
+            "state": {
+              "moderate": "Modéré",
+              "severe": "Sévère",
+              "extreme": "Extrême"
+            }
+          },
+          "color": {
+            "name": "Couleur de l’alerte",
+            "state": {
+              "blue": "Bleu",
+              "yellow": "Jaune",
+              "orange": "Orange",
+              "red": "Rouge"
+            }
+          },
+          "type_name": { "name": "Type d’alerte" }
+        }
+      },
+
+      "today_temp_range": {
+        "name": "Plage de température du jour",
+        "state": {
+          "Unknown": "Inconnu"
+        },
+        "state_attributes": {
+          "max_temp": { "name": "Température maximale" },
+          "min_temp": { "name": "Température minimale" }
+        }
+      },
+
+      "precipitation_summary": {
+        "name": "Résumé des précipitations",
+        "state": {
+          "No precipitation in the next two hours": "Aucune précipitation dans les deux prochaines heures"
+        },
+        "state_attributes": {
+          "detail": { "name": "Détails" }
+        }
+      },
+
+      "weather_summary": {
+        "name": "Résumé météo",
+        "state": {
+          "The weather has been stable recently": "Le temps est stable récemment"
+        }
+      }
+    },
+
+    "weather": {
+      "weather": {
+        "name": "Météo",
+        "state_attributes": {
+          "qweather_icon": { "name": "Icône météo" },
+          "update_time": { "name": "Heure de mise à jour" },
+          "obs_time": { "name": "Heure d’observation" },
+          "condition_cn": { "name": "Conditions météo (chinois)" },
+          "wind_dir": { "name": "Direction du vent" },
+          "cloud": { "name": "Nébulosité" },
+          "dew": { "name": "Point de rosée" },
+          "precip": { "name": "Précipitations" },
+          "precip_probability": { "name": "Probabilité de précipitations" },
+          "feels_like": { "name": "Température ressentie" },
+          "wind_scale": { "name": "Force du vent" },
+          "sunrise": { "name": "Lever du soleil" },
+          "sunset": { "name": "Coucher du soleil" },
+          "moon_phase": { "name": "Phase lunaire" },
+          "moonrise": { "name": "Lever de la lune" },
+          "moonset": { "name": "Coucher de la lune" },
+          "minutely_summary": { "name": "Résumé minute par minute" },
+          "hourly_summary": { "name": "Résumé heure par heure" },
+          "aqi": { "name": "Indice de qualité de l’air" },
+          "city": { "name": "Ville" },
+          "warning": { "name": "Alerte" },
+          "suggestion": { "name": "Conseils de vie" }
+        },
+        "unit_of_measurement": {
+          "°C": "degrés Celsius",
+          "mmHg": "millimètres de mercure",
+          "km/h": "km/h",
+          "km": "kilomètres",
+          "mm": "millimètres"
+        }
+      }
+    }
+  }
+}
