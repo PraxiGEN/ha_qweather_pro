@@ -51,7 +51,10 @@ QWeather Pro  internationalized, providing a seamless localized experience for 
 
 1. In HACS → “Integrations”, click the three-dot menu.
 2. Select **“Custom repositories”**.
-3. Enter: `https://github.com/hzonz/ha_qweather_pro`
+3. Enter:
+```yaml
+https://github.com/hzonz/ha_qweather_pro
+```
 4. Choose category **Integration**.
 5. Click **Add**.
 6. Find **QWeather Pro** in HACS and install it.
@@ -60,7 +63,9 @@ QWeather Pro  internationalized, providing a seamless localized experience for 
 ### Manual Installation
 
 1. Download the latest release:  
-   `https://github.com/hzonz/ha_qweather_pro`
+```yaml
+https://github.com/hzonz/ha_qweather_pro
+```
 2. Extract and place `custom_components/qweather_pro` into your Home Assistant `custom_components` directory.
 3. Restart Home Assistant.
 
