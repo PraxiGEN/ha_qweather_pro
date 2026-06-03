@@ -66,8 +66,8 @@ QWeather Pro  internationalized, providing a seamless localized experience for 
 
 ## 📖 Documentation Navigation
 
-- [🚀 Detailed Configuration & Usage Guide (DOCS.md)](md/DOCS_EN.md)
-- [📜 Changelog (CHANGELOG.md)](md/CHANGELOG_EN.md)
+- [🚀 Detailed Configuration & Usage Guide (DOCS.md)](md/DOCS.md)
+- [📜 Changelog (CHANGELOG.md)](md/CHANGELOG.md)
 
 ## Special Thanks
 
