@@ -41,8 +41,6 @@ QWeather Pro  internationalized, providing a seamless localized experience for 
 - **Smart Fallback Mechanism**:
   - **Core Weather/Alerts/AQI**: Supports all 30+ languages provided by QWeather API (e.g., German, French, Japanese, etc.).
   - **Minutely Precipitation & Life Indices**: Due to API constraints, these specific fields will automatically fallback to **English** if the system language is not Chinese, ensuring stable data delivery.
-- **Conditional Entity Visibility**:
-  - **Weather Summary Entity**: This entity uses complex natural language synthesis. To ensure accuracy, it is only generated when the system language is **Chinese** or **English**. It will be automatically removed/hidden when switching to other languages to keep your dashboard clean.
 - **Localized Titles & IDs**: During the setup flow, the integration fetches and locks the city name based on your current language (e.g., "BeiJing" in Chinese or "BeiJing" in English), generating clean, localized Entity IDs.
 
 ## 📦 Installation
