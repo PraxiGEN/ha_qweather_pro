@@ -3,13 +3,21 @@
   "config": {
     "step": {
       "user": {
+        "title": "添加新城市",
+        "description": "检测到您已配置过和风天气。您可以选择 **‘使用新账号’** 或直接 **‘复用现有账号’** 的信息。 \n **注意：** 同一 **API Host** 下添加多个城市会成倍增加调用量，请适当延长更新频率以避免超额。",
+        "data": {
+          "account_selection": "账号/凭据复用"
+        }
+      },      
+      "setup": {
         "title": "配置和风天气Pro",
         "description": "### ⚙️ 添加步骤 \n **前往[和风天气控制台](https://console.qweather.com):** \n 1. 在设置中复制 **API Host** 填写下方的 **API Host**。 \n 2. 项目管理 → 创建项目, 在项目中添加凭据: 可选 **JSON Web Token** 和 **API KEY**。\n 3. 地理位置建议输入 经纬度(高德坐标) 或者 城市名称，可选：[城市ID](https://github.com/qwd/LocationList/blob/master/China-City-List-latest.csv)。 \n 地理位置默认为HA经纬度。 \n #### 注: **API KEY** 认证方式无法提供足够的安全性, 使用 **API KEY** 认证方式都将受请求量的限制, 推荐使用 **JSON Web Token(JWT)** 的认证方式！",
         "data": {
           "host": "API 服务器地址(API Host)",
           "location_id": "地理位置 支持城市名称、城市ID、经纬度(经度在前)。",
           "use_token": "使用 JWT 认证 (推荐，更安全)",
-          "api_key": "普通 API Key (使用 JWT 则留空)"
+          "api_key": "普通 API Key (使用 JWT 则留空)",
+          "account_selection": "账号凭据复用"
         }
       },
       "jwt_setup": {
@@ -18,6 +26,13 @@
         "data": {
           "project_id": "项目 ID (Project ID)",
           "key_id": "凭据 ID (Key ID)"
+        }
+      },
+      "reuse_location": {
+        "title": "添加新城市",
+        "description": "已成功加载现有账号信息。请直接输入您想添加的新城市的 **地理位置** （经纬度、城市名称 或 城市ID）。",
+        "data": {
+          "location_id": "新城市地理位置"
         }
       },
       "select_location": {
@@ -32,24 +47,42 @@
         "description": "您的集成可能因为认证失效而停止工作，请在此更新您的 API Host 或密钥。",
         "data": {
           "host": "API Host",
-          "api_key": "API 密钥"
+          "location_id": "地理位置",
+          "use_token": "使用 JWT 认证",
+          "api_key": "API 密钥 (Key)"
         }
-      },  
-      "error": {
-        "cannot_connect": "网络连接失败，请检查 Host 是否正确",
-        "invalid_auth": "身份认证失败，请检查 Key 或 JWT",
-        "jwt_error": "JWT 签名生成失败",
-        "api_key_missing": "普通模式下必须填写 API Key",
-        "api_host_deprecated": "公共域名已失效，请使用个人 API Host",
-        "location_not_found": "未找到该位置，请尝试输入经纬度"
-      },
-      "abort": {
-        "already_configured": "该地理位置已被配置",
-        "reconfigure_successful": "配置已成功更新！"
       }
+    },  
+    "error": {
+      "invalid_parameter": "请求参数错误，请检查输入格式",
+      "location_not_found": "未找到该位置，请尝试输入精准的“经度,纬度”",
+      "data_not_available": "该地点暂无气象数据支持",
+      "invalid_auth": "身份认证失败，请检查您的 Key 或 JWT 配置",
+      "no_credit": "账号额度不足或已逾期，请检查和风控制台账单",
+      "security_restriction": "请求违反了您在控制台设置的 IP 或安全限制",
+      "invalid_host": "API Host 错误，请确保填写的是您的专属接口地址",
+      "account_suspended": "您的和风天气账号已被冻结",
+      "forbidden": "您当前的套餐无权请求此数据",
+      "not_found": "接口路径错误或资源不存在 (404)",
+      "method_not_allowed": "错误的请求方法 (405)",
+      "too_many_requests": "请求过于频繁或超过 QPM 限制，请稍后再试",
+      "over_monthly_limit": "本月请求量已达上限",
+      "server_error": "和风天气服务器发生未知故障 (500)",
+      "cannot_connect": "无法连接到 API Host，请检查网络或地址是否正确",
+      "api_host_deprecated": "公共域名已失效，请使用个人 API Host"
+    },
+    "abort": {
+      "already_configured": "该地理位置已被配置",
+      "reconfigure_successful": "配置已成功更新！"
     }
   },
-
+  "selector": {
+    "account_selection": {
+      "options": {
+        "new_account": "使用新账号/凭据"
+      }
+    }
+  },  
   "options": {
     "step": {
       "init": {
@@ -118,6 +151,8 @@
           "level": { 
             "name": "预警级别",
             "state":{
+              "unknown": "未知",
+              "minor": "轻微",
               "moderate": "中等",
               "severe": "严重",
               "extreme": "极端"
@@ -126,10 +161,16 @@
           "color": {
             "name": "预警颜色",
             "state":{
+              "white": "白色",
+              "gray": "灰色",
+              "green": "绿色",
               "blue": "蓝色",
               "yellow": "黄色",
+              "amber": "橙色",
               "orange": "橙色",
-              "red": "红色"
+              "red": "红色",
+              "purple": "紫色",
+              "black": "黑色"
             }
           },  
           "type_name": { "name": "预警类型名称" }

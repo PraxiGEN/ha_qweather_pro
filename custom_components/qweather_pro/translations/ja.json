@@ -3,53 +3,83 @@
   "config": {
     "step": {
       "user": {
-        "title": "和風天気 Pro を設定",
-        "description": "### ⚙️ 追加手順\n **[QWeather コンソール](https://console.qweather.com) にアクセス：**\n 1. 設定ページで **API Host** をコピーし、下の **API Host** に入力してください。\n 2. プロジェクト管理 → プロジェクトを作成し、認証情報を追加します：**JSON Web Token** または **API KEY** を選択できます。\n 3. 位置情報は経度・緯度（WGS-84）のみ対応しています。例：116.40,39.90。\n 位置情報は HA のデフォルト経緯度が使用されます。\n #### 注：**API KEY** 認証方式は十分な安全性を提供できず、リクエスト制限を受けます。**JSON Web Token (JWT)** の使用を強く推奨します！",
+        "title": "新しい都市を追加",
+        "description": "QWeather がすでに設定されているようです。**「新しいアカウントを使用」** または **「既存アカウントを再利用」** を選択できます。\n **注意：** 同じ **API Host** に複数の都市を追加すると、リクエスト量が倍増します。上限超過を避けるため、更新間隔を適切に延長してください。",
         "data": {
-          "host": "API サーバーアドレス (API Host)",
-          "location_id": "位置情報（経度が先、緯度が後）",
-          "use_token": "JWT 認証を使用（推奨・より安全）",
+          "account_selection": "アカウント／認証情報の再利用"
+        }
+      },
+      "setup": {
+        "title": "QWeather Pro を設定",
+        "description": "### ⚙️ 設定手順\n **[QWeather コンソール](https://console.qweather.com) にアクセス：**\n 1. 設定で **API Host** をコピーし、下の **API Host** フィールドに入力します。\n 2. プロジェクト管理 → プロジェクトを作成し、認証情報（**JSON Web Token** または **API KEY**）を追加します。\n 3. 位置情報は緯度・経度（WGS‑84）のみ対応しています。例：116.40,39.90。\n デフォルトでは HA の緯度・経度が使用されます。\n #### 注意：**API KEY** 認証は安全性が不十分で、リクエスト制限の対象となります。**JSON Web Token (JWT)** の使用を推奨します！",
+        "data": {
+          "host": "API Host",
+          "location_id": "地理位置（緯度・経度のみ、経度が先）",
+          "use_token": "JWT 認証を使用（推奨）",
           "api_key": "通常の API Key（JWT 使用時は空欄）"
         }
       },
       "jwt_setup": {
         "title": "JWT セキュリティ認証を設定",
-        "description": "公開鍵が自動生成されました。\n\n**手順：**\n1. 下のボックス内の **公開鍵** をコピーします。\n2. [QWeather コンソール](https://console.qweather.com) にアクセスし、プロジェクトに認証情報を追加し、**JSON Web Token** を選択して公開鍵を貼り付けます。\n\n```text\n{public_key}\n```\n\n完了後、下の **プロジェクト ID** と **認証 ID** を入力してください。\n### 注：JWT 認証は一度しか追加できません。統合を再追加すると、既存の JWT 認証情報は無効になります。",
+        "description": "公開鍵が自動生成されました。\n\n**手順：**\n1. 下のボックス内の **公開鍵** をコピーします。\n2. [QWeather コンソール](https://console.qweather.com) にアクセスし、プロジェクトに認証情報を追加、**JSON Web Token** を選択し、公開鍵を貼り付けます。\n\n```text\n{public_key}\n```\n\n完了後、**Project ID** と **Key ID** を入力してください。\n### 注意：JWT 認証は一度しか追加できません。再設定すると以前の JWT は無効になります。",
         "data": {
-          "project_id": "プロジェクト ID (Project ID)",
-          "key_id": "認証 ID (Key ID)"
+          "project_id": "Project ID",
+          "key_id": "Key ID"
+        }
+      },
+      "reuse_location": {
+        "title": "新しい都市を追加",
+        "description": "既存のアカウント情報が正常に読み込まれました。追加したい都市の **地理位置（緯度・経度）** を入力してください。",
+        "data": {
+          "location_id": "新しい都市の地理位置"
         }
       },
       "select_location": {
-        "title": "位置情報を確認",
+        "title": "都市位置を確認",
         "description": "複数の一致する地域が見つかりました。最も正確なものを選択してください：",
         "data": {
-          "location_index": "一致した地域リスト"
+          "location_index": "一致した都市リスト"
         }
       },
       "reconfigure": {
         "title": "認証情報を再設定",
-        "description": "認証エラーにより統合が動作停止している可能性があります。API Host またはキーを更新してください。",
+        "description": "認証エラーにより統合が動作停止した可能性があります。API Host またはキーを更新してください。",
         "data": {
           "host": "API Host",
+          "location_id": "地理位置",
+          "use_token": "JWT 認証を使用",
           "api_key": "API Key"
         }
-      },
-      "error": {
-        "cannot_connect": "ネットワーク接続に失敗しました。Host が正しいか確認してください",
-        "invalid_auth": "認証に失敗しました。Key または JWT を確認してください",
-        "jwt_error": "JWT 署名の生成に失敗しました",
-        "api_key_missing": "通常モードでは API Key の入力が必須です",
-        "api_host_deprecated": "公共ドメインは廃止されました。個人 API Host を使用してください",
-        "location_not_found": "位置情報が見つかりません。経度・緯度を入力してみてください"
-      },
-      "abort": {
-        "already_configured": "この位置情報はすでに設定されています",
-        "reconfigure_successful": "設定が正常に更新されました！"
+      }
+    },
+    "error": {
+      "invalid_parameter": "無効なパラメータ",
+      "location_not_found": "位置情報が見つかりません",
+      "data_not_available": "この位置のデータは利用できません",
+      "invalid_auth": "無効な API Key または JWT",
+      "no_credit": "クレジット不足または未払い",
+      "security_restriction": "セキュリティ制限（IP／Ref フィルタ）",
+      "invalid_host": "無効な API Host",
+      "account_suspended": "アカウントが停止されています",
+      "forbidden": "このデータへのアクセス権がありません",
+      "not_found": "リソースが見つかりません（404）",
+      "too_many_requests": "リクエストが多すぎます（レート制限）",
+      "over_monthly_limit": "月間クォータ超過",
+      "server_error": "サーバーエラー（500）",
+      "cannot_connect": "接続に失敗しました"
+    },
+    "abort": {
+      "already_configured": "この位置はすでに設定されています",
+      "reconfigure_successful": "設定が正常に更新されました！"
+    }
+  },
+  "selector": {
+    "account_selection": {
+      "options": {
+        "new_account": "新しいアカウント／認証情報"
       }
     }
   },
-
   "options": {
     "step": {
       "init": {
@@ -108,7 +138,6 @@
           "mg/m³": "ミリグラム/立方メートル"
         }
       },
-
       "warning_info": {
         "name": "気象警報",
         "state": {
@@ -116,7 +145,7 @@
         },
         "state_attributes": {
           "id": { "name": "警報 ID" },
-          "sender": { "name": "発表機関" },
+          "sender": { "name": "発信者" },
           "issued": { "name": "発表時間" },
           "title": { "name": "警報タイトル" },
           "text": { "name": "警報内容" },
@@ -124,24 +153,31 @@
           "level": {
             "name": "警報レベル",
             "state": {
+              "unknown": "不明",
+              "minor": "軽度",
               "moderate": "中程度",
-              "severe": "深刻",
+              "severe": "重大",
               "extreme": "極端"
             }
           },
           "color": {
-            "name": "警報色",
+            "name": "警報カラー",
             "state": {
+              "white": "白",
+              "gray": "灰",
+              "green": "緑",
               "blue": "青",
               "yellow": "黄",
-              "orange": "橙",
-              "red": "赤"
+              "amber": "琥珀",
+              "orange": "オレンジ",
+              "red": "赤",
+              "purple": "紫",
+              "black": "黒"
             }
           },
           "type_name": { "name": "警報タイプ名" }
         }
       },
-
       "today_temp_range": {
         "name": "今日の気温範囲",
         "state": {

@@ -1,55 +1,84 @@
 {
-  "title": "QWeather Pro",
   "config": {
     "step": {
       "user": {
-        "title": "QWeather Pro konfigurieren",
-        "description": "### ⚙️ Einrichtungsschritte\n **Öffnen Sie die [QWeather-Konsole](https://console.qweather.com):**\n 1. Kopieren Sie in den Einstellungen den **API Host** und tragen Sie ihn unten ein.\n 2. Projektverwaltung → Projekt erstellen und Anmeldedaten hinzufügen: **JSON Web Token** oder **API KEY**.\n 3. Der Standort unterstützt nur Koordinaten (WGS‑84), z. B.: 116.40,39.90.\n Standardmäßig wird der Standort von Home Assistant verwendet.\n #### Hinweis: Die **API KEY**‑Authentifizierung bietet keine ausreichende Sicherheit und unterliegt Anfragebeschränkungen. Die Verwendung von **JSON Web Token (JWT)** wird dringend empfohlen!",
+        "title": "Neue Stadt hinzufügen",
+        "description": "Es scheint, dass QWeather bereits konfiguriert wurde. Sie können **‚Neues Konto verwenden‘** oder **‚Bestehendes Konto wiederverwenden‘** auswählen.\n **Hinweis:** Das Hinzufügen mehrerer Städte unter demselben **API Host** vervielfacht das Anfragevolumen. Bitte verlängern Sie das Aktualisierungsintervall, um Überschreitungen zu vermeiden.",
         "data": {
-          "host": "API‑Serveradresse (API Host)",
-          "location_id": "Standort (nur Koordinaten, Längengrad zuerst)",
-          "use_token": "JWT‑Authentifizierung verwenden (empfohlen, sicherer)",
-          "api_key": "Standard‑API‑Key (bei JWT leer lassen)"
+          "account_selection": "Konto/Anmeldedaten wiederverwenden"
+        }
+      },
+      "setup": {
+        "title": "QWeather Pro konfigurieren",
+        "description": "### ⚙️ Einrichtungsschritte\n **Öffnen Sie die [QWeather-Konsole](https://console.qweather.com):**\n 1. Kopieren Sie unter Einstellungen den **API Host** und tragen Sie ihn unten ein.\n 2. Projektverwaltung → Erstellen Sie ein Projekt und fügen Sie Anmeldedaten hinzu: **JSON Web Token** oder **API KEY**.\n 3. Der Standort unterstützt nur Breiten‑ und Längengrad (WGS‑84), z. B.: 116.40,39.90.\n Standardmäßig wird der HA‑Standort verwendet.\n #### Hinweis: Die **API KEY**‑Authentifizierung bietet unzureichende Sicherheit und unterliegt strengen Limits. Die Verwendung von **JSON Web Token (JWT)** wird empfohlen!",
+        "data": {
+          "host": "API Host",
+          "location_id": "Geografischer Standort (nur Längen‑ und Breitengrad, Länge zuerst)",
+          "use_token": "JWT‑Authentifizierung verwenden (Empfohlen)",
+          "api_key": "Normale API‑Schlüssel (bei JWT leer lassen)"
         }
       },
       "jwt_setup": {
         "title": "JWT‑Sicherheitsauthentifizierung konfigurieren",
-        "description": "Ein öffentlicher Schlüssel wurde automatisch generiert.\n\n**Schritte:**\n1. Kopieren Sie den **öffentlichen Schlüssel** unten.\n2. Öffnen Sie die [QWeather‑Konsole](https://console.qweather.com), fügen Sie dem Projekt Anmeldedaten hinzu, wählen Sie **JSON Web Token** und fügen Sie den Schlüssel ein.\n\n```text\n{public_key}\n```\n\nGeben Sie anschließend unten die **Projekt‑ID** und **Schlüssel‑ID** ein.\n### Hinweis: JWT kann nur einmal hinzugefügt werden. Wenn die Integration erneut hinzugefügt wird, ist das ursprüngliche JWT ungültig.",
+        "description": "Ein öffentlicher Schlüssel wurde automatisch generiert.\n\n**Schritte:**\n1. Kopieren Sie den **öffentlichen Schlüssel** unten.\n2. Öffnen Sie die [QWeather‑Konsole](https://console.qweather.com), fügen Sie dem Projekt Anmeldedaten hinzu, wählen Sie **JSON Web Token** und fügen Sie den Schlüssel ein.\n\n```text\n{public_key}\n```\n\nGeben Sie anschließend **Project ID** und **Key ID** ein.\n### Hinweis: JWT kann nur einmal hinzugefügt werden. Wenn Sie die Integration erneut hinzufügen, wird das alte JWT ungültig.",
         "data": {
-          "project_id": "Projekt‑ID (Project ID)",
-          "key_id": "Schlüssel‑ID (Key ID)"
+          "project_id": "Project ID",
+          "key_id": "Key ID"
+        }
+      },
+      "reuse_location": {
+        "title": "Neue Stadt hinzufügen",
+        "description": "Die vorhandenen Kontoinformationen wurden erfolgreich geladen. Bitte geben Sie den **geografischen Standort** (Breiten‑ und Längengrad) der neuen Stadt ein.",
+        "data": {
+          "location_id": "Geografischer Standort der neuen Stadt"
         }
       },
       "select_location": {
-        "title": "Standort bestätigen",
+        "title": "Stadtstandort bestätigen",
         "description": "Mehrere passende Regionen wurden gefunden. Bitte wählen Sie die genaueste aus:",
         "data": {
-          "location_index": "Liste der passenden Standorte"
+          "location_index": "Liste der passenden Städte"
         }
       },
       "reconfigure": {
-        "title": "Authentifizierungsdaten neu konfigurieren",
+        "title": "Authentifizierung neu konfigurieren",
         "description": "Die Integration funktioniert möglicherweise nicht mehr aufgrund ungültiger Authentifizierung. Bitte aktualisieren Sie hier Ihren API Host oder Schlüssel.",
         "data": {
           "host": "API Host",
+          "location_id": "Geografischer Standort",
+          "use_token": "JWT‑Authentifizierung verwenden",
           "api_key": "API‑Schlüssel"
         }
-      },
-      "error": {
-        "cannot_connect": "Netzwerkverbindung fehlgeschlagen, bitte API Host überprüfen",
-        "invalid_auth": "Authentifizierung fehlgeschlagen, bitte Key oder JWT prüfen",
-        "jwt_error": "JWT‑Signatur konnte nicht erzeugt werden",
-        "api_key_missing": "Im Standardmodus muss ein API Key angegeben werden",
-        "api_host_deprecated": "Öffentliche Domains werden nicht mehr unterstützt, bitte persönlichen API Host verwenden",
-        "location_not_found": "Standort nicht gefunden, bitte Koordinaten eingeben"
-      },
-      "abort": {
-        "already_configured": "Dieser Standort wurde bereits konfiguriert",
-        "reconfigure_successful": "Konfiguration erfolgreich aktualisiert!"
+      }
+    },
+    "error": {
+      "invalid_parameter": "Ungültige Parameter",
+      "location_not_found": "Standort nicht gefunden",
+      "data_not_available": "Keine Daten für diesen Standort verfügbar",
+      "invalid_auth": "Ungültiger API‑Schlüssel oder JWT",
+      "no_credit": "Kein Guthaben oder ausstehende Zahlung",
+      "security_restriction": "Sicherheitsbeschränkung (IP/Ref‑Filter)",
+      "invalid_host": "Ungültiger API Host",
+      "account_suspended": "Konto gesperrt",
+      "forbidden": "Keine Berechtigung für diese Daten",
+      "not_found": "Ressource nicht gefunden (404)",
+      "too_many_requests": "Zu viele Anfragen (Rate‑Limit)",
+      "over_monthly_limit": "Monatliches Kontingent überschritten",
+      "server_error": "Serverfehler (500)",
+      "cannot_connect": "Verbindung fehlgeschlagen"
+    },
+    "abort": {
+      "already_configured": "Dieser Standort wurde bereits konfiguriert",
+      "reconfigure_successful": "Konfiguration erfolgreich aktualisiert!"
+    }
+  },
+  "selector": {
+    "account_selection": {
+      "options": {
+        "new_account": "Neues Konto / neue Anmeldedaten"
       }
     }
   },
-
   "options": {
     "step": {
       "init": {
@@ -115,15 +144,17 @@
           "Without warning": "Keine Warnung"
         },
         "state_attributes": {
-          "id": { "name": "Warnungs‑ID" },
-          "sender": { "name": "Herausgeber" },
+          "id": { "name": "Warnungs-ID" },
+          "sender": { "name": "Herausgeber der Warnung" },
           "issued": { "name": "Ausgabezeit" },
           "title": { "name": "Warnungstitel" },
-          "text": { "name": "Warnungsinhalt" },
+          "text": { "name": "Warnungstext" },
           "instruction": { "name": "Handlungsempfehlung" },
           "level": {
             "name": "Warnstufe",
             "state": {
+              "unknown": "Unbekannt",
+              "minor": "Gering",
               "moderate": "Mittel",
               "severe": "Schwer",
               "extreme": "Extrem"
@@ -132,10 +163,16 @@
           "color": {
             "name": "Warnfarbe",
             "state": {
+              "white": "Weiß",
+              "gray": "Grau",
+              "green": "Grün",
               "blue": "Blau",
               "yellow": "Gelb",
+              "amber": "Bernstein",
               "orange": "Orange",
-              "red": "Rot"
+              "red": "Rot",
+              "purple": "Lila",
+              "black": "Schwarz"
             }
           },
           "type_name": { "name": "Warnungstyp" }

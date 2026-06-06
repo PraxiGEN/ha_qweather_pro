@@ -3,53 +3,83 @@
   "config": {
     "step": {
       "user": {
-        "title": "配置和風天氣 Pro",
-        "description": "### ⚙️ 添加步驟 \n **前往[和風天氣控制台](https://console.qweather.com):** \n 1. 在設定中複製 **API Host** 並填寫下方的 **API Host**。 \n 2. 專案管理 → 建立專案，並在專案中新增憑證：可選 **JSON Web Token** 和 **API KEY**。\n 3. 地理位置僅支援經緯度 (WGS-84)，例如：116.40,39.90。 \n 地理位置預設為 HA 經緯度。 \n #### 注：**API KEY** 認證方式無法提供足夠的安全性，使用 **API KEY** 認證方式將受請求量限制，建議使用 **JSON Web Token (JWT)** 認證方式！",
+        "title": "新增城市",
+        "description": "偵測到您已經配置過 QWeather。您可以選擇 **「使用新帳號」** 或 **「重複使用現有帳號」**。\n **注意：** 在同一個 **API Host** 下新增多個城市會成倍增加請求量，請適當延長更新頻率以避免超額。",
         "data": {
-          "host": "API 伺服器地址 (API Host)",
-          "location_id": "地理位置 僅支援經緯度（經度在前）。",
-          "use_token": "使用 JWT 認證（推薦，更安全）",
-          "api_key": "一般 API Key（使用 JWT 則留空）"
+          "account_selection": "帳號／憑證重複使用"
+        }
+      },
+      "setup": {
+        "title": "配置 QWeather Pro",
+        "description": "### ⚙️ 設定步驟\n **前往 [QWeather 控制台](https://console.qweather.com)：**\n 1. 在設定中複製 **API Host**，並填入下方欄位。\n 2. 專案管理 → 建立專案，並新增憑證：可選 **JSON Web Token** 或 **API KEY**。\n 3. 位置僅支援經緯度（WGS‑84），例如：116.40,39.90。\n 預設位置為 HA 的經緯度。\n #### 注意：**API KEY** 認證安全性不足，且所有使用 API KEY 的請求都會受到速率限制。建議使用 **JSON Web Token (JWT)**！",
+        "data": {
+          "host": "API Host",
+          "location_id": "地理位置（僅支援經緯度，經度在前）",
+          "use_token": "使用 JWT 認證（推薦）",
+          "api_key": "一般 API Key（使用 JWT 時請留空）"
         }
       },
       "jwt_setup": {
         "title": "配置 JWT 安全認證",
-        "description": "系統已為您自動生成公鑰。\n\n**操作步驟：**\n1. 複製下方框中的**公鑰**。\n2. 前往 [和風天氣控制台](https://console.qweather.com)，在專案中新增憑證，選擇 **JSON Web Token** 並貼上公鑰。\n\n```text\n{public_key}\n```\n\n完成後，請填寫下方的 **專案 ID** 與 **憑證 ID**。\n### 注：JWT 方式僅能新增一次，若重新新增整合，原有的 JWT 憑證將無法再使用。",
+        "description": "已自動為您產生一組公開金鑰。\n\n**步驟：**\n1. 複製下方框內的 **公開金鑰**。\n2. 前往 [QWeather 控制台](https://console.qweather.com)，在專案中新增憑證，選擇 **JSON Web Token**，並貼上公開金鑰。\n\n```text\n{public_key}\n```\n\n完成後，請填寫下方的 **Project ID** 與 **Key ID**。\n### 注意：JWT 認證只能新增一次。如果您重新新增整合，原本的 JWT 將會失效。",
         "data": {
-          "project_id": "專案 ID (Project ID)",
-          "key_id": "憑證 ID (Key ID)"
+          "project_id": "Project ID",
+          "key_id": "Key ID"
+        }
+      },
+      "reuse_location": {
+        "title": "新增城市",
+        "description": "已成功載入現有帳號資訊。請輸入您想新增城市的 **地理位置（經緯度）**。",
+        "data": {
+          "location_id": "新城市的地理位置"
         }
       },
       "select_location": {
         "title": "確認城市位置",
-        "description": "搜尋到以下多個匹配地區，請選擇最準確的一個：",
+        "description": "搜尋到多個符合的地區，請選擇最準確的一個：",
         "data": {
-          "location_index": "匹配的城市列表"
+          "location_index": "符合的城市列表"
         }
       },
       "reconfigure": {
         "title": "重新配置認證資訊",
-        "description": "您的整合可能因認證失效而停止運作，請在此更新您的 API Host 或密鑰。",
+        "description": "您的整合可能因認證失效而停止運作，請在此更新 API Host 或密鑰。",
         "data": {
           "host": "API Host",
-          "api_key": "API 密鑰"
+          "location_id": "地理位置",
+          "use_token": "使用 JWT 認證",
+          "api_key": "API Key"
         }
-      },
-      "error": {
-        "cannot_connect": "網路連線失敗，請檢查 Host 是否正確",
-        "invalid_auth": "身份認證失敗，請檢查 Key 或 JWT",
-        "jwt_error": "JWT 簽名生成失敗",
-        "api_key_missing": "一般模式下必須填寫 API Key",
-        "api_host_deprecated": "公共網域已失效，請使用個人 API Host",
-        "location_not_found": "未找到該位置，請嘗試輸入經緯度"
-      },
-      "abort": {
-        "already_configured": "該地理位置已被配置",
-        "reconfigure_successful": "配置已成功更新！"
+      }
+    },
+    "error": {
+      "invalid_parameter": "無效的參數",
+      "location_not_found": "找不到該位置",
+      "data_not_available": "此位置的資料不可用",
+      "invalid_auth": "無效的 API Key 或 JWT",
+      "no_credit": "點數不足或帳務逾期",
+      "security_restriction": "安全限制（IP／Ref 過濾）",
+      "invalid_host": "無效的 API Host",
+      "account_suspended": "帳號已被停用",
+      "forbidden": "無權存取此資料",
+      "not_found": "找不到資源（404）",
+      "too_many_requests": "請求過多（速率限制）",
+      "over_monthly_limit": "超出每月額度",
+      "server_error": "伺服器錯誤（500）",
+      "cannot_connect": "連線失敗"
+    },
+    "abort": {
+      "already_configured": "此位置已經配置過",
+      "reconfigure_successful": "配置更新成功！"
+    }
+  },
+  "selector": {
+    "account_selection": {
+      "options": {
+        "new_account": "新增帳號／憑證"
       }
     }
   },
-
   "options": {
     "step": {
       "init": {
@@ -124,6 +154,8 @@
           "level": {
             "name": "預警級別",
             "state": {
+              "unknown": "未知",
+              "minor": "輕微",
               "moderate": "中等",
               "severe": "嚴重",
               "extreme": "極端"
@@ -132,10 +164,16 @@
           "color": {
             "name": "預警顏色",
             "state": {
+              "white": "白色",
+              "gray": "灰色",
+              "green": "綠色",
               "blue": "藍色",
               "yellow": "黃色",
+              "amber": "琥珀色",
               "orange": "橙色",
-              "red": "紅色"
+              "red": "紅色",
+              "purple": "紫色",
+              "black": "黑色"
             }
           },
           "type_name": { "name": "預警類型名稱" }

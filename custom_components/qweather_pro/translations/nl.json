@@ -1,55 +1,84 @@
 {
-  "title": "QWeather Pro",
   "config": {
     "step": {
       "user": {
-        "title": "QWeather Pro configureren",
-        "description": "### ⚙️ Configuratiestappen\n **Ga naar de [QWeather Console](https://console.qweather.com):**\n 1. Kopieer in de instellingen de **API Host** en vul deze hieronder in.\n 2. Projectbeheer → Maak een project aan en voeg referenties toe: kies **JSON Web Token** of **API KEY**.\n 3. Locatie ondersteunt alleen coördinaten (WGS‑84), bijvoorbeeld: 116.40,39.90.\n Standaard wordt de Home Assistant‑locatie gebruikt.\n #### Opmerking: Authenticatie via **API KEY** biedt onvoldoende beveiliging en is beperkt in verzoeken. Het wordt sterk aanbevolen om **JSON Web Token (JWT)** te gebruiken!",
+        "title": "Nieuwe stad toevoegen",
+        "description": "Het lijkt erop dat QWeather al is geconfigureerd. U kunt kiezen voor **‘Nieuw account gebruiken’** of **‘Bestaand account hergebruiken’**.\n **Let op:** Het toevoegen van meerdere steden onder dezelfde **API Host** zal het aantal verzoeken vermenigvuldigen. Verleng het update-interval om overschrijding van limieten te voorkomen.",
         "data": {
-          "host": "API‑serveradres (API Host)",
-          "location_id": "Locatie (alleen coördinaten, lengtegraad eerst)",
-          "use_token": "JWT‑authenticatie gebruiken (aanbevolen, veiliger)",
-          "api_key": "Standaard API Key (leeg laten bij gebruik van JWT)"
+          "account_selection": "Account/gegevens hergebruiken"
+        }
+      },
+      "setup": {
+        "title": "QWeather Pro configureren",
+        "description": "### ⚙️ Configuratiestappen\n **Ga naar de [QWeather Console](https://console.qweather.com):**\n 1. Kopieer in Instellingen de **API Host** en vul deze hieronder in.\n 2. Projectbeheer → Maak een project aan en voeg inloggegevens toe: **JSON Web Token** of **API KEY**.\n 3. Locatie ondersteunt alleen breedte‑ en lengtegraad (WGS‑84), bijvoorbeeld: 116.40,39.90.\n Standaard wordt de HA‑breedte/lengtegraad gebruikt.\n #### Opmerking: **API KEY**‑authenticatie biedt onvoldoende beveiliging en is onderhevig aan strikte limieten. Het wordt aanbevolen om **JSON Web Token (JWT)** te gebruiken!",
+        "data": {
+          "host": "API Host",
+          "location_id": "Geografische locatie (alleen lengte‑ en breedtegraad, lengte eerst)",
+          "use_token": "JWT‑authenticatie gebruiken (Aanbevolen)",
+          "api_key": "Gewone API Key (leeg laten bij gebruik van JWT)"
         }
       },
       "jwt_setup": {
         "title": "JWT‑beveiligingsauthenticatie configureren",
-        "description": "Er is automatisch een openbare sleutel gegenereerd.\n\n**Stappen:**\n1. Kopieer de **openbare sleutel** hieronder.\n2. Ga naar de [QWeather Console](https://console.qweather.com), voeg een referentie toe aan het project, kies **JSON Web Token** en plak de sleutel.\n\n```text\n{public_key}\n```\n\nVul daarna **Project ID** en **Key ID** hieronder in.\n### Opmerking: JWT kan slechts één keer worden toegevoegd. Als je de integratie opnieuw toevoegt, wordt de oude JWT ongeldig.",
+        "description": "Er is automatisch een openbare sleutel gegenereerd.\n\n**Stappen:**\n1. Kopieer de **openbare sleutel** hieronder.\n2. Ga naar de [QWeather Console](https://console.qweather.com), voeg een credential toe aan uw project, selecteer **JSON Web Token**, en plak de sleutel.\n\n```text\n{public_key}\n```\n\nVul daarna **Project ID** en **Key ID** in.\n### Opmerking: JWT‑authenticatie kan slechts één keer worden toegevoegd. Als u de integratie opnieuw toevoegt, wordt de oude JWT ongeldig.",
         "data": {
           "project_id": "Project ID",
           "key_id": "Key ID"
         }
       },
-      "select_location": {
-        "title": "Locatie bevestigen",
-        "description": "Er zijn meerdere overeenkomende regio’s gevonden. Kies de meest nauwkeurige:",
+      "reuse_location": {
+        "title": "Nieuwe stad toevoegen",
+        "description": "Bestaande accountinformatie is succesvol geladen. Voer de **geografische locatie** (breedte‑ en lengtegraad) van de nieuwe stad in.",
         "data": {
-          "location_index": "Lijst met overeenkomende locaties"
+          "location_id": "Geografische locatie van de nieuwe stad"
+        }
+      },
+      "select_location": {
+        "title": "Stadslocatie bevestigen",
+        "description": "Er zijn meerdere overeenkomende regio’s gevonden. Selecteer de meest nauwkeurige:",
+        "data": {
+          "location_index": "Lijst met overeenkomende steden"
         }
       },
       "reconfigure": {
         "title": "Authenticatie opnieuw configureren",
-        "description": "De integratie werkt mogelijk niet meer door ongeldige authenticatie. Werk hier je API Host of sleutel bij.",
+        "description": "De integratie werkt mogelijk niet meer vanwege ongeldige authenticatie. Werk hier uw API Host of sleutel bij.",
         "data": {
           "host": "API Host",
+          "location_id": "Geografische locatie",
+          "use_token": "JWT‑authenticatie gebruiken",
           "api_key": "API Key"
         }
-      },
-      "error": {
-        "cannot_connect": "Netwerkverbinding mislukt, controleer of de Host correct is",
-        "invalid_auth": "Authenticatie mislukt, controleer de Key of JWT",
-        "jwt_error": "JWT‑handtekening genereren mislukt",
-        "api_key_missing": "In standaardmodus is een API Key vereist",
-        "api_host_deprecated": "Publieke domeinen worden niet langer ondersteund, gebruik je persoonlijke API Host",
-        "location_not_found": "Locatie niet gevonden, probeer coördinaten in te voeren"
-      },
-      "abort": {
-        "already_configured": "Deze locatie is al geconfigureerd",
-        "reconfigure_successful": "Configuratie succesvol bijgewerkt!"
+      }
+    },
+    "error": {
+      "invalid_parameter": "Ongeldige parameters",
+      "location_not_found": "Locatie niet gevonden",
+      "data_not_available": "Geen gegevens beschikbaar voor deze locatie",
+      "invalid_auth": "Ongeldige API Key of JWT",
+      "no_credit": "Onvoldoende tegoed of openstaande betaling",
+      "security_restriction": "Beveiligingsbeperking (IP/Ref‑filter)",
+      "invalid_host": "Ongeldige API Host",
+      "account_suspended": "Account is opgeschort",
+      "forbidden": "Geen toestemming voor deze gegevens",
+      "not_found": "Bron niet gevonden (404)",
+      "too_many_requests": "Te veel verzoeken (limiet bereikt)",
+      "over_monthly_limit": "Maandelijkse limiet overschreden",
+      "server_error": "Serverfout (500)",
+      "cannot_connect": "Verbinding mislukt"
+    },
+    "abort": {
+      "already_configured": "Deze locatie is al geconfigureerd",
+      "reconfigure_successful": "Configuratie succesvol bijgewerkt!"
+    }
+  },
+  "selector": {
+    "account_selection": {
+      "options": {
+        "new_account": "Nieuw account/nieuwe gegevens"
       }
     }
   },
-
   "options": {
     "step": {
       "init": {
@@ -115,15 +144,17 @@
           "Without warning": "Geen waarschuwing"
         },
         "state_attributes": {
-          "id": { "name": "Waarschuwings‑ID" },
-          "sender": { "name": "Uitgever" },
+          "id": { "name": "Waarschuwing-ID" },
+          "sender": { "name": "Uitgever van de waarschuwing" },
           "issued": { "name": "Uitgiftetijd" },
-          "title": { "name": "Titel van waarschuwing" },
+          "title": { "name": "Titel van de waarschuwing" },
           "text": { "name": "Waarschuwingsinhoud" },
-          "instruction": { "name": "Instructies" },
+          "instruction": { "name": "Veiligheidsinstructies" },
           "level": {
             "name": "Waarschuwingsniveau",
             "state": {
+              "unknown": "Onbekend",
+              "minor": "Licht",
               "moderate": "Matig",
               "severe": "Ernstig",
               "extreme": "Extreem"
@@ -132,10 +163,16 @@
           "color": {
             "name": "Waarschuwingskleur",
             "state": {
+              "white": "Wit",
+              "gray": "Grijs",
+              "green": "Groen",
               "blue": "Blauw",
               "yellow": "Geel",
+              "amber": "Amber",
               "orange": "Oranje",
-              "red": "Rood"
+              "red": "Rood",
+              "purple": "Paars",
+              "black": "Zwart"
             }
           },
           "type_name": { "name": "Type waarschuwing" }

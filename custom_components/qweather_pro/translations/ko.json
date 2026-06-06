@@ -1,23 +1,36 @@
 {
-  "title": "QWeather Pro",
   "config": {
     "step": {
       "user": {
-        "title": "QWeather Pro 설정",
-        "description": "### ⚙️ 추가 단계\n **[QWeather 콘솔](https://console.qweather.com)로 이동:**\n 1. 설정에서 **API Host** 를 복사하여 아래 **API Host** 입력란에 붙여넣으세요.\n 2. 프로젝트 관리 → 프로젝트 생성 후, 인증 정보를 추가합니다: **JSON Web Token** 또는 **API KEY** 중 선택할 수 있습니다.\n 3. 위치 정보는 경도, 위도(WGS-84)만 지원합니다. 예: 116.40,39.90\n 위치 정보는 기본적으로 HA의 경도·위도를 사용합니다.\n #### 참고: **API KEY** 인증 방식은 보안성이 낮고 요청 제한이 있습니다. **JSON Web Token (JWT)** 인증 방식을 강력히 권장합니다!",
+        "title": "새 도시 추가",
+        "description": "QWeather가 이미 구성된 것으로 보입니다. **‘새 계정 사용’** 또는 **‘기존 계정 재사용’** 중에서 선택할 수 있습니다.\n **주의:** 동일한 **API Host** 아래 여러 도시를 추가하면 요청량이 배로 증가합니다. 초과 사용을 방지하기 위해 업데이트 간격을 적절히 늘려주세요.",
         "data": {
-          "host": "API 서버 주소 (API Host)",
-          "location_id": "위치 정보 (경도 먼저 입력)",
-          "use_token": "JWT 인증 사용 (추천, 더 안전함)",
+          "account_selection": "계정/자격 증명 재사용"
+        }
+      },
+      "setup": {
+        "title": "QWeather Pro 설정",
+        "description": "### ⚙️ 설정 단계\n **[QWeather 콘솔](https://console.qweather.com)에 접속:**\n 1. 설정에서 **API Host**를 복사하여 아래 **API Host** 필드에 입력합니다.\n 2. 프로젝트 관리 → 프로젝트 생성 후, 인증 정보를 추가합니다: **JSON Web Token** 또는 **API KEY**.\n 3. 위치는 위도·경도(WGS‑84)만 지원합니다. 예: 116.40,39.90.\n 기본값은 HA의 위도·경도입니다.\n #### 참고: **API KEY** 인증은 보안성이 낮으며 요청 제한이 적용됩니다. **JSON Web Token (JWT)** 사용을 권장합니다!",
+        "data": {
+          "host": "API Host",
+          "location_id": "지리 위치 (경도 먼저, 위도·경도만 지원)",
+          "use_token": "JWT 인증 사용 (권장)",
           "api_key": "일반 API Key (JWT 사용 시 비워두기)"
         }
       },
       "jwt_setup": {
-        "title": "JWT 보안 인증 구성",
-        "description": "공개 키가 자동으로 생성되었습니다.\n\n**단계:**\n1. 아래 상자의 **공개 키** 를 복사하세요.\n2. [QWeather 콘솔](https://console.qweather.com)로 이동하여 프로젝트에 인증 정보를 추가하고, **JSON Web Token** 을 선택한 뒤 공개 키를 붙여넣으세요.\n\n```text\n{public_key}\n```\n\n완료 후 아래의 **프로젝트 ID** 와 **인증 ID** 를 입력하세요.\n### 참고: JWT 인증은 한 번만 추가할 수 있습니다. 통합을 다시 추가하면 기존 JWT 인증 정보는 더 이상 사용할 수 없습니다.",
+        "title": "JWT 보안 인증 설정",
+        "description": "공개 키가 자동으로 생성되었습니다.\n\n**단계:**\n1. 아래 상자의 **공개 키**를 복사합니다.\n2. [QWeather 콘솔](https://console.qweather.com)에서 프로젝트에 인증 정보를 추가하고, **JSON Web Token**을 선택한 뒤 공개 키를 붙여넣습니다.\n\n```text\n{public_key}\n```\n\n완료 후 **Project ID**와 **Key ID**를 입력하세요.\n### 참고: JWT 인증은 한 번만 추가할 수 있습니다. 통합을 다시 추가하면 기존 JWT는 더 이상 유효하지 않습니다.",
         "data": {
-          "project_id": "프로젝트 ID (Project ID)",
-          "key_id": "인증 ID (Key ID)"
+          "project_id": "Project ID",
+          "key_id": "Key ID"
+        }
+      },
+      "reuse_location": {
+        "title": "새 도시 추가",
+        "description": "기존 계정 정보가 성공적으로 불러와졌습니다. 추가하려는 도시의 **지리 위치(위도·경도)** 를 입력하세요.",
+        "data": {
+          "location_id": "새 도시의 지리 위치"
         }
       },
       "select_location": {
@@ -29,27 +42,43 @@
       },
       "reconfigure": {
         "title": "인증 정보 재구성",
-        "description": "인증 오류로 인해 통합이 중지되었을 수 있습니다. 여기에서 API Host 또는 키를 업데이트하세요.",
+        "description": "인증 오류로 인해 통합이 작동을 멈췄을 수 있습니다. 여기에서 API Host 또는 키를 업데이트하세요.",
         "data": {
           "host": "API Host",
+          "location_id": "지리 위치",
+          "use_token": "JWT 인증 사용",
           "api_key": "API Key"
         }
-      },
-      "error": {
-        "cannot_connect": "네트워크 연결 실패, Host가 올바른지 확인하세요",
-        "invalid_auth": "인증 실패, Key 또는 JWT를 확인하세요",
-        "jwt_error": "JWT 서명 생성 실패",
-        "api_key_missing": "일반 모드에서는 API Key 입력이 필요합니다",
-        "api_host_deprecated": "공용 도메인은 더 이상 지원되지 않습니다. 개인 API Host를 사용하세요",
-        "location_not_found": "해당 위치를 찾을 수 없습니다. 경도·위도를 입력해보세요"
-      },
-      "abort": {
-        "already_configured": "해당 위치는 이미 구성되었습니다",
-        "reconfigure_successful": "구성이 성공적으로 업데이트되었습니다!"
+      }
+    },
+    "error": {
+      "invalid_parameter": "잘못된 매개변수",
+      "location_not_found": "위치를 찾을 수 없습니다",
+      "data_not_available": "이 위치의 데이터를 사용할 수 없습니다",
+      "invalid_auth": "잘못된 API Key 또는 JWT",
+      "no_credit": "크레딧 부족 또는 미납",
+      "security_restriction": "보안 제한 (IP/Ref 필터)",
+      "invalid_host": "잘못된 API Host",
+      "account_suspended": "계정이 정지되었습니다",
+      "forbidden": "이 데이터에 대한 권한이 없습니다",
+      "not_found": "리소스를 찾을 수 없습니다 (404)",
+      "too_many_requests": "요청이 너무 많습니다 (요청 제한)",
+      "over_monthly_limit": "월간 할당량 초과",
+      "server_error": "서버 오류 (500)",
+      "cannot_connect": "연결 실패"
+    },
+    "abort": {
+      "already_configured": "이 위치는 이미 구성되어 있습니다",
+      "reconfigure_successful": "구성이 성공적으로 업데이트되었습니다!"
+    }
+  },
+  "selector": {
+    "account_selection": {
+      "options": {
+        "new_account": "새 계정/자격 증명"
       }
     }
   },
-
   "options": {
     "step": {
       "init": {
@@ -116,14 +145,16 @@
         },
         "state_attributes": {
           "id": { "name": "경보 ID" },
-          "sender": { "name": "발표 기관" },
-          "issued": { "name": "발표 시간" },
+          "sender": { "name": "발령 기관" },
+          "issued": { "name": "발령 시각" },
           "title": { "name": "경보 제목" },
           "text": { "name": "경보 내용" },
           "instruction": { "name": "대응 지침" },
           "level": {
-            "name": "경보 등급",
+            "name": "경보 수준",
             "state": {
+              "unknown": "알 수 없음",
+              "minor": "경미",
               "moderate": "보통",
               "severe": "심각",
               "extreme": "극심"
@@ -132,16 +163,22 @@
           "color": {
             "name": "경보 색상",
             "state": {
-              "blue": "파랑",
-              "yellow": "노랑",
-              "orange": "주황",
-              "red": "빨강"
+              "white": "흰색",
+              "gray": "회색",
+              "green": "초록색",
+              "blue": "파란색",
+              "yellow": "노란색",
+              "amber": "호박색",
+              "orange": "주황색",
+              "red": "빨간색",
+              "purple": "보라색",
+              "black": "검은색"
             }
           },
-          "type_name": { "name": "경보 유형" }
+          "type_name": { "name": "경보 유형 이름" }
         }
       },
-
+      
       "today_temp_range": {
         "name": "오늘의 기온 범위",
         "state": {

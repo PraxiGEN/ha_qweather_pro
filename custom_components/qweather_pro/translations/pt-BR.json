@@ -1,55 +1,84 @@
 {
-  "title": "QWeather Pro",
   "config": {
     "step": {
       "user": {
-        "title": "Configurar QWeather Pro",
-        "description": "### ⚙️ Etapas de configuração\n **Acesse o [Console QWeather](https://console.qweather.com):**\n 1. Nas configurações, copie o **API Host** e preencha abaixo.\n 2. Gerenciamento de projetos → Criar projeto e adicionar credenciais: escolha **JSON Web Token** ou **API KEY**.\n 3. A localização aceita apenas coordenadas (WGS‑84), por exemplo: 116.40,39.90.\n A localização padrão usa a latitude/longitude do Home Assistant.\n #### Nota: A autenticação por **API KEY** não oferece segurança suficiente e está sujeita a limites de requisições. Recomenda‑se usar **JSON Web Token (JWT)**!",
+        "title": "Adicionar nova cidade",
+        "description": "Parece que o QWeather já está configurado. Você pode escolher **‘Usar uma nova conta’** ou **‘Reutilizar a conta existente’**.\n **Atenção:** Adicionar várias cidades sob o mesmo **API Host** multiplicará o volume de requisições. Aumente o intervalo de atualização para evitar exceder os limites.",
         "data": {
-          "host": "Endereço do servidor API (API Host)",
-          "location_id": "Localização (somente coordenadas, longitude primeiro)",
-          "use_token": "Usar autenticação JWT (recomendado, mais seguro)",
-          "api_key": "API Key comum (deixe vazio se usar JWT)"
+          "account_selection": "Reutilização de conta/credenciais"
+        }
+      },
+      "setup": {
+        "title": "Configurar QWeather Pro",
+        "description": "### ⚙️ Etapas de configuração\n **Acesse o [Console QWeather](https://console.qweather.com):**\n 1. Em Configurações, copie o **API Host** e cole no campo abaixo.\n 2. Gerenciamento de Projetos → Crie um projeto e adicione credenciais: **JSON Web Token** ou **API KEY**.\n 3. A localização aceita apenas latitude e longitude (WGS‑84), por exemplo: 116.40,39.90.\n Por padrão, será usada a latitude/longitude do HA.\n #### Observação: A autenticação por **API KEY** não oferece segurança suficiente e está sujeita a limites rigorosos. É recomendado usar **JSON Web Token (JWT)**!",
+        "data": {
+          "host": "API Host",
+          "location_id": "Localização geográfica (somente latitude e longitude, longitude primeiro)",
+          "use_token": "Usar autenticação JWT (Recomendado)",
+          "api_key": "API Key comum (deixe em branco se usar JWT)"
         }
       },
       "jwt_setup": {
         "title": "Configurar autenticação JWT",
-        "description": "Uma chave pública foi gerada automaticamente.\n\n**Etapas:**\n1. Copie a **chave pública** no campo abaixo.\n2. Acesse o [Console QWeather](https://console.qweather.com), adicione uma credencial ao projeto, selecione **JSON Web Token** e cole a chave pública.\n\n```text\n{public_key}\n```\n\nDepois, preencha o **Project ID** e o **Key ID**.\n### Nota: A autenticação JWT só pode ser adicionada uma vez. Se você reinstalar a integração, a credencial JWT anterior deixará de funcionar.",
+        "description": "Uma chave pública foi gerada automaticamente.\n\n**Etapas:**\n1. Copie a **chave pública** no campo abaixo.\n2. Acesse o [Console QWeather](https://console.qweather.com), adicione uma credencial ao projeto, selecione **JSON Web Token** e cole a chave pública.\n\n```text\n{public_key}\n```\n\nApós isso, preencha **Project ID** e **Key ID**.\n### Observação: A autenticação JWT só pode ser adicionada uma vez. Se você reinstalar a integração, a credencial JWT anterior deixará de ser válida.",
         "data": {
           "project_id": "Project ID",
           "key_id": "Key ID"
         }
       },
+      "reuse_location": {
+        "title": "Adicionar nova cidade",
+        "description": "As informações da conta existente foram carregadas com sucesso. Insira a **localização geográfica** (latitude e longitude) da nova cidade que deseja adicionar.",
+        "data": {
+          "location_id": "Localização geográfica da nova cidade"
+        }
+      },
       "select_location": {
-        "title": "Confirmar localização",
+        "title": "Confirmar localização da cidade",
         "description": "Foram encontradas várias regiões correspondentes. Selecione a mais precisa:",
         "data": {
-          "location_index": "Lista de locais correspondentes"
+          "location_index": "Lista de cidades correspondentes"
         }
       },
       "reconfigure": {
         "title": "Reconfigurar autenticação",
-        "description": "A integração pode ter parado de funcionar devido a falha de autenticação. Atualize aqui seu API Host ou chave.",
+        "description": "A integração pode ter parado de funcionar devido a autenticação inválida. Atualize aqui seu API Host ou chave.",
         "data": {
           "host": "API Host",
+          "location_id": "Localização geográfica",
+          "use_token": "Usar autenticação JWT",
           "api_key": "API Key"
         }
-      },
-      "error": {
-        "cannot_connect": "Falha na conexão de rede, verifique se o Host está correto",
-        "invalid_auth": "Falha na autenticação, verifique a Key ou o JWT",
-        "jwt_error": "Falha ao gerar assinatura JWT",
-        "api_key_missing": "No modo padrão é necessário informar uma API Key",
-        "api_host_deprecated": "O domínio público não é mais suportado, use seu API Host pessoal",
-        "location_not_found": "Localização não encontrada, tente inserir coordenadas"
-      },
-      "abort": {
-        "already_configured": "Esta localização já está configurada",
-        "reconfigure_successful": "Configuração atualizada com sucesso!"
+      }
+    },
+    "error": {
+      "invalid_parameter": "Parâmetros inválidos",
+      "location_not_found": "Localização não encontrada",
+      "data_not_available": "Dados indisponíveis para esta localização",
+      "invalid_auth": "API Key ou JWT inválido",
+      "no_credit": "Crédito insuficiente ou pagamento pendente",
+      "security_restriction": "Restrição de segurança (filtro IP/Ref)",
+      "invalid_host": "API Host inválido",
+      "account_suspended": "Conta suspensa",
+      "forbidden": "Sem permissão para estes dados",
+      "not_found": "Recurso não encontrado (404)",
+      "too_many_requests": "Muitas requisições (limite atingido)",
+      "over_monthly_limit": "Limite mensal excedido",
+      "server_error": "Erro no servidor (500)",
+      "cannot_connect": "Falha na conexão"
+    },
+    "abort": {
+      "already_configured": "Esta localização já está configurada",
+      "reconfigure_successful": "Configuração atualizada com sucesso!"
+    }
+  },
+  "selector": {
+    "account_selection": {
+      "options": {
+        "new_account": "Nova conta/credenciais"
       }
     }
   },
-
   "options": {
     "step": {
       "init": {
@@ -116,26 +145,34 @@
         },
         "state_attributes": {
           "id": { "name": "ID do alerta" },
-          "sender": { "name": "Emissor" },
-          "issued": { "name": "Hora de emissão" },
+          "sender": { "name": "Emissor do alerta" },
+          "issued": { "name": "Horário de emissão" },
           "title": { "name": "Título do alerta" },
           "text": { "name": "Conteúdo do alerta" },
-          "instruction": { "name": "Instruções" },
+          "instruction": { "name": "Instruções de segurança" },
           "level": {
             "name": "Nível do alerta",
             "state": {
+              "unknown": "Desconhecido",
+              "minor": "Leve",
               "moderate": "Moderado",
-              "severe": "Severo",
+              "severe": "Grave",
               "extreme": "Extremo"
             }
           },
           "color": {
             "name": "Cor do alerta",
             "state": {
+              "white": "Branco",
+              "gray": "Cinza",
+              "green": "Verde",
               "blue": "Azul",
               "yellow": "Amarelo",
+              "amber": "Âmbar",
               "orange": "Laranja",
-              "red": "Vermelho"
+              "red": "Vermelho",
+              "purple": "Roxo",
+              "black": "Preto"
             }
           },
           "type_name": { "name": "Tipo de alerta" }

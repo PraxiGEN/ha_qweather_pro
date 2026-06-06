@@ -28,6 +28,7 @@ CONF_USE_TOKEN: Final = "use_token"
 CONF_PROJECT_ID: Final = "project_id"
 CONF_KEY_ID: Final = "key_id"
 CONF_PRIVATE_KEY: Final = "private_key"
+CONF_ACCOUNT_SELECT: Final = "account_selection"
 
 CONF_UPDATE_INTERVAL: Final = "update_interval"
 CONF_HOURLYSTEPS: Final = "hourlysteps"

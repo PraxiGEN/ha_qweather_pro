@@ -24,6 +24,7 @@ from .const import (
     CONF_DAILYSTEPS,
     CONF_UPDATE_INTERVAL,
     CONF_PROJECT_ID,
+    CONF_ACCOUNT_SELECT,
     CONF_KEY_ID,
     CONF_PRIVATE_KEY,
     CONF_GIRD,
@@ -66,18 +67,53 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return private_bytes.decode('utf-8'), public_bytes.decode('utf-8')
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> FlowResult:
-        """初始配置步骤."""
-        if user_input is not None:
-            self._temp_data = user_input
-            if user_input.get(CONF_USE_TOKEN):
-                return await self.async_step_jwt_setup()
-            # 开启地理位置搜索流程
-            return await self._async_search_location(user_input)
-
-        default_location = f"{round(self.hass.config.longitude, 2)},{round(self.hass.config.latitude, 2)}"
+        """入口步骤：决定是新建还是复用账号."""
+        existing_entries = self._async_current_entries()
         
+        # 如果是第一次添加，直接走新建流程
+        if not existing_entries:
+            return await self.async_step_setup(user_input)
+
+        # 如果已存在实例，显示“引导页”
+        if user_input is not None:
+            selection = user_input.get(CONF_ACCOUNT_SELECT)
+            if selection == "new_account":
+                return await self.async_step_setup()
+            
+            # 【复用逻辑】记住选中的 entry_id
+            self._temp_data["reuse_from"] = selection
+            return await self.async_step_reuse_location()
+
+        # 构造“复用或新建”的选择列表
+        account_options = [{"value": "new_account", "label": "Add New Account"}]
+        for entry in existing_entries:
+            # 标签直接显示为：复用 [城市名] 的账号
+            account_options.append({"value": entry.entry_id, "label": entry.title})
+
         return self.async_show_form(
             step_id="user",
+            data_schema=vol.Schema({
+                vol.Required(CONF_ACCOUNT_SELECT, default="new_account"): selector.SelectSelector(
+                    selector.SelectSelectorConfig(
+                        options=account_options,
+                        mode=selector.SelectSelectorMode.DROPDOWN,
+                        translation_key="account_selection"
+                    )
+                )
+            })
+        )
+
+    async def async_step_setup(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        """标准设置页面."""
+        if user_input is not None:
+            self._temp_data.update(user_input)
+            if user_input.get(CONF_USE_TOKEN):
+                return await self.async_step_jwt_setup()
+            return await self._async_search_location(self._temp_data)
+
+        default_location = f"{round(self.hass.config.longitude, 2)},{round(self.hass.config.latitude, 2)}"
+        return self.async_show_form(
+            step_id="setup",
             data_schema=vol.Schema({
                 vol.Required(CONF_HOST): selector.TextSelector(),
                 vol.Required(CONF_LOCATION_ID, default=default_location): selector.TextSelector(),                                       
@@ -86,6 +122,27 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
                 ),
             }),
+        )
+
+    async def async_step_reuse_location(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        """复用模式下的精简表单：只显示原有的位置输入框."""
+        if user_input is not None:
+            # 从选中的旧条目中提取认证信息
+            reuse_id = self._temp_data["reuse_from"]
+            old_entry = next(e for e in self._async_current_entries() if e.entry_id == reuse_id)
+            
+            # 合并凭据到临时数据
+            self._temp_data.update(old_entry.data)
+            self._temp_data[CONF_LOCATION_ID] = user_input[CONF_LOCATION_ID]
+            
+            return await self._async_search_location(self._temp_data)
+
+        # 沿用原有的位置输入框定义
+        return self.async_show_form(
+            step_id="reuse_location",
+            data_schema=vol.Schema({
+                vol.Required(CONF_LOCATION_ID): selector.TextSelector(),
+            })
         )
 
     async def async_step_jwt_setup(self, user_input: dict[str, Any] | None = None) -> FlowResult:
@@ -141,25 +198,64 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 qweather_lang = LANGUAGE_MAP.get(ha_lang, "en")
                 
                 res = await api.city_lookup(raw_loc, lang=qweather_lang)
+                api_code = res.get("code") # 获取 API 状态码
                 
-                if res.get("code") == "200" and res.get("location"):
+                if api_code == "200" and res.get("location"):
                     self._discovered_locations = res["location"]
-                    
-                    # 如果只有 1 个结果且是经纬度反查，直接进入确认
                     if len(self._discovered_locations) == 1:
                         return await self._async_verify_and_create(self._discovered_locations[0])
-                    
-                    # 否则进入城市选择界面
                     return await self.async_step_select_location()
+                
+                # --- 精细化错误分类 ---
+                if api_code == "400":
+                    # 细分：是参数错误还是找不到位置
+                    error_title = res.get("error_detail", "")
+                    if "Location" in error_title:
+                        errors["base"] = "location_not_found"
+                    else:
+                        errors["base"] = "invalid_parameter"
+                elif api_code == "401":
+                    errors["base"] = "invalid_auth"
+                elif api_code == "403":
+                    # 细分：是没钱了还是 Host 填错了
+                    error_title = res.get("error_detail", "")
+                    if "Host" in error_title:
+                        errors["base"] = "invalid_host"
+                    elif "Credit" in error_title or "Overdue" in error_title:
+                        errors["base"] = "no_credit"
+                    else:
+                        errors["base"] = "forbidden"
+                elif api_code == "404":
+                    errors["base"] = "not_found"
+                elif api_code == "429":
+                    errors["base"] = "too_many_requests"
+                elif api_code == "500":
+                    errors["base"] = "server_error"
                 else:
-                    errors["base"] = "location_not_found"
+                    errors["base"] = "cannot_connect"
+                    
             except Exception as err:
                 LOGGER.error("无法连接至 API Host %s: %s", user_host, err)
                 errors["base"] = "cannot_connect"
 
-        # 回退到相应表单
-        step = "jwt_setup" if config_data.get(CONF_USE_TOKEN) else "user"
-        return self.async_show_form(step_id=step, data_schema=self._get_schema(config_data), errors=errors)
+        # 确定出错时应该回退到哪个步骤
+        if self.source == config_entries.SOURCE_RECONFIGURE:
+            step_id = "reconfigure"
+        elif "reuse_from" in self._temp_data:
+            step_id = "reuse_location"
+        else:
+            step_id = "setup"
+
+        # 如果是 JWT 模式且还在配置阶段，回退到 jwt_setup
+        if config_data.get(CONF_USE_TOKEN) and step_id != "reuse_location":
+            # 注意：如果 reconfigure 过程中 JWT 校验失败，通常也应该回退到 jwt_setup 重新输入 ID
+            step_id = "jwt_setup"
+
+        return self.async_show_form(
+            step_id=step_id, 
+            data_schema=self._get_schema(config_data), 
+            errors=errors
+        )
 
     async def async_step_select_location(self, user_input: dict[str, Any] | None = None) -> FlowResult:
         """让用户从多个搜索结果中确认城市."""
@@ -194,16 +290,16 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def _async_verify_and_create(self, location_info: dict[str, Any]) -> FlowResult:
         """实现地理数据标准化，锁定物理 ID 并创建条目."""
         
-        # 1. 提取标准化高精度坐标 (Lon,Lat)
+        # 提取标准化高精度坐标 (Lon,Lat)
         std_lon = round(float(location_info["lon"]), 2)
         std_lat = round(float(location_info["lat"]), 2)
         normalized_coords = f"{std_lon},{std_lat}"
         
-        # 2. 更新临时数据
+        # 新临时数据
         self._temp_data[CONF_LOCATION_ID] = normalized_coords
         city_title = location_info["name"]
 
-        # 3. 锁定物理唯一 ID
+        # 锁定物理唯一 ID
         unique_id = f"qw_{normalized_coords.replace(',', '_')}"
         await self.async_set_unique_id(unique_id)
         
@@ -212,7 +308,7 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         
         self._abort_if_unique_id_configured()
 
-        # 4. 创建集成条目
+        # 创建集成条目
         return self.async_create_entry(
             title=city_title, 
             data=self._temp_data,
@@ -227,11 +323,20 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     def _get_schema(self, data: dict) -> vol.Schema:
         """获取带有当前数据的 Schema 用于错误回显."""
+        # 复用模式下的回显
+        if "reuse_from" in self._temp_data:
+            return vol.Schema({
+                vol.Required(CONF_LOCATION_ID, default=data.get(CONF_LOCATION_ID)): selector.TextSelector()
+            })
+        
+        # JWT 模式下的回显
         if data.get(CONF_USE_TOKEN):
             return vol.Schema({
                 vol.Required(CONF_PROJECT_ID, default=data.get(CONF_PROJECT_ID)): selector.TextSelector(),
                 vol.Required(CONF_KEY_ID, default=data.get(CONF_KEY_ID)): selector.TextSelector(),
             })
+
+        # 普通 setup 模式下的全量回显
         return vol.Schema({
             vol.Required(CONF_HOST, default=data.get(CONF_HOST)): selector.TextSelector(),
             vol.Required(CONF_LOCATION_ID, default=data.get(CONF_LOCATION_ID)): selector.TextSelector(),
@@ -242,18 +347,28 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         })
 
     async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None) -> FlowResult:
-        """重新配置逻辑."""
+        """重新配置逻辑：支持切换 Key 或 JWT."""
         entry = self._get_reconfigure_entry()
+        
         if user_input is not None:
-            # 重新配置时也走一遍搜索校验逻辑
+            # 合并旧数据与新输入
             self._temp_data = {**entry.data, **user_input}
+            
+            # 如果勾选了使用 Token，跳转到 JWT 配置页
+            if user_input.get(CONF_USE_TOKEN):
+                return await self.async_step_jwt_setup()
+            
+            # 否则直接走搜索校验逻辑
             return await self._async_search_location(self._temp_data)
 
+        # 初始显示重新配置表单
         return self.async_show_form(
             step_id="reconfigure",
             data_schema=vol.Schema({
                 vol.Required(CONF_HOST, default=entry.data.get(CONF_HOST, "")): selector.TextSelector(),
-                vol.Required(CONF_API_KEY, default=entry.data.get(CONF_API_KEY, "")): selector.TextSelector(
+                vol.Required(CONF_LOCATION_ID, default=entry.data.get(CONF_LOCATION_ID, "")): selector.TextSelector(),
+                vol.Required(CONF_USE_TOKEN, default=entry.data.get(CONF_USE_TOKEN, False)): selector.BooleanSelector(),
+                vol.Optional(CONF_API_KEY, default=entry.data.get(CONF_API_KEY, "")): selector.TextSelector(
                     selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
                 ),
             })

@@ -104,10 +104,22 @@ class QWeatherAPI:
         try:
             async with asyncio.timeout(15):
                 resp = await self.session.get(url, params=params, headers=headers)
-                data = await resp.json()
+                # 即使是错误，也要尝试解析 JSON，因为 V2 规范在 Body 里包含详细原因
+                try:
+                    data = await resp.json()
+                except Exception:
+                    data = {}
+
+                # 如果不是 200，则在返回字典中强制注入 http_status
                 if resp.status != 200:
-                    LOGGER.debug("API 返回业务代码: %s (URL: %s)", data.get("code"), url)
-                return data
+                    LOGGER.error("QWeather API Error: %s (URL: %s)", resp.status, url)
+                    return {
+                        "code": str(resp.status),
+                        "http_status": resp.status,
+                        "error_detail": data.get("error", {}).get("title", "Unknown Error")
+                    }
+                
+                return data 
         except asyncio.TimeoutError:
             LOGGER.debug("QWeather API 请求超时: %s", endpoint)
             raise # 触发重试
