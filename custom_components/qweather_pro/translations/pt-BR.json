@@ -3,32 +3,32 @@
     "step": {
       "user": {
         "title": "Adicionar nova cidade",
-        "description": "Parece que o QWeather já está configurado. Você pode escolher **‘Usar uma nova conta’** ou **‘Reutilizar a conta existente’**.\n **Atenção:** Adicionar várias cidades sob o mesmo **API Host** multiplicará o volume de requisições. Aumente o intervalo de atualização para evitar exceder os limites.",
+        "description": "Parece que o QWeather já está configurado. Você pode escolher **“Usar uma nova conta”** ou **“Reutilizar a conta existente”**.\r\n**Observação:** Adicionar várias cidades sob o mesmo **API Host** aumentará o volume de solicitações. Ajuste o intervalo de atualização para evitar exceder os limites.",
         "data": {
           "account_selection": "Reutilização de conta/credenciais"
         }
       },
       "setup": {
         "title": "Configurar QWeather Pro",
-        "description": "### ⚙️ Etapas de configuração\n **Acesse o [Console QWeather](https://console.qweather.com):**\n 1. Em Configurações, copie o **API Host** e cole no campo abaixo.\n 2. Gerenciamento de Projetos → Crie um projeto e adicione credenciais: **JSON Web Token** ou **API KEY**.\n 3. A localização aceita apenas latitude e longitude (WGS‑84), por exemplo: 116.40,39.90.\n Por padrão, será usada a latitude/longitude do HA.\n #### Observação: A autenticação por **API KEY** não oferece segurança suficiente e está sujeita a limites rigorosos. É recomendado usar **JSON Web Token (JWT)**!",
+        "description": "### Etapas de configuração\r\n**Acesse o [Console QWeather]({qweather_console}):**\r\n1. Em Configurações, copie o **API Host** e preencha no campo abaixo.\r\n2. Gerenciamento de Projetos → Crie um projeto e adicione credenciais: **JSON Web Token** e **API KEY** (opcionais).\r\n3. A localização aceita apenas latitude e longitude (WGS‑84), por exemplo: 116.40,39.90.\r\nA localização padrão é a latitude e longitude do Home Assistant.\r\n#### Observação: A autenticação por API KEY não oferece segurança suficiente. Todas as solicitações usando API KEY estão sujeitas a limites rigorosos. Recomenda‑se usar autenticação JWT!",
         "data": {
           "host": "API Host",
-          "location_id": "Localização geográfica (somente latitude e longitude, longitude primeiro)",
-          "use_token": "Usar autenticação JWT (Recomendado)",
+          "location_id": "Localização geográfica. Aceita apenas longitude e latitude (primeiro longitude).",
+          "use_token": "Usar autenticação JWT (recomendado)",
           "api_key": "API Key comum (deixe em branco se usar JWT)"
         }
       },
       "jwt_setup": {
         "title": "Configurar autenticação JWT",
-        "description": "Uma chave pública foi gerada automaticamente.\n\n**Etapas:**\n1. Copie a **chave pública** no campo abaixo.\n2. Acesse o [Console QWeather](https://console.qweather.com), adicione uma credencial ao projeto, selecione **JSON Web Token** e cole a chave pública.\n\n```text\n{public_key}\n```\n\nApós isso, preencha **Project ID** e **Key ID**.\n### Observação: A autenticação JWT só pode ser adicionada uma vez. Se você reinstalar a integração, a credencial JWT anterior deixará de ser válida.",
+        "description": "Uma chave pública foi gerada automaticamente para você.\r\n**Etapas:**\r\n1. Copie a **chave pública** no campo abaixo.\r\n2. Acesse o [Console QWeather]({qweather_console}), adicione uma credencial ao projeto, selecione **JSON Web Token** e cole a chave pública.\r\n```text\n{public_key}\n```\r\nApós concluir, preencha o **Project ID** e o **Key ID** abaixo.\r\n#### Observação: A autenticação JWT só pode ser adicionada uma vez. Se você reinstalar a integração, a credencial JWT anterior deixará de ser válida.",
         "data": {
-          "project_id": "Project ID",
-          "key_id": "Key ID"
+          "project_id": "ID do Projeto",
+          "key_id": "ID da Chave"
         }
       },
       "reuse_location": {
         "title": "Adicionar nova cidade",
-        "description": "As informações da conta existente foram carregadas com sucesso. Insira a **localização geográfica** (latitude e longitude) da nova cidade que deseja adicionar.",
+        "description": "As informações da conta existente foram carregadas com sucesso. Insira a **localização geográfica** (latitude e longitude) da nova cidade.",
         "data": {
           "location_id": "Localização geográfica da nova cidade"
         }
@@ -42,7 +42,7 @@
       },
       "reconfigure": {
         "title": "Reconfigurar autenticação",
-        "description": "A integração pode ter parado de funcionar devido a autenticação inválida. Atualize aqui seu API Host ou chave.",
+        "description": "A integração pode ter parado de funcionar devido a autenticação inválida. Atualize seu API Host ou chave aqui.",
         "data": {
           "host": "API Host",
           "location_id": "Localização geográfica",
@@ -56,40 +56,40 @@
       "location_not_found": "Localização não encontrada",
       "data_not_available": "Dados indisponíveis para esta localização",
       "invalid_auth": "API Key ou JWT inválido",
-      "no_credit": "Crédito insuficiente ou pagamento pendente",
+      "no_credit": "Sem crédito ou pagamento pendente",
       "security_restriction": "Restrição de segurança (filtro IP/Ref)",
       "invalid_host": "API Host inválido",
       "account_suspended": "Conta suspensa",
       "forbidden": "Sem permissão para estes dados",
       "not_found": "Recurso não encontrado (404)",
-      "too_many_requests": "Muitas requisições (limite atingido)",
+      "too_many_requests": "Muitas solicitações (limite excedido)",
       "over_monthly_limit": "Limite mensal excedido",
       "server_error": "Erro no servidor (500)",
       "cannot_connect": "Falha na conexão"
     },
     "abort": {
-      "already_configured": "Esta localização já está configurada",
+      "already_configured": "Esta localização já foi configurada",
       "reconfigure_successful": "Configuração atualizada com sucesso!"
     }
   },
   "selector": {
     "account_selection": {
       "options": {
-        "new_account": "Nova conta/credenciais"
+        "new_account": "Nova conta / novas credenciais"
       }
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Configurar opções",
-        "description": "### 💡 Guia de uso\n- A previsão diária pode ser de **3/7/15/30 dias**. A previsão em grade suporta apenas **3/7 dias**.\n- A previsão por hora pode ser de **24h/72h/168h**. A previsão em grade suporta apenas **24h/72h**.\n- **Clima em grade**: ao ativar a API de grade de alta precisão, alguns dados reais (como **visibilidade**) podem não estar disponíveis e aparecerão como `--`.",
+        "title": "Opções da integração",
+        "description": "### Instruções de uso\r\nA previsão diária pode ser configurada para **3/7/15/30** dias, enquanto a previsão diária em grade suporta apenas **3/7** dias.\r\n- A previsão por hora pode ser configurada para **24/72/168** horas, enquanto a previsão por grade suporta apenas **24/72** horas.\r\n- **Clima em grade**: Após ativar a API de grade de alta precisão, alguns dados observados (como **visibilidade**) não estarão mais disponíveis e aparecerão como `--` no cartão.",
         "data": {
           "update_interval": "Intervalo de atualização (minutos)",
-          "dailysteps": "Dias de previsão diária (3-30)",
-          "hourlysteps": "Horas de previsão por hora (24-168)",
-          "gird": "Usar clima de grade de alta precisão (V7 Grid API)",
-          "custom_ui": "Ativar suporte a UI personalizada"
+          "dailysteps": "Dias de previsão diária (3–30)",
+          "hourlysteps": "Horas de previsão por hora (24–168)",
+          "gird": "Usar API de grade (alta precisão)",
+          "custom_ui": "Ativar suporte para UI personalizada"
         }
       }
     }
@@ -178,7 +178,7 @@
           "type_name": { "name": "Tipo de alerta" }
         }
       },
-      "aqi_status": { "name": "Qualidade do ar" },
+
       "today_temp_range": {
         "name": "Faixa de temperatura de hoje",
         "state": {
@@ -223,6 +223,7 @@
               "cold_snap": "Queda brusca"
             }
           },
+          "aqi_status": { "name": "Status do índice de qualidade do ar" },
           "uv_risk": {
             "name": "Intensidade UV",
             "state": {
@@ -240,9 +241,9 @@
         "name": "Clima",
         "state_attributes": {
           "qweather_icon": { "name": "Ícone do clima" },
-          "update_time": { "name": "Hora de atualização" },
-          "obs_time": { "name": "Hora de observação" },
-          "condition_cn": { "name": "Condição climática (Chinês)" },
+          "update_time": { "name": "Horário de atualização dos dados" },
+          "obs_time": { "name": "Horário de observação" },
+          "condition_cn": { "name": "Condição climática (chinês)" },
           "wind_dir": { "name": "Direção do vento" },
           "cloud": { "name": "Nebulosidade" },
           "dew": { "name": "Ponto de orvalho" },
@@ -255,12 +256,21 @@
           "moon_phase": { "name": "Fase da lua" },
           "moonrise": { "name": "Nascer da lua" },
           "moonset": { "name": "Pôr da lua" },
-          "minutely_summary": { "name": "Resumo por minuto" },
-          "hourly_summary": { "name": "Resumo por hora" },
+          "minutely_summary": { "name": "Resumo minuto a minuto" },
+          "moon_phase_icon": { "name": "Ícone da fase lunar" },
+          "text_night": { "name": "Condição noturna" },
+          "icon_night": { "name": "Ícone noturno" },
+          "wind_scale_day": { "name": "Escala de vento (dia)" },
+          "wind_scale_night": { "name": "Escala de vento (noite)" },
+          "wind_dir_day": { "name": "Direção do vento (dia)" },
+          "wind_dir_night": { "name": "Direção do vento (noite)" },
+          "forecast_pressure": { "name": "Pressão atmosférica futura" },
+          "forecast_vis": { "name": "Visibilidade futura" },
+          "forecast_cloud": { "name": "Nebulosidade futura" },
           "aqi": { "name": "Índice de qualidade do ar" },
           "city": { "name": "Cidade" },
-          "warning": { "name": "Alerta" },
-          "suggestion": { "name": "Recomendações de vida" }
+          "warning": { "name": "Informações de alerta" },
+          "suggestion": { "name": "Sugestões do índice de vida" }
         },
         "unit_of_measurement": {
           "°C": "Graus Celsius",

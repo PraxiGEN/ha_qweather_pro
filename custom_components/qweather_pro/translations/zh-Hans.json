@@ -4,25 +4,24 @@
     "step": {
       "user": {
         "title": "添加新城市",
-        "description": "检测到您已配置过和风天气。您可以选择 **‘使用新账号’** 或直接 **‘复用现有账号’** 的信息。 \n **注意：** 同一 **API Host** 下添加多个城市会成倍增加调用量，请适当延长更新频率以避免超额。",
+        "description": "检测到您已配置过和风天气。您可以选择 **使用新账号** 或直接 **复用现有账号** 的信息。\r\n**注意：** 同一 **API Host** 下添加多个城市会成倍增加调用量，请适当延长更新频率以避免超额。",
         "data": {
           "account_selection": "账号/凭据复用"
         }
       },      
       "setup": {
         "title": "配置和风天气Pro",
-        "description": "### ⚙️ 添加步骤 \n **前往[和风天气控制台](https://console.qweather.com):** \n 1. 在设置中复制 **API Host** 填写下方的 **API Host**。 \n 2. 项目管理 → 创建项目, 在项目中添加凭据: 可选 **JSON Web Token** 和 **API KEY**。\n 3. 地理位置建议输入 经纬度(高德坐标) 或者 城市名称，可选：[城市ID](https://github.com/qwd/LocationList/blob/master/China-City-List-latest.csv)。 \n 地理位置默认为HA经纬度。 \n #### 注: **API KEY** 认证方式无法提供足够的安全性, 使用 **API KEY** 认证方式都将受请求量的限制, 推荐使用 **JSON Web Token(JWT)** 的认证方式！",
+        "description": "### 添加步骤\r\n**前往[和风天气控制台]({qweather_console}):**\r\n1. 在设置中复制 **API Host** 填写下方的 **API Host**。\r\n2. 项目管理 → 创建项目, 在项目中添加凭据: 可选 **JSON Web Token** 和 **API KEY**。\r\n3. 地理位置建议输入 经纬度(高德坐标) 或者 城市名称，可选：城市ID。\n4. 地理位置默认为HA经纬度。\n#### 注意: API KEY 认证方式无法提供足够的安全性, 使用 API KEY 认证方式都将受请求量的限制, 推荐使用 JSON Web Token(JWT) 的认证方式！",
         "data": {
           "host": "API 服务器地址(API Host)",
           "location_id": "地理位置 支持城市名称、城市ID、经纬度(经度在前)。",
           "use_token": "使用 JWT 认证 (推荐，更安全)",
-          "api_key": "普通 API Key (使用 JWT 则留空)",
-          "account_selection": "账号凭据复用"
+          "api_key": "普通 API Key (使用 JWT 则留空)"
         }
       },
       "jwt_setup": {
         "title": "配置 JWT 安全认证",
-        "description": "系统已为您自动生成公钥。\n\n**操作步骤：**\n1. 复制下方框中的**公钥**。\n2. 前往[和风天气控制台](https://console.qweather.com),在项目中添加凭据，选择 **JSON Web Token** 并粘贴公钥。\n\n```text\n{public_key}\n```\n\n完成后,填写下方的 **项目ID** 和 **凭据ID**。\n ### 注：JWT方式，只能添加一次，重新添加集成，原有JWT凭据将无法使用。",
+        "description": "系统已为您自动生成公钥。\r\n **操作步骤：** \r\n1. 复制下方框中的 **公钥**。\r\n2. 前往[和风天气控制台]({qweather_console}),在项目中添加凭据，选择 **JSON Web Token** 并粘贴公钥。\r\n```text\n{public_key}\n```\r\n完成后,填写下方的 **项目ID** 和 **凭据ID**。\r\n #### 注意：JWT方式，只能添加一次，重新添加集成，原有JWT凭据将无法使用。",
         "data": {
           "project_id": "项目 ID (Project ID)",
           "key_id": "凭据 ID (Key ID)"
@@ -87,7 +86,7 @@
     "step": {
       "init": {
         "title": "配置选项",
-        "description": "### 💡 使用说明\n- 每日天气预报可选择 **3d/7d/15d/30d** 天，格点逐日预报只能选择 **3d/7d** 天。 \n- 逐小时预报可选择 **24h/72h/168h** 小时，格点逐小时预报只能选择 **24h/72h** 小时。\n- **格点天气**：开启高精度格点 API 后,部分实测数据（如**能见度**）将无法提供,卡片中将显示为 `--`。",
+        "description": "### 使用说明\r\n- 每日天气预报可选择 **3d/7d/15d/30d** 天，格点逐日预报只能选择 **3d/7d** 天。 \r\n- 逐小时预报可选择 **24h/72h/168h** 小时，格点逐小时预报只能选择 **24h/72h** 小时。\r\n- **格点天气**：开启高精度格点 API 后,部分实测数据（如**能见度**）将无法提供,卡片中将显示为 `--`。",
         "data": {
           "update_interval": "数据更新频率 (分钟)",
           "dailysteps": "逐日预报天数 (3-30)",
@@ -103,17 +102,17 @@
     "sensor": {
       "aqi": {
         "name": "空气质量",
-        "state":{
+        "state": {
           "Unknown": "未知"
         },
         "state_attributes": {
           "aqi_value": { "name": "AQI 数值" },
           "aqi_level": { "name": "空气质量等级" },
-          "primary_pollutant": { 
+          "primary_pollutant": {
             "name": "主要污染物",
-            "state":{
+            "state": {
               "None": "无"
-            }          
+            }
           },
           "pm2p5": { "name": "PM2.5" },
           "pm10": { "name": "PM10" },
@@ -121,21 +120,27 @@
           "so2": { "name": "二氧化硫(SO₂)" },
           "o3": { "name": "臭氧(O₃)" },
           "co": { "name": "一氧化碳(CO)" },
-          "health_effect": { 
+          "health_effect": {
             "name": "健康影响",
-            "state":{
+            "state": {
               "No data available": "暂无数据",
               "Please refer to the recommendations of the local meteorological authorities": "请参考当地气象部门建议"
             }
           },
           "health_advice": { "name": "健康建议" },
-          "stations": { "name": "监测站信息", "state":{ "No monitoring station information available": "暂无监测站信息" } }
+          "stations": {
+            "name": "监测站信息",
+            "state": {
+              "No monitoring station information available": "暂无监测站信息"
+            }
+          }
         },
         "unit_of_measurement": {
           "μg/m³": "微克/立方米",
           "mg/m³": "毫克/立方米"
         }
       },
+
       "warning_info": {
         "name": "气象预警",
         "state": {
@@ -148,9 +153,9 @@
           "title": { "name": "预警标题" },
           "text": { "name": "预警内容" },
           "instruction": { "name": "预警处置建议" },
-          "level": { 
+          "level": {
             "name": "预警级别",
-            "state":{
+            "state": {
               "unknown": "未知",
               "minor": "轻微",
               "moderate": "中等",
@@ -160,7 +165,7 @@
           },
           "color": {
             "name": "预警颜色",
-            "state":{
+            "state": {
               "white": "白色",
               "gray": "灰色",
               "green": "绿色",
@@ -172,28 +177,32 @@
               "purple": "紫色",
               "black": "黑色"
             }
-          },  
+          },
           "type_name": { "name": "预警类型名称" }
         }
       },
+
       "today_temp_range": {
         "name": "今日温度范围",
-        "state":{
+        "state": {
           "Unknown": "未知"
         },
-        "state_attributes": { "max_temp": { "name": "最高温度" }, "min_temp": { "name": "最低温度" } }        
-      },
-      "precipitation_summary": {
-        "name": "降水简报",
-        "state":{
-          "No precipitation in the next two hours": "未来两小时无降水"
-        },
-        "state_attributes": { 
-          "detail": { 
-            "name": "细节"
-          } 
+        "state_attributes": {
+          "max_temp": { "name": "最高温度" },
+          "min_temp": { "name": "最低温度" }
         }
       },
+
+      "precipitation_summary": {
+        "name": "降水简报",
+        "state": {
+          "No precipitation in the next two hours": "未来两小时无降水"
+        },
+        "state_attributes": {
+          "detail": { "name": "细节" }
+        }
+      },
+
       "weather_summary": {
         "name": "天气概况",
         "state_attributes": {
@@ -251,7 +260,16 @@
           "moonrise": { "name": "月出时间" },
           "moonset": { "name": "月落时间" },
           "minutely_summary": { "name": "分钟级天气总结" },
-          "hourly_summary": { "name": "小时级天气总结" },
+          "moon_phase_icon": { "name": "月相图标" },
+          "text_night": { "name": "夜晚天气状况" },
+          "icon_night": { "name": "夜晚图标" },
+          "wind_scale_day": { "name": "白天风力等级" },
+          "wind_scale_night": { "name": "夜晚风力等级" },
+          "wind_dir_day": { "name": "白天风向" },
+          "wind_dir_night": { "name": "夜晚风向" },
+          "forecast_pressure": { "name": "未来气压" },
+          "forecast_vis": { "name": "未来能见度" },
+          "forecast_cloud": { "name": "未来云量" },
           "aqi": { "name": "空气质量指数" },
           "city": { "name": "城市" },
           "warning": { "name": "预警信息" },

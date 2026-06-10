@@ -62,21 +62,24 @@
       `;
     }
 
+    /* 生活指数渲染 - 修改：增加滚动容器 */
     _renderLifeIndex(list) {
       if (!list || !list.length)
         return html`<div class="no-data">${this._t("no_suggestions")}</div>`;
 
       return html`
-        <div class="life-list">
-          ${list.map(i => html`
-            <div class="life-item">
-              <div class="life-header">
-                <span class="life-title">${i.title}</span>
-                <span class="life-brf">${i.brf}</span>
+        <div class="life-scroll-box">
+          <div class="life-list">
+            ${list.map(i => html`
+              <div class="life-item">
+                <div class="life-header">
+                  <span class="life-title">${i.title_cn || i.title}</span>
+                  <span class="life-brf">${i.brf}</span>
+                </div>
+                <div class="life-text">${i.txt || i.text}</div>
               </div>
-              <div class="life-text">${i.txt}</div>
-            </div>
-          `)}
+            `)}
+          </div>
         </div>
       `;
     }
@@ -89,8 +92,8 @@
       const aqiVal = a.aqi?.aqi || "--";
       const aqiCat = a.aqi?.aqi_category || (this._lang === "zh" ? "未知" : "Unknown");
 
-      const lifeTypes = ["drsg", "uv", "cw", "sport"];
-      const lifeList = (a.suggestion || []).filter(i => lifeTypes.includes(i.type));
+      // 修改：不再限制 lifeTypes，显示后端传来的所有指数以供滚动查看
+      const lifeList = a.suggestion || []; 
 
       return html`
         <div class="content">
@@ -129,7 +132,6 @@
             ${this._renderAttr("mdi:chemical-weapon", "SO₂", stripUnit(a.aqi?.pollutants?.so2) || "--")}
             ${this._renderAttr("mdi:weather-hazy", "O₃", stripUnit(a.aqi?.pollutants?.o3) || "--")}
             ${this._renderAttr("mdi:molecule-co", "CO", stripUnit(a.aqi?.pollutants?.co) || "--")}
-
           </div>
 
           <!-- 日月信息 4×1 -->
@@ -141,7 +143,7 @@
             ${this._renderAttr("mdi:arrow-down-bold-circle-outline", this._t("moonset"), a.moonset || "--")}
           </div>
 
-          <!-- 生活指数 4 项 -->
+          <!-- 生活指数 -->
           <div class="section-title">${this._t("lifestyle_title")}</div>
           ${this._renderLifeIndex(lifeList)}
 
@@ -166,26 +168,9 @@
         .temp-text { font-size:42px; font-weight:300; }
         .temp-text sup { font-size:18px; }
 
-        .grid-3x2 {
-          display:grid;
-          grid-template-columns:repeat(3,1fr);
-          gap:14px;
-          margin-bottom:24px;
-        }
-
-        .grid-4x2 {
-          display:grid;
-          grid-template-columns:repeat(4,1fr);
-          gap:14px;
-          margin-bottom:24px;
-        }
-
-        .grid-4x1 {
-          display:grid;
-          grid-template-columns:repeat(4,1fr);
-          gap:14px;
-          margin-bottom:24px;
-        }
+        .grid-3x2 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:24px; }
+        .grid-4x2 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+        .grid-4x1 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
 
         .attr-item { background:var(--secondary-background-color); padding:12px 14px; border-radius:12px; display:flex; align-items:center; min-width:0; }
         .attr-item ha-icon { margin-right:12px; color:var(--primary-color); --mdc-icon-size:22px; }
@@ -193,6 +178,19 @@
         .attr-value { font-size:15px; font-weight:600; }
 
         .section-title { font-size:15px; font-weight:bold; margin:18px 0 10px; border-left:4px solid var(--primary-color); padding-left:8px; }
+
+        /* 生活指数滚动容器样式 */
+        .life-scroll-box { 
+          max-height: 360px; /* 限制约4个项目的高度 */
+          overflow-y: auto; 
+          padding-right: 6px;
+          -webkit-overflow-scrolling: touch; /* 支持移动端流畅滑动 */
+        }
+
+        /* 滚动条美化 */
+        .life-scroll-box::-webkit-scrollbar { width: 4px; }
+        .life-scroll-box::-webkit-scrollbar-track { background: transparent; }
+        .life-scroll-box::-webkit-scrollbar-thumb { background: var(--divider-color); border-radius: 10px; }
 
         .life-list { display:flex; flex-direction:column; gap:12px; }
         .life-item { padding:12px; border-radius:10px; background:var(--secondary-background-color); }

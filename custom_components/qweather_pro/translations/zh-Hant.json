@@ -4,24 +4,24 @@
     "step": {
       "user": {
         "title": "新增城市",
-        "description": "偵測到您已經配置過 QWeather。您可以選擇 **「使用新帳號」** 或 **「重複使用現有帳號」**。\n **注意：** 在同一個 **API Host** 下新增多個城市會成倍增加請求量，請適當延長更新頻率以避免超額。",
+        "description": "看起來你已經設定過 QWeather。你可以選擇 **「使用新帳號」** 或直接 **「重複使用現有帳號」**。\r\n**注意：** 在相同 **API Host** 下新增多個城市會增加請求量。請適當延長更新間隔以避免超出限制。",
         "data": {
           "account_selection": "帳號／憑證重複使用"
         }
       },
       "setup": {
-        "title": "配置 QWeather Pro",
-        "description": "### ⚙️ 設定步驟\n **前往 [QWeather 控制台](https://console.qweather.com)：**\n 1. 在設定中複製 **API Host**，並填入下方欄位。\n 2. 專案管理 → 建立專案，並新增憑證：可選 **JSON Web Token** 或 **API KEY**。\n 3. 位置僅支援經緯度（WGS‑84），例如：116.40,39.90。\n 預設位置為 HA 的經緯度。\n #### 注意：**API KEY** 認證安全性不足，且所有使用 API KEY 的請求都會受到速率限制。建議使用 **JSON Web Token (JWT)**！",
+        "title": "設定 QWeather Pro",
+        "description": "### 設定步驟\r\n**前往 [QWeather 控制台]({qweather_console})：**\r\n1. 在設定中複製 **API Host**，並填入下方的 **API Host** 欄位。\r\n2. 專案管理 → 建立專案，然後為專案新增憑證：可選 **JSON Web Token** 與 **API KEY**。\r\n3. 位置僅支援經緯度（WGS‑84），例如：116.40,39.90。\r\n預設位置為 Home Assistant 的經緯度。\r\n### 注意：API KEY 驗證的安全性不足，所有使用 API KEY 的請求都會受到嚴格限制。建議使用 JWT 驗證！",
         "data": {
           "host": "API Host",
-          "location_id": "地理位置（僅支援經緯度，經度在前）",
-          "use_token": "使用 JWT 認證（推薦）",
+          "location_id": "地理位置。僅支援經緯度（先經度後緯度）。",
+          "use_token": "使用 JWT 驗證（建議）",
           "api_key": "一般 API Key（使用 JWT 時請留空）"
         }
       },
       "jwt_setup": {
-        "title": "配置 JWT 安全認證",
-        "description": "已自動為您產生一組公開金鑰。\n\n**步驟：**\n1. 複製下方框內的 **公開金鑰**。\n2. 前往 [QWeather 控制台](https://console.qweather.com)，在專案中新增憑證，選擇 **JSON Web Token**，並貼上公開金鑰。\n\n```text\n{public_key}\n```\n\n完成後，請填寫下方的 **Project ID** 與 **Key ID**。\n### 注意：JWT 認證只能新增一次。如果您重新新增整合，原本的 JWT 將會失效。",
+        "title": "設定 JWT 安全驗證",
+        "description": "系統已自動為你產生一組公開金鑰。\r\n**步驟：**\r\n1. 複製下方框內的 **公開金鑰**。\r\n2. 前往 [QWeather 控制台]({qweather_console})，在專案中新增憑證，選擇 **JSON Web Token**，並貼上公開金鑰。\r\n```text\n{public_key}\n```\r\n完成後，請在下方填入 **Project ID** 與 **Key ID**。\r\n#### 注意：JWT 驗證只能新增一次。如果你重新新增整合，原本的 JWT 憑證將失效。",
         "data": {
           "project_id": "Project ID",
           "key_id": "Key ID"
@@ -29,68 +29,68 @@
       },
       "reuse_location": {
         "title": "新增城市",
-        "description": "已成功載入現有帳號資訊。請輸入您想新增城市的 **地理位置（經緯度）**。",
+        "description": "已成功載入現有帳號資訊。請輸入你想新增城市的 **地理位置（經緯度）**。",
         "data": {
           "location_id": "新城市的地理位置"
         }
       },
       "select_location": {
         "title": "確認城市位置",
-        "description": "搜尋到多個符合的地區，請選擇最準確的一個：",
+        "description": "找到多個符合的地區。請選擇最準確的一項：",
         "data": {
           "location_index": "符合的城市列表"
         }
       },
       "reconfigure": {
-        "title": "重新配置認證資訊",
-        "description": "您的整合可能因認證失效而停止運作，請在此更新 API Host 或密鑰。",
+        "title": "重新設定驗證",
+        "description": "你的整合可能因驗證失效而停止運作。請在此更新 API Host 或金鑰。",
         "data": {
           "host": "API Host",
           "location_id": "地理位置",
-          "use_token": "使用 JWT 認證",
+          "use_token": "使用 JWT 驗證",
           "api_key": "API Key"
         }
       }
     },
     "error": {
       "invalid_parameter": "無效的參數",
-      "location_not_found": "找不到該位置",
+      "location_not_found": "找不到位置",
       "data_not_available": "此位置的資料不可用",
       "invalid_auth": "無效的 API Key 或 JWT",
-      "no_credit": "點數不足或帳務逾期",
-      "security_restriction": "安全限制（IP／Ref 過濾）",
+      "no_credit": "無可用額度或帳務逾期",
+      "security_restriction": "安全限制（IP/Ref 過濾）",
       "invalid_host": "無效的 API Host",
       "account_suspended": "帳號已被停用",
       "forbidden": "無權存取此資料",
       "not_found": "找不到資源（404）",
-      "too_many_requests": "請求過多（速率限制）",
+      "too_many_requests": "請求過多（達到速率限制）",
       "over_monthly_limit": "超出每月額度",
       "server_error": "伺服器錯誤（500）",
       "cannot_connect": "連線失敗"
     },
     "abort": {
-      "already_configured": "此位置已經配置過",
-      "reconfigure_successful": "配置更新成功！"
+      "already_configured": "此位置已經設定過",
+      "reconfigure_successful": "設定已成功更新！"
     }
   },
   "selector": {
     "account_selection": {
       "options": {
-        "new_account": "新增帳號／憑證"
+        "new_account": "新增帳號／新增憑證"
       }
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "配置選項",
-        "description": "### 💡 使用說明\n- 每日天氣預報可選擇 **3d/7d/15d/30d** 天，格點逐日預報僅支援 **3d/7d** 天。 \n- 逐小時預報可選擇 **24h/72h/168h** 小時，格點逐小時預報僅支援 **24h/72h** 小時。\n- **格點天氣**：啟用高精度格點 API 後，部分實測資料（如**能見度**）將無法提供，卡片中將顯示為 `--`。",
+        "title": "整合選項",
+        "description": "### 使用說明\r\n每日天氣預報可設定為 **3/7/15/30** 天，而格點每日預報僅支援 **3/7** 天。\r\n- 每小時預報可設定為 **24/72/168** 小時，而格點每小時預報僅支援 **24/72** 小時。\r\n- **格點天氣**：啟用高精度格點 API 後，部分觀測資料（如 **能見度**）將不再提供，並會在卡片中顯示為 `--`。",
         "data": {
-          "update_interval": "資料更新頻率（分鐘）",
-          "dailysteps": "逐日預報天數 (3-30)",
-          "hourlysteps": "逐小時預報小時數 (24-168)",
-          "gird": "使用高精度格點天氣 (V7 Grid API)",
-          "custom_ui": "啟用自訂前端 UI 支援"
+          "update_interval": "更新間隔（分鐘）",
+          "dailysteps": "每日預報天數（3–30）",
+          "hourlysteps": "每小時預報時數（24–168）",
+          "gird": "使用格點 API（高精度）",
+          "custom_ui": "啟用自訂 UI 支援"
         }
       }
     }
@@ -179,7 +179,7 @@
           "type_name": { "name": "預警類型名稱" }
         }
       },
-      "aqi_status": { "name": "空氣品質狀態" },
+
       "today_temp_range": {
         "name": "今日溫度範圍",
         "state": {
@@ -224,6 +224,7 @@
               "cold_snap": "氣溫驟降"
             }
           },
+          "aqi_status": { "name": "空氣品質狀態" },
           "uv_risk": {
             "name": "紫外線強度",
             "state": {
@@ -242,7 +243,7 @@
         "state_attributes": {
           "qweather_icon": { "name": "天氣圖示" },
           "update_time": { "name": "資料更新時間" },
-          "obs_time": { "name": "實況觀測時間" },
+          "obs_time": { "name": "觀測時間" },
           "condition_cn": { "name": "天氣狀況（中文）" },
           "wind_dir": { "name": "風向" },
           "cloud": { "name": "雲量" },
@@ -257,7 +258,16 @@
           "moonrise": { "name": "月出時間" },
           "moonset": { "name": "月落時間" },
           "minutely_summary": { "name": "分鐘級天氣摘要" },
-          "hourly_summary": { "name": "小時級天氣摘要" },
+          "moon_phase_icon": { "name": "月相圖示" },
+          "text_night": { "name": "夜間天氣狀況" },
+          "icon_night": { "name": "夜間圖示" },
+          "wind_scale_day": { "name": "白天風力等級" },
+          "wind_scale_night": { "name": "夜間風力等級" },
+          "wind_dir_day": { "name": "白天風向" },
+          "wind_dir_night": { "name": "夜間風向" },
+          "forecast_pressure": { "name": "未來氣壓" },
+          "forecast_vis": { "name": "未來能見度" },
+          "forecast_cloud": { "name": "未來雲量" },
           "aqi": { "name": "空氣品質指數" },
           "city": { "name": "城市" },
           "warning": { "name": "預警資訊" },

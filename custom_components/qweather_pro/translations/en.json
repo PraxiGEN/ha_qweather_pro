@@ -1,7 +1,7 @@
 {
   "config": {
     "step": {
-    "user": {
+      "user": {
         "title": "Add New City",
         "description": "It appears that you have already configured QWeather. You may choose to **‘Use a new account’** or directly **‘Reuse the existing account’** information.\r\n**Note:** Adding multiple cities under the same **API Host** will multiply the request volume. Please extend the update interval appropriately to avoid exceeding limits.",
         "data": {
@@ -10,7 +10,7 @@
       },      
       "setup": {
         "title": "Configure QWeather Pro",
-        "description": "### Setup Steps\r\n**Go to the [QWeather Console](https://console.qweather.com):**\r\n1. In Settings, copy the **API Host** and fill it into the **API Host** field below.\r\n2. Project Management → Create a project, then add credentials to the project: optional **JSON Web Token** and **API KEY**.\r\n3. The location only supports latitude and longitude (WGS-84), for example: 116.40,39.90.\r\nThe default location is the HA latitude and longitude.\r\n**Note:** **API KEY** authentication does not provide sufficient security. All requests using **API KEY** authentication are subject to rate limits. It is recommended to use **JSON Web Token (JWT)** authentication!",
+        "description": "### Setup Steps\r\n**Go to the [QWeather Console]({qweather_console}):**\r\n1. In Settings, copy the **API Host** and fill it into the **API Host** field below.\r\n2. Project Management → Create a project, then add credentials to the project: optional **JSON Web Token** and **API KEY**.\r\n3. The location only supports latitude and longitude (WGS-84), for example: 116.40,39.90.\r\nThe default location is the HA latitude and longitude.\r\n#### Note: API KEY authentication does not provide sufficient security. All requests using API KEY authentication are subject to rate limits. It is recommended to use JSON Web Token (JWT) authentication!",
         "data": {
           "host": "API Host",
           "location_id": "Geographical location. Only supports latitude and longitude (longitude first).",
@@ -20,7 +20,7 @@
       },
       "jwt_setup": {
         "title": "Configure JWT Security Authentication",
-        "description": "A public key has been automatically generated for you.\r\n**Steps:**\r\n1. Copy the **public key** in the box below.\r\n2. Go to the [QWeather Console](https://console.qweather.com), add a credential to your project, select **JSON Web Token**, and paste the public key.\r\n```text\n{public_key}\n```\r\nAfter completing this, fill in the **Project ID** and **Key ID** below.\r\n**Note:** JWT authentication can only be added once. If you re-add the integration, the original JWT credential will no longer be valid.",
+        "description": "A public key has been automatically generated for you.\r\n**Steps:**\r\n1. Copy the **public key** in the box below.\r\n2. Go to the [QWeather Console]({qweather_console}), add a credential to your project, select **JSON Web Token**, and paste the public key.\r\n```text\n{public_key}\n```\r\nAfter completing this, fill in the **Project ID** and **Key ID** below.\r\n#### Note: JWT authentication can only be added once. If you re-add the integration, the original JWT credential will no longer be valid.",
         "data": {
           "project_id": "Project ID",
           "key_id": "Key ID"

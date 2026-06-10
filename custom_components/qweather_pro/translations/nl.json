@@ -3,32 +3,32 @@
     "step": {
       "user": {
         "title": "Nieuwe stad toevoegen",
-        "description": "Het lijkt erop dat QWeather al is geconfigureerd. U kunt kiezen voor **‘Nieuw account gebruiken’** of **‘Bestaand account hergebruiken’**.\n **Let op:** Het toevoegen van meerdere steden onder dezelfde **API Host** zal het aantal verzoeken vermenigvuldigen. Verleng het update-interval om overschrijding van limieten te voorkomen.",
+        "description": "Het lijkt erop dat QWeather al is geconfigureerd. Je kunt kiezen voor **‘Een nieuw account gebruiken’** of **‘Bestaand account hergebruiken’**.\r\n**Opmerking:** Het toevoegen van meerdere steden onder dezelfde **API Host** verhoogt het aantal verzoeken. Verleng het update-interval om te voorkomen dat je limieten overschrijdt.",
         "data": {
-          "account_selection": "Account/gegevens hergebruiken"
+          "account_selection": "Account-/referentiehergebruik"
         }
       },
       "setup": {
         "title": "QWeather Pro configureren",
-        "description": "### ⚙️ Configuratiestappen\n **Ga naar de [QWeather Console](https://console.qweather.com):**\n 1. Kopieer in Instellingen de **API Host** en vul deze hieronder in.\n 2. Projectbeheer → Maak een project aan en voeg inloggegevens toe: **JSON Web Token** of **API KEY**.\n 3. Locatie ondersteunt alleen breedte‑ en lengtegraad (WGS‑84), bijvoorbeeld: 116.40,39.90.\n Standaard wordt de HA‑breedte/lengtegraad gebruikt.\n #### Opmerking: **API KEY**‑authenticatie biedt onvoldoende beveiliging en is onderhevig aan strikte limieten. Het wordt aanbevolen om **JSON Web Token (JWT)** te gebruiken!",
+        "description": "### Configuratiestappen\r\n**Ga naar de [QWeather Console]({qweather_console}):**\r\n1. Kopieer in Instellingen de **API Host** en vul deze hieronder in.\r\n2. Projectbeheer → Maak een project aan en voeg vervolgens referenties toe: optioneel **JSON Web Token** en **API KEY**.\r\n3. Locatie ondersteunt alleen breedte- en lengtegraad (WGS‑84), bijvoorbeeld: 116.40,39.90.\r\nDe standaardlocatie is de breedte- en lengtegraad van Home Assistant.\r\n#### Opmerking: API KEY-authenticatie biedt onvoldoende beveiliging. Alle verzoeken met API KEY zijn onderworpen aan strikte limieten. Gebruik bij voorkeur JWT-authenticatie!",
         "data": {
           "host": "API Host",
-          "location_id": "Geografische locatie (alleen lengte‑ en breedtegraad, lengte eerst)",
-          "use_token": "JWT‑authenticatie gebruiken (Aanbevolen)",
+          "location_id": "Geografische locatie. Alleen lengte- en breedtegraad (lengte eerst).",
+          "use_token": "JWT-authenticatie gebruiken (aanbevolen)",
           "api_key": "Gewone API Key (leeg laten bij gebruik van JWT)"
         }
       },
       "jwt_setup": {
-        "title": "JWT‑beveiligingsauthenticatie configureren",
-        "description": "Er is automatisch een openbare sleutel gegenereerd.\n\n**Stappen:**\n1. Kopieer de **openbare sleutel** hieronder.\n2. Ga naar de [QWeather Console](https://console.qweather.com), voeg een credential toe aan uw project, selecteer **JSON Web Token**, en plak de sleutel.\n\n```text\n{public_key}\n```\n\nVul daarna **Project ID** en **Key ID** in.\n### Opmerking: JWT‑authenticatie kan slechts één keer worden toegevoegd. Als u de integratie opnieuw toevoegt, wordt de oude JWT ongeldig.",
+        "title": "JWT-beveiligingsauthenticatie configureren",
+        "description": "Er is automatisch een openbare sleutel voor je gegenereerd.\r\n**Stappen:**\r\n1. Kopieer de **openbare sleutel** hieronder.\r\n2. Ga naar de [QWeather Console]({qweather_console}), voeg een referentie toe aan je project, kies **JSON Web Token** en plak de openbare sleutel.\r\n```text\n{public_key}\n```\r\nVul daarna hieronder de **Project ID** en **Key ID** in.\r\n#### Opmerking: JWT-authenticatie kan slechts één keer worden toegevoegd. Als je de integratie opnieuw toevoegt, wordt de oude JWT-referentie ongeldig.",
         "data": {
-          "project_id": "Project ID",
-          "key_id": "Key ID"
+          "project_id": "Project-ID",
+          "key_id": "Key-ID"
         }
       },
       "reuse_location": {
         "title": "Nieuwe stad toevoegen",
-        "description": "Bestaande accountinformatie is succesvol geladen. Voer de **geografische locatie** (breedte‑ en lengtegraad) van de nieuwe stad in.",
+        "description": "Bestaande accountinformatie is succesvol geladen. Voer de **geografische locatie** (lengte- en breedtegraad) van de nieuwe stad in.",
         "data": {
           "location_id": "Geografische locatie van de nieuwe stad"
         }
@@ -42,11 +42,11 @@
       },
       "reconfigure": {
         "title": "Authenticatie opnieuw configureren",
-        "description": "De integratie werkt mogelijk niet meer vanwege ongeldige authenticatie. Werk hier uw API Host of sleutel bij.",
+        "description": "De integratie werkt mogelijk niet meer vanwege ongeldige authenticatie. Werk hier je API Host of sleutel bij.",
         "data": {
           "host": "API Host",
           "location_id": "Geografische locatie",
-          "use_token": "JWT‑authenticatie gebruiken",
+          "use_token": "JWT-authenticatie gebruiken",
           "api_key": "API Key"
         }
       }
@@ -56,16 +56,16 @@
       "location_not_found": "Locatie niet gevonden",
       "data_not_available": "Geen gegevens beschikbaar voor deze locatie",
       "invalid_auth": "Ongeldige API Key of JWT",
-      "no_credit": "Onvoldoende tegoed of openstaande betaling",
-      "security_restriction": "Beveiligingsbeperking (IP/Ref‑filter)",
+      "no_credit": "Geen krediet of achterstallige betaling",
+      "security_restriction": "Beveiligingsbeperking (IP/Ref-filter)",
       "invalid_host": "Ongeldige API Host",
-      "account_suspended": "Account is opgeschort",
+      "account_suspended": "Account geschorst",
       "forbidden": "Geen toestemming voor deze gegevens",
       "not_found": "Bron niet gevonden (404)",
       "too_many_requests": "Te veel verzoeken (limiet bereikt)",
       "over_monthly_limit": "Maandelijkse limiet overschreden",
       "server_error": "Serverfout (500)",
-      "cannot_connect": "Verbinding mislukt"
+      "cannot_connect": "Kan geen verbinding maken"
     },
     "abort": {
       "already_configured": "Deze locatie is al geconfigureerd",
@@ -75,21 +75,21 @@
   "selector": {
     "account_selection": {
       "options": {
-        "new_account": "Nieuw account/nieuwe gegevens"
+        "new_account": "Nieuw account / nieuwe referenties"
       }
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Opties configureren",
-        "description": "### 💡 Gebruikersgids\n- De dagelijkse voorspelling kan **3/7/15/30 dagen** zijn. Grid‑voorspellingen ondersteunen alleen **3/7 dagen**.\n- Uurlijkse voorspellingen kunnen **24h/72h/168h** zijn. Grid‑uurlijkse voorspellingen ondersteunen alleen **24h/72h**.\n- **Grid‑weer**: bij het inschakelen van de high‑precision Grid API kunnen sommige realtime gegevens (zoals **zichtbaarheid**) ontbreken en worden weergegeven als `--`.",
+        "title": "Integratie-opties",
+        "description": "### Gebruiksinstructies\r\nDe dagelijkse weersvoorspelling kan worden ingesteld op **3/7/15/30** dagen, terwijl de rastergebaseerde dagelijkse voorspelling alleen **3/7** dagen ondersteunt.\r\n- De uurlijkse voorspelling kan worden ingesteld op **24/72/168** uur, terwijl de rastergebaseerde uurlijkse voorspelling alleen **24/72** uur ondersteunt.\r\n- **Rasterweer**: Na het inschakelen van de hoge‑precisie raster‑API zijn sommige waarnemingsgegevens (zoals **zichtbaarheid**) niet meer beschikbaar en worden weergegeven als `--` op de kaart.",
         "data": {
           "update_interval": "Update-interval (minuten)",
-          "dailysteps": "Aantal dagen dagelijkse voorspelling (3–30)",
-          "hourlysteps": "Aantal uren uurlijkse voorspelling (24–168)",
-          "gird": "High‑precision grid‑weer gebruiken (V7 Grid API)",
-          "custom_ui": "Aangepaste UI‑ondersteuning inschakelen"
+          "dailysteps": "Dagen voor dagelijkse voorspelling (3–30)",
+          "hourlysteps": "Uren voor uurlijkse voorspelling (24–168)",
+          "gird": "Raster‑API gebruiken (hoge precisie)",
+          "custom_ui": "Ondersteuning voor aangepaste UI inschakelen"
         }
       }
     }
@@ -178,7 +178,7 @@
           "type_name": { "name": "Type waarschuwing" }
         }
       },
-      "aqi_status": { "name": "Luchtkwaliteitsstatus" },
+
       "today_temp_range": {
         "name": "Temperatuurbereik vandaag",
         "state": {
@@ -223,6 +223,7 @@
               "cold_snap": "Sterke daling"
             }
           },
+          "aqi_status": { "name": "Luchtkwaliteitsindex status" },
           "uv_risk": {
             "name": "UV‑intensiteit",
             "state": {
@@ -240,14 +241,14 @@
         "name": "Weer",
         "state_attributes": {
           "qweather_icon": { "name": "Weerpictogram" },
-          "update_time": { "name": "Update‑tijd" },
+          "update_time": { "name": "Tijd van gegevensupdate" },
           "obs_time": { "name": "Observatietijd" },
           "condition_cn": { "name": "Weerconditie (Chinees)" },
           "wind_dir": { "name": "Windrichting" },
-          "cloud": { "name": "Bewolking" },
+          "cloud": { "name": "Bewolkingsgraad" },
           "dew": { "name": "Dauwpunt" },
           "precip": { "name": "Neerslag" },
-          "precip_probability": { "name": "Kans op neerslag" },
+          "precip_probability": { "name": "Neerslagkans" },
           "feels_like": { "name": "Gevoelstemperatuur" },
           "wind_scale": { "name": "Windkracht" },
           "sunrise": { "name": "Zonsopkomst" },
@@ -255,12 +256,21 @@
           "moon_phase": { "name": "Maanfase" },
           "moonrise": { "name": "Maanopkomst" },
           "moonset": { "name": "Maanondergang" },
-          "minutely_summary": { "name": "Per‑minuut samenvatting" },
-          "hourly_summary": { "name": "Uurlijkse samenvatting" },
+          "minutely_summary": { "name": "Samenvatting per minuut" },
+          "moon_phase_icon": { "name": "Maanfase‑pictogram" },
+          "text_night": { "name": "Weerconditie ’s nachts" },
+          "icon_night": { "name": "Nachtpictogram" },
+          "wind_scale_day": { "name": "Windkracht (dag)" },
+          "wind_scale_night": { "name": "Windkracht (nacht)" },
+          "wind_dir_day": { "name": "Windrichting (dag)" },
+          "wind_dir_night": { "name": "Windrichting (nacht)" },
+          "forecast_pressure": { "name": "Verwachte luchtdruk" },
+          "forecast_vis": { "name": "Verwachte zichtbaarheid" },
+          "forecast_cloud": { "name": "Verwachte bewolking" },
           "aqi": { "name": "Luchtkwaliteitsindex" },
           "city": { "name": "Stad" },
-          "warning": { "name": "Waarschuwing" },
-          "suggestion": { "name": "Leefstijladvies" }
+          "warning": { "name": "Waarschuwingsinformatie" },
+          "suggestion": { "name": "Levensindex‑advies" }
         },
         "unit_of_measurement": {
           "°C": "Graden Celsius",

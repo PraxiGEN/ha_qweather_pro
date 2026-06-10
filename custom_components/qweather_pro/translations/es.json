@@ -3,46 +3,46 @@
     "step": {
       "user": {
         "title": "Agregar nueva ciudad",
-        "description": "Parece que QWeather ya está configurado. Puede elegir **‘Usar una nueva cuenta’** o **‘Reutilizar la cuenta existente’**.\n **Nota:** Agregar varias ciudades bajo el mismo **API Host** multiplicará el volumen de solicitudes. Aumente el intervalo de actualización para evitar exceder los límites.",
+        "description": "Parece que ya has configurado QWeather. Puedes elegir **“Usar una nueva cuenta”** o directamente **“Reutilizar la cuenta existente”**.\r\n**Nota:** Agregar varias ciudades bajo el mismo **API Host** multiplicará el volumen de solicitudes. Ajusta adecuadamente el intervalo de actualización para evitar exceder los límites.",
         "data": {
           "account_selection": "Reutilización de cuenta/credenciales"
         }
       },
       "setup": {
         "title": "Configurar QWeather Pro",
-        "description": "### ⚙️ Pasos de configuración\n **Vaya a la [Consola de QWeather](https://console.qweather.com):**\n 1. En Configuración, copie el **API Host** y colóquelo en el campo correspondiente.\n 2. Gestión de proyectos → Cree un proyecto y agregue credenciales: **JSON Web Token** o **API KEY**.\n 3. La ubicación solo admite latitud y longitud (WGS‑84), por ejemplo: 116.40,39.90.\n De forma predeterminada, se usa la latitud/longitud de HA.\n #### Nota: La autenticación con **API KEY** no es suficientemente segura y está sujeta a límites estrictos. Se recomienda usar **JSON Web Token (JWT)**.",
+        "description": "### Pasos de configuración\r\n**Ve a la [Consola de QWeather]({qweather_console}):**\r\n1. En Configuración, copia el **API Host** y complétalo en el campo **API Host** de abajo.\r\n2. Gestión de proyectos → Crear un proyecto, luego agrega credenciales al proyecto: **JSON Web Token** y **API KEY** opcionales.\r\n3. La ubicación solo admite latitud y longitud (WGS‑84), por ejemplo: 116.40,39.90.\r\nLa ubicación predeterminada es la latitud y longitud de Home Assistant.\r\n#### Nota: La autenticación con API KEY no proporciona suficiente seguridad. Todas las solicitudes con API KEY están sujetas a límites estrictos. Se recomienda usar autenticación JWT.",
         "data": {
           "host": "API Host",
-          "location_id": "Ubicación geográfica (solo latitud y longitud, primero la longitud)",
-          "use_token": "Usar autenticación JWT (Recomendado)",
-          "api_key": "Clave API estándar (dejar vacío si usa JWT)"
+          "location_id": "Ubicación geográfica. Solo admite longitud y latitud (primero longitud).",
+          "use_token": "Usar autenticación JWT (recomendado)",
+          "api_key": "Clave API normal (déjalo vacío si usas JWT)"
         }
       },
       "jwt_setup": {
-        "title": "Configurar autenticación de seguridad JWT",
-        "description": "Se ha generado automáticamente una clave pública.\n\n**Pasos:**\n1. Copie la **clave pública** del cuadro inferior.\n2. Vaya a la [Consola de QWeather](https://console.qweather.com), agregue una credencial al proyecto, seleccione **JSON Web Token** y pegue la clave pública.\n\n```text\n{public_key}\n```\n\nDespués de esto, complete **Project ID** y **Key ID**.\n### Nota: La autenticación JWT solo puede agregarse una vez. Si vuelve a agregar la integración, la credencial JWT anterior dejará de ser válida.",
+        "title": "Configurar autenticación JWT",
+        "description": "Se ha generado automáticamente una clave pública para ti.\r\n**Pasos:**\r\n1. Copia la **clave pública** en el cuadro de abajo.\r\n2. Ve a la [Consola de QWeather]({qweather_console}), agrega una credencial al proyecto, selecciona **JSON Web Token** y pega la clave pública.\r\n```text\n{public_key}\n```\r\nDespués de completar esto, ingresa el **Project ID** y el **Key ID** abajo.\r\n#### Nota: La autenticación JWT solo puede agregarse una vez. Si vuelves a añadir la integración, la credencial JWT anterior dejará de ser válida.",
         "data": {
-          "project_id": "Project ID",
-          "key_id": "Key ID"
+          "project_id": "ID del proyecto",
+          "key_id": "ID de la clave"
         }
       },
       "reuse_location": {
         "title": "Agregar nueva ciudad",
-        "description": "La información de la cuenta existente se ha cargado correctamente. Ingrese la **ubicación geográfica** (latitud y longitud) de la nueva ciudad que desea agregar.",
+        "description": "La información de la cuenta existente se ha cargado correctamente. Ingresa la **ubicación geográfica** (latitud y longitud) de la nueva ciudad.",
         "data": {
           "location_id": "Ubicación geográfica de la nueva ciudad"
         }
       },
       "select_location": {
         "title": "Confirmar ubicación de la ciudad",
-        "description": "Se encontraron varias regiones coincidentes. Seleccione la más precisa:",
+        "description": "Se encontraron varias regiones coincidentes. Selecciona la más precisa:",
         "data": {
           "location_index": "Lista de ciudades coincidentes"
         }
       },
       "reconfigure": {
         "title": "Reconfigurar autenticación",
-        "description": "La integración puede haber dejado de funcionar debido a una autenticación inválida. Actualice aquí su API Host o clave.",
+        "description": "La integración puede haber dejado de funcionar debido a una autenticación no válida. Actualiza aquí tu API Host o clave.",
         "data": {
           "host": "API Host",
           "location_id": "Ubicación geográfica",
@@ -52,44 +52,44 @@
       }
     },
     "error": {
-      "invalid_parameter": "Parámetros inválidos",
+      "invalid_parameter": "Parámetros no válidos",
       "location_not_found": "Ubicación no encontrada",
       "data_not_available": "Datos no disponibles para esta ubicación",
-      "invalid_auth": "API Key o JWT inválido",
-      "no_credit": "Crédito insuficiente o pago pendiente",
+      "invalid_auth": "Clave API o JWT no válido",
+      "no_credit": "Sin crédito o pago vencido",
       "security_restriction": "Restricción de seguridad (filtro IP/Ref)",
-      "invalid_host": "API Host inválido",
+      "invalid_host": "API Host no válido",
       "account_suspended": "Cuenta suspendida",
       "forbidden": "Sin permiso para estos datos",
       "not_found": "Recurso no encontrado (404)",
-      "too_many_requests": "Demasiadas solicitudes (límite alcanzado)",
-      "over_monthly_limit": "Cuota mensual excedida",
+      "too_many_requests": "Demasiadas solicitudes (límite excedido)",
+      "over_monthly_limit": "Límite mensual excedido",
       "server_error": "Error del servidor (500)",
-      "cannot_connect": "Error de conexión"
+      "cannot_connect": "No se puede conectar"
     },
     "abort": {
       "already_configured": "Esta ubicación ya está configurada",
-      "reconfigure_successful": "¡Configuración actualizada con éxito!"
+      "reconfigure_successful": "¡Configuración actualizada correctamente!"
     }
   },
   "selector": {
     "account_selection": {
       "options": {
-        "new_account": "Nueva cuenta/credenciales"
+        "new_account": "Nueva cuenta / nuevas credenciales"
       }
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Configurar opciones",
-        "description": "### 💡 Guía de uso\n- El pronóstico diario puede ser de **3/7/15/30 días**. El pronóstico por cuadrícula solo admite **3/7 días**.\n- El pronóstico por horas puede ser de **24h/72h/168h**. El pronóstico por cuadrícula solo admite **24h/72h**.\n- **Clima por cuadrícula**: al activar la API de cuadrícula de alta precisión, algunos datos reales (como la **visibilidad**) pueden no estar disponibles y aparecerán como `--`.",
+        "title": "Opciones de integración",
+        "description": "### Instrucciones de uso\r\nLa previsión diaria puede configurarse en **3/7/15/30** días, mientras que la previsión diaria por cuadrícula solo admite **3/7** días.\r\n- La previsión por horas puede configurarse en **24/72/168** horas, mientras que la previsión por cuadrícula solo admite **24/72** horas.\r\n- **Clima por cuadrícula**: Después de habilitar la API de cuadrícula de alta precisión, algunos datos observados (como la **visibilidad**) ya no estarán disponibles y aparecerán como `--` en la tarjeta.",
         "data": {
-          "update_interval": "Frecuencia de actualización (minutos)",
-          "dailysteps": "Días de pronóstico diario (3-30)",
-          "hourlysteps": "Horas de pronóstico por hora (24-168)",
-          "gird": "Usar clima de cuadrícula de alta precisión (V7 Grid API)",
-          "custom_ui": "Habilitar interfaz personalizada"
+          "update_interval": "Intervalo de actualización (minutos)",
+          "dailysteps": "Días de previsión diaria (3–30)",
+          "hourlysteps": "Horas de previsión por hora (24–168)",
+          "gird": "Usar API de cuadrícula (alta precisión)",
+          "custom_ui": "Habilitar soporte para UI personalizada"
         }
       }
     }
@@ -241,9 +241,9 @@
         "name": "Clima",
         "state_attributes": {
           "qweather_icon": { "name": "Ícono del clima" },
-          "update_time": { "name": "Hora de actualización" },
+          "update_time": { "name": "Hora de actualización de datos" },
           "obs_time": { "name": "Hora de observación" },
-          "condition_cn": { "name": "Condición climática (Chino)" },
+          "condition_cn": { "name": "Condición meteorológica (chino)" },
           "wind_dir": { "name": "Dirección del viento" },
           "cloud": { "name": "Nubosidad" },
           "dew": { "name": "Punto de rocío" },
@@ -256,12 +256,21 @@
           "moon_phase": { "name": "Fase lunar" },
           "moonrise": { "name": "Salida de la luna" },
           "moonset": { "name": "Puesta de la luna" },
-          "minutely_summary": { "name": "Resumen por minuto" },
-          "hourly_summary": { "name": "Resumen por hora" },
+          "minutely_summary": { "name": "Resumen meteorológico por minuto" },
+          "moon_phase_icon": { "name": "Ícono de fase lunar" },
+          "text_night": { "name": "Condición nocturna" },
+          "icon_night": { "name": "Ícono nocturno" },
+          "wind_scale_day": { "name": "Escala del viento (día)" },
+          "wind_scale_night": { "name": "Escala del viento (noche)" },
+          "wind_dir_day": { "name": "Dirección del viento (día)" },
+          "wind_dir_night": { "name": "Dirección del viento (noche)" },
+          "forecast_pressure": { "name": "Presión atmosférica futura" },
+          "forecast_vis": { "name": "Visibilidad futura" },
+          "forecast_cloud": { "name": "Nubosidad futura" },
           "aqi": { "name": "Índice de calidad del aire" },
           "city": { "name": "Ciudad" },
-          "warning": { "name": "Alerta" },
-          "suggestion": { "name": "Consejos de vida" }
+          "warning": { "name": "Información de alerta" },
+          "suggestion": { "name": "Sugerencias del índice de vida" }
         },
         "unit_of_measurement": {
           "°C": "Grados Celsius",

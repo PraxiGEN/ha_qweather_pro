@@ -3,24 +3,24 @@
     "step": {
       "user": {
         "title": "새 도시 추가",
-        "description": "QWeather가 이미 구성된 것으로 보입니다. **‘새 계정 사용’** 또는 **‘기존 계정 재사용’** 중에서 선택할 수 있습니다.\n **주의:** 동일한 **API Host** 아래 여러 도시를 추가하면 요청량이 배로 증가합니다. 초과 사용을 방지하기 위해 업데이트 간격을 적절히 늘려주세요.",
+        "description": "QWeather가 이미 구성된 것으로 보입니다. **‘새 계정 사용’** 또는 **‘기존 계정 재사용’**을 선택할 수 있습니다.\r\n**참고:** 동일한 **API Host** 아래에 여러 도시를 추가하면 요청량이 증가합니다. 제한을 초과하지 않도록 업데이트 간격을 적절히 늘려주세요.",
         "data": {
           "account_selection": "계정/자격 증명 재사용"
         }
       },
       "setup": {
-        "title": "QWeather Pro 설정",
-        "description": "### ⚙️ 설정 단계\n **[QWeather 콘솔](https://console.qweather.com)에 접속:**\n 1. 설정에서 **API Host**를 복사하여 아래 **API Host** 필드에 입력합니다.\n 2. 프로젝트 관리 → 프로젝트 생성 후, 인증 정보를 추가합니다: **JSON Web Token** 또는 **API KEY**.\n 3. 위치는 위도·경도(WGS‑84)만 지원합니다. 예: 116.40,39.90.\n 기본값은 HA의 위도·경도입니다.\n #### 참고: **API KEY** 인증은 보안성이 낮으며 요청 제한이 적용됩니다. **JSON Web Token (JWT)** 사용을 권장합니다!",
+        "title": "QWeather Pro 구성",
+        "description": "### 설정 단계\r\n**[QWeather 콘솔]({qweather_console})로 이동:**\r\n1. 설정에서 **API Host**를 복사하여 아래 **API Host** 필드에 입력합니다.\r\n2. 프로젝트 관리 → 프로젝트 생성 후, 프로젝트에 자격 증명 추가: **JSON Web Token** 및 **API KEY**(선택 사항).\r\n3. 위치는 위도와 경도(WGS‑84)만 지원합니다. 예: 116.40,39.90.\r\n기본 위치는 Home Assistant의 위도·경도입니다.\r\n#### 참고: API KEY 인증은 보안이 충분하지 않습니다. API KEY를 사용하는 모든 요청은 엄격한 제한을 받습니다. JWT 인증 사용을 권장합니다!",
         "data": {
           "host": "API Host",
-          "location_id": "지리 위치 (경도 먼저, 위도·경도만 지원)",
-          "use_token": "JWT 인증 사용 (권장)",
-          "api_key": "일반 API Key (JWT 사용 시 비워두기)"
+          "location_id": "지리적 위치. 경도와 위도만 지원(경도 먼저).",
+          "use_token": "JWT 인증 사용(권장)",
+          "api_key": "일반 API Key(JWT 사용 시 비워두기)"
         }
       },
       "jwt_setup": {
-        "title": "JWT 보안 인증 설정",
-        "description": "공개 키가 자동으로 생성되었습니다.\n\n**단계:**\n1. 아래 상자의 **공개 키**를 복사합니다.\n2. [QWeather 콘솔](https://console.qweather.com)에서 프로젝트에 인증 정보를 추가하고, **JSON Web Token**을 선택한 뒤 공개 키를 붙여넣습니다.\n\n```text\n{public_key}\n```\n\n완료 후 **Project ID**와 **Key ID**를 입력하세요.\n### 참고: JWT 인증은 한 번만 추가할 수 있습니다. 통합을 다시 추가하면 기존 JWT는 더 이상 유효하지 않습니다.",
+        "title": "JWT 보안 인증 구성",
+        "description": "공개 키가 자동으로 생성되었습니다.\r\n**단계:**\r\n1. 아래 상자에 있는 **공개 키**를 복사합니다.\r\n2. [QWeather 콘솔]({qweather_console})에서 프로젝트에 자격 증명을 추가하고 **JSON Web Token**을 선택한 뒤 공개 키를 붙여넣습니다.\r\n```text\n{public_key}\n```\r\n완료 후 **Project ID**와 **Key ID**를 입력하세요.\r\n#### 참고: JWT 인증은 한 번만 추가할 수 있습니다. 통합을 다시 추가하면 기존 JWT 자격 증명은 더 이상 유효하지 않습니다.",
         "data": {
           "project_id": "Project ID",
           "key_id": "Key ID"
@@ -28,24 +28,24 @@
       },
       "reuse_location": {
         "title": "새 도시 추가",
-        "description": "기존 계정 정보가 성공적으로 불러와졌습니다. 추가하려는 도시의 **지리 위치(위도·경도)** 를 입력하세요.",
+        "description": "기존 계정 정보가 성공적으로 불러와졌습니다. 새로 추가할 도시의 **지리적 위치(위도·경도)**를 입력하세요.",
         "data": {
-          "location_id": "새 도시의 지리 위치"
+          "location_id": "새 도시의 지리적 위치"
         }
       },
       "select_location": {
         "title": "도시 위치 확인",
-        "description": "여러 개의 일치하는 지역이 검색되었습니다. 가장 정확한 지역을 선택하세요:",
+        "description": "여러 개의 일치하는 지역이 발견되었습니다. 가장 정확한 지역을 선택하세요:",
         "data": {
           "location_index": "일치하는 도시 목록"
         }
       },
       "reconfigure": {
-        "title": "인증 정보 재구성",
-        "description": "인증 오류로 인해 통합이 작동을 멈췄을 수 있습니다. 여기에서 API Host 또는 키를 업데이트하세요.",
+        "title": "인증 재구성",
+        "description": "인증이 유효하지 않아 통합이 작동하지 않을 수 있습니다. API Host 또는 키를 업데이트하세요.",
         "data": {
           "host": "API Host",
-          "location_id": "지리 위치",
+          "location_id": "지리적 위치",
           "use_token": "JWT 인증 사용",
           "api_key": "API Key"
         }
@@ -53,18 +53,18 @@
     },
     "error": {
       "invalid_parameter": "잘못된 매개변수",
-      "location_not_found": "위치를 찾을 수 없습니다",
-      "data_not_available": "이 위치의 데이터를 사용할 수 없습니다",
+      "location_not_found": "위치를 찾을 수 없음",
+      "data_not_available": "이 위치의 데이터를 사용할 수 없음",
       "invalid_auth": "잘못된 API Key 또는 JWT",
-      "no_credit": "크레딧 부족 또는 미납",
-      "security_restriction": "보안 제한 (IP/Ref 필터)",
+      "no_credit": "크레딧 부족 또는 연체",
+      "security_restriction": "보안 제한(IP/Ref 필터)",
       "invalid_host": "잘못된 API Host",
-      "account_suspended": "계정이 정지되었습니다",
-      "forbidden": "이 데이터에 대한 권한이 없습니다",
-      "not_found": "리소스를 찾을 수 없습니다 (404)",
-      "too_many_requests": "요청이 너무 많습니다 (요청 제한)",
+      "account_suspended": "계정이 정지됨",
+      "forbidden": "이 데이터에 대한 권한 없음",
+      "not_found": "리소스를 찾을 수 없음(404)",
+      "too_many_requests": "요청 과다(요청 제한 초과)",
       "over_monthly_limit": "월간 할당량 초과",
-      "server_error": "서버 오류 (500)",
+      "server_error": "서버 오류(500)",
       "cannot_connect": "연결 실패"
     },
     "abort": {
@@ -75,20 +75,20 @@
   "selector": {
     "account_selection": {
       "options": {
-        "new_account": "새 계정/자격 증명"
+        "new_account": "새 계정 / 새 자격 증명"
       }
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "옵션 설정",
-        "description": "### 💡 사용 안내\n- 일일 예보는 **3일/7일/15일/30일** 중 선택할 수 있습니다. 격자 기반 일일 예보는 **3일/7일** 만 지원합니다.\n- 시간별 예보는 **24h/72h/168h** 중 선택할 수 있습니다. 격자 기반 시간별 예보는 **24h/72h** 만 지원합니다.\n- **격자 기반 날씨**: 고정밀 격자 API를 활성화하면 일부 실측 데이터(예: **가시거리**)가 제공되지 않으며, 카드에서는 `--` 로 표시됩니다.",
+        "title": "통합 옵션",
+        "description": "### 사용 안내\r\n일일 예보는 **3/7/15/30**일로 설정할 수 있으며, 그리드 기반 일일 예보는 **3/7**일만 지원합니다.\r\n- 시간별 예보는 **24/72/168**시간으로 설정할 수 있으며, 그리드 기반 시간별 예보는 **24/72**시간만 지원합니다.\r\n- **그리드 날씨**: 고정밀 그리드 API를 활성화하면 일부 관측 데이터(예: **가시거리**)가 더 이상 제공되지 않으며 카드에는 `--`로 표시됩니다.",
         "data": {
-          "update_interval": "데이터 업데이트 주기 (분)",
-          "dailysteps": "일일 예보 일수 (3-30)",
-          "hourlysteps": "시간별 예보 시간 (24-168)",
-          "gird": "고정밀 격자 날씨 (V7 Grid API) 사용",
+          "update_interval": "업데이트 간격(분)",
+          "dailysteps": "일일 예보 일수(3–30)",
+          "hourlysteps": "시간별 예보 시간(24–168)",
+          "gird": "그리드 API 사용(고정밀)",
           "custom_ui": "사용자 정의 UI 지원 활성화"
         }
       }
@@ -178,7 +178,7 @@
           "type_name": { "name": "경보 유형 이름" }
         }
       },
-      "aqi_status": { "name": "대기질 상태" },
+
       "today_temp_range": {
         "name": "오늘의 기온 범위",
         "state": {
@@ -223,6 +223,7 @@
               "cold_snap": "급강하"
             }
           },
+          "aqi_status": { "name": "대기질 상태" },
           "uv_risk": {
             "name": "자외선 강도",
             "state": {
@@ -240,7 +241,7 @@
         "name": "날씨",
         "state_attributes": {
           "qweather_icon": { "name": "날씨 아이콘" },
-          "update_time": { "name": "업데이트 시간" },
+          "update_time": { "name": "데이터 업데이트 시간" },
           "obs_time": { "name": "관측 시간" },
           "condition_cn": { "name": "날씨 상태(중국어)" },
           "wind_dir": { "name": "풍향" },
@@ -250,17 +251,26 @@
           "precip_probability": { "name": "강수 확률" },
           "feels_like": { "name": "체감 온도" },
           "wind_scale": { "name": "풍력 등급" },
-          "sunrise": { "name": "일출" },
-          "sunset": { "name": "일몰" },
-          "moon_phase": { "name": "월령" },
-          "moonrise": { "name": "월출" },
-          "moonset": { "name": "월몰" },
-          "minutely_summary": { "name": "분 단위 요약" },
-          "hourly_summary": { "name": "시간 단위 요약" },
+          "sunrise": { "name": "일출 시간" },
+          "sunset": { "name": "일몰 시간" },
+          "moon_phase": { "name": "달의 위상" },
+          "moonrise": { "name": "월출 시간" },
+          "moonset": { "name": "월몰 시간" },
+          "minutely_summary": { "name": "분 단위 날씨 요약" },
+          "moon_phase_icon": { "name": "달 위상 아이콘" },
+          "text_night": { "name": "야간 날씨 상태" },
+          "icon_night": { "name": "야간 아이콘" },
+          "wind_scale_day": { "name": "주간 풍력 등급" },
+          "wind_scale_night": { "name": "야간 풍력 등급" },
+          "wind_dir_day": { "name": "주간 풍향" },
+          "wind_dir_night": { "name": "야간 풍향" },
+          "forecast_pressure": { "name": "예상 기압" },
+          "forecast_vis": { "name": "예상 가시거리" },
+          "forecast_cloud": { "name": "예상 구름량" },
           "aqi": { "name": "대기질 지수" },
           "city": { "name": "도시" },
           "warning": { "name": "경보 정보" },
-          "suggestion": { "name": "생활 지수 조언" }
+          "suggestion": { "name": "생활 지수 제안" }
         },
         "unit_of_measurement": {
           "°C": "섭씨",

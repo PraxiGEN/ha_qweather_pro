@@ -15,7 +15,6 @@ from homeassistant.const import (
     UnitOfSpeed,
     UnitOfTemperature,
 )
-from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN, ATTRIBUTION, CONF_CUSTOM_UI
@@ -167,18 +166,31 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
             "precip": now.get("precip"),
             "dew": now.get("dew"),
             "minutely_summary": data.get("minutely_summary"),
-            "hourly_summary": data.get("hourly_summary"),
         }
 
         # 2. 动态补全最新 API 字段 (从预报中提取今日瞬时值)
         if daily:
             today = daily[0]
+            # --- 天文数据 ---
             attrs["sunrise"] = today.get("sunrise")
             attrs["sunset"] = today.get("sunset")
-            attrs["moon_phase"] = today.get("moon_phase")
-            attrs["uv_index"] = today.get("uv_index")
             attrs["moonrise"] = today.get("moonrise")
             attrs["moonset"] = today.get("moonset")
+            attrs["moon_phase"] = today.get("moon_phase")
+            attrs["moon_phase_icon"] = today.get("moon_phase_icon")
+            # --- 昼夜状况 ---
+            attrs["text_night"] = today.get("text_night")
+            attrs["icon_night"] = today.get("icon_night")
+            # --- 风力详情 (昼夜分离) ---
+            attrs["wind_scale_day"] = today.get("wind_scale_day")
+            attrs["wind_scale_night"] = today.get("wind_scale_night")
+            attrs["wind_dir_day"] = today.get("wind_dir_day")
+            attrs["wind_dir_night"] = today.get("wind_dir_night")
+            # --- 预报类辅助参数 ---
+            attrs["uv_index"] = today.get("uv_index")
+            attrs["forecast_pressure"] = today.get("pressure")
+            attrs["forecast_vis"] = today.get("vis")
+            attrs["forecast_cloud"] = today.get("cloud")
 
         if hourly:
             attrs["precip_probability"] = hourly[0].get("precipitation_probability")

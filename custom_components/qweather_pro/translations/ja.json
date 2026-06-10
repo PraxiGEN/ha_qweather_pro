@@ -4,24 +4,24 @@
     "step": {
       "user": {
         "title": "新しい都市を追加",
-        "description": "QWeather がすでに設定されているようです。**「新しいアカウントを使用」** または **「既存アカウントを再利用」** を選択できます。\n **注意：** 同じ **API Host** に複数の都市を追加すると、リクエスト量が倍増します。上限超過を避けるため、更新間隔を適切に延長してください。",
+        "description": "QWeather はすでに設定されています。**「新しいアカウントを使用」** または **「既存アカウントを再利用」** を選択できます。\r\n**注意:** 同じ **API Host** に複数の都市を追加すると、リクエスト量が増加します。制限超過を避けるため、更新間隔を適切に延長してください。",
         "data": {
           "account_selection": "アカウント／認証情報の再利用"
         }
       },
       "setup": {
-        "title": "QWeather Pro を設定",
-        "description": "### ⚙️ 設定手順\n **[QWeather コンソール](https://console.qweather.com) にアクセス：**\n 1. 設定で **API Host** をコピーし、下の **API Host** フィールドに入力します。\n 2. プロジェクト管理 → プロジェクトを作成し、認証情報（**JSON Web Token** または **API KEY**）を追加します。\n 3. 位置情報は緯度・経度（WGS‑84）のみ対応しています。例：116.40,39.90。\n デフォルトでは HA の緯度・経度が使用されます。\n #### 注意：**API KEY** 認証は安全性が不十分で、リクエスト制限の対象となります。**JSON Web Token (JWT)** の使用を推奨します！",
+        "title": "QWeather Pro の設定",
+        "description": "### 設定手順\r\n**[QWeather コンソール]({qweather_console}) にアクセス:**\r\n1. 設定で **API Host** をコピーし、下の **API Host** フィールドに入力します。\r\n2. プロジェクト管理 → プロジェクトを作成し、認証情報（**JSON Web Token** または **API KEY**）を追加します。\r\n3. 位置情報は緯度・経度（WGS‑84）のみ対応しています。例：116.40,39.90。\r\nデフォルトの位置情報は Home Assistant の緯度・経度です。\r\n#### 注意: API KEY 認証は十分なセキュリティを提供しません。API KEY を使用したすべてのリクエストは厳しい制限を受けます。JWT 認証の使用を推奨します。",
         "data": {
           "host": "API Host",
-          "location_id": "地理位置（緯度・経度のみ、経度が先）",
+          "location_id": "地理位置情報（経度・緯度。経度が先）",
           "use_token": "JWT 認証を使用（推奨）",
           "api_key": "通常の API Key（JWT 使用時は空欄）"
         }
       },
       "jwt_setup": {
-        "title": "JWT セキュリティ認証を設定",
-        "description": "公開鍵が自動生成されました。\n\n**手順：**\n1. 下のボックス内の **公開鍵** をコピーします。\n2. [QWeather コンソール](https://console.qweather.com) にアクセスし、プロジェクトに認証情報を追加、**JSON Web Token** を選択し、公開鍵を貼り付けます。\n\n```text\n{public_key}\n```\n\n完了後、**Project ID** と **Key ID** を入力してください。\n### 注意：JWT 認証は一度しか追加できません。再設定すると以前の JWT は無効になります。",
+        "title": "JWT セキュリティ認証の設定",
+        "description": "公開鍵が自動的に生成されました。\r\n**手順:**\r\n1. 下のボックスにある **公開鍵** をコピーします。\r\n2. [QWeather コンソール]({qweather_console}) にアクセスし、プロジェクトに認証情報を追加、**JSON Web Token** を選択し公開鍵を貼り付けます。\r\n```text\n{public_key}\n```\r\n完了後、**Project ID** と **Key ID** を入力してください。\r\n#### 注意: JWT 認証は一度しか追加できません。統合を再追加すると、以前の JWT 認証情報は無効になります。",
         "data": {
           "project_id": "Project ID",
           "key_id": "Key ID"
@@ -29,47 +29,47 @@
       },
       "reuse_location": {
         "title": "新しい都市を追加",
-        "description": "既存のアカウント情報が正常に読み込まれました。追加したい都市の **地理位置（緯度・経度）** を入力してください。",
+        "description": "既存のアカウント情報が正常に読み込まれました。追加したい都市の **地理位置情報（緯度・経度）** を入力してください。",
         "data": {
-          "location_id": "新しい都市の地理位置"
+          "location_id": "新しい都市の地理位置情報"
         }
       },
       "select_location": {
-        "title": "都市位置を確認",
-        "description": "複数の一致する地域が見つかりました。最も正確なものを選択してください：",
+        "title": "都市位置の確認",
+        "description": "複数の一致する地域が見つかりました。最も正確なものを選択してください:",
         "data": {
-          "location_index": "一致した都市リスト"
+          "location_index": "一致した都市の一覧"
         }
       },
       "reconfigure": {
-        "title": "認証情報を再設定",
-        "description": "認証エラーにより統合が動作停止した可能性があります。API Host またはキーを更新してください。",
+        "title": "認証の再設定",
+        "description": "認証が無効になっている可能性があります。API Host またはキーを更新してください。",
         "data": {
           "host": "API Host",
-          "location_id": "地理位置",
+          "location_id": "地理位置情報",
           "use_token": "JWT 認証を使用",
           "api_key": "API Key"
         }
       }
     },
     "error": {
-      "invalid_parameter": "無効なパラメータ",
+      "invalid_parameter": "無効なパラメーター",
       "location_not_found": "位置情報が見つかりません",
       "data_not_available": "この位置のデータは利用できません",
       "invalid_auth": "無効な API Key または JWT",
       "no_credit": "クレジット不足または未払い",
-      "security_restriction": "セキュリティ制限（IP／Ref フィルタ）",
+      "security_restriction": "セキュリティ制限（IP/Ref フィルター）",
       "invalid_host": "無効な API Host",
       "account_suspended": "アカウントが停止されています",
       "forbidden": "このデータへのアクセス権がありません",
       "not_found": "リソースが見つかりません（404）",
-      "too_many_requests": "リクエストが多すぎます（レート制限）",
+      "too_many_requests": "リクエスト過多（レート制限）",
       "over_monthly_limit": "月間クォータ超過",
       "server_error": "サーバーエラー（500）",
       "cannot_connect": "接続に失敗しました"
     },
     "abort": {
-      "already_configured": "この位置はすでに設定されています",
+      "already_configured": "この位置情報はすでに設定されています",
       "reconfigure_successful": "設定が正常に更新されました！"
     }
   },
@@ -83,13 +83,13 @@
   "options": {
     "step": {
       "init": {
-        "title": "オプション設定",
-        "description": "### 💡 使用説明\n- 日次予報は **3日/7日/15日/30日** を選択できます。格子点日次予報は **3日/7日** のみ対応。\n- 時間別予報は **24h/72h/168h** を選択できます。格子点時間別予報は **24h/72h** のみ対応。\n- **格子点天気**：高精度格子点 API を有効にすると、一部の実測データ（例：**視程**）が提供されず、カードでは `--` と表示されます。",
+        "title": "統合オプション",
+        "description": "### 使用説明\r\n日次予報は **3/7/15/30** 日から選択できますが、グリッド日次予報は **3/7** 日のみ対応しています。\r\n- 時間予報は **24/72/168** 時間から選択できますが、グリッド時間予報は **24/72** 時間のみ対応しています。\r\n- **グリッド天気**: 高精度グリッド API を有効にすると、一部の観測データ（例：**視程**）が利用できなくなり、カード上では `--` と表示されます。",
         "data": {
-          "update_interval": "データ更新間隔（分）",
-          "dailysteps": "日次予報日数 (3-30)",
-          "hourlysteps": "時間別予報時間数 (24-168)",
-          "gird": "高精度格子点天気 (V7 Grid API) を使用",
+          "update_interval": "更新間隔（分）",
+          "dailysteps": "日次予報（日数 3–30）",
+          "hourlysteps": "時間予報（24–168 時間）",
+          "gird": "グリッド API を使用（高精度）",
           "custom_ui": "カスタム UI サポートを有効化"
         }
       }
@@ -138,6 +138,7 @@
           "mg/m³": "ミリグラム/立方メートル"
         }
       },
+
       "warning_info": {
         "name": "気象警報",
         "state": {
@@ -178,6 +179,7 @@
           "type_name": { "name": "警報タイプ名" }
         }
       },
+
       "today_temp_range": {
         "name": "今日の気温範囲",
         "state": {
@@ -240,7 +242,7 @@
         "name": "天気",
         "state_attributes": {
           "qweather_icon": { "name": "天気アイコン" },
-          "update_time": { "name": "更新時間" },
+          "update_time": { "name": "データ更新時間" },
           "obs_time": { "name": "観測時間" },
           "condition_cn": { "name": "天気状況（中国語）" },
           "wind_dir": { "name": "風向" },
@@ -250,17 +252,26 @@
           "precip_probability": { "name": "降水確率" },
           "feels_like": { "name": "体感温度" },
           "wind_scale": { "name": "風力階級" },
-          "sunrise": { "name": "日の出" },
-          "sunset": { "name": "日の入り" },
+          "sunrise": { "name": "日の出時刻" },
+          "sunset": { "name": "日の入り時刻" },
           "moon_phase": { "name": "月相" },
-          "moonrise": { "name": "月の出" },
-          "moonset": { "name": "月の入り" },
-          "minutely_summary": { "name": "1分間天気概要" },
-          "hourly_summary": { "name": "1時間天気概要" },
+          "moonrise": { "name": "月の出時刻" },
+          "moonset": { "name": "月の入り時刻" },
+          "minutely_summary": { "name": "1分ごとの天気概要" },
+          "moon_phase_icon": { "name": "月相アイコン" },
+          "text_night": { "name": "夜間の天気状況" },
+          "icon_night": { "name": "夜間アイコン" },
+          "wind_scale_day": { "name": "昼間の風力階級" },
+          "wind_scale_night": { "name": "夜間の風力階級" },
+          "wind_dir_day": { "name": "昼間の風向" },
+          "wind_dir_night": { "name": "夜間の風向" },
+          "forecast_pressure": { "name": "予想気圧" },
+          "forecast_vis": { "name": "予想視程" },
+          "forecast_cloud": { "name": "予想雲量" },
           "aqi": { "name": "空気質指数" },
           "city": { "name": "都市" },
           "warning": { "name": "警報情報" },
-          "suggestion": { "name": "生活指数アドバイス" }
+          "suggestion": { "name": "生活指数の提案" }
         },
         "unit_of_measurement": {
           "°C": "摂氏度",

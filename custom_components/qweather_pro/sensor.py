@@ -8,7 +8,7 @@ from homeassistant.components.sensor import (
     SensorEntity,
     SensorEntityDescription,
 )
-from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
+
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN, ATTRIBUTION, LOGGER
@@ -104,7 +104,7 @@ async def async_setup_entry(
     )
 
 class QWeatherSensor(CoordinatorEntity[QWeatherUpdateCoordinator], SensorEntity):
-    """和风天气传感器（官方规范版）."""
+    """和风天气传感器."""
 
     _attr_has_entity_name = True
 

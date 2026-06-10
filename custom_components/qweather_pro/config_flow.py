@@ -122,6 +122,9 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
                 ),
             }),
+            description_placeholders={
+                "qweather_console": "https://console.qweather.com"
+            }
         )
 
     async def async_step_reuse_location(self, user_input: dict[str, Any] | None = None) -> FlowResult:
@@ -165,7 +168,10 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_PROJECT_ID): selector.TextSelector(),
                 vol.Required(CONF_KEY_ID): selector.TextSelector(),
             }),
-            description_placeholders={"public_key": self._generated_public_key}
+            description_placeholders={
+                "public_key": self._generated_public_key,
+                "qweather_console": "https://console.qweather.com"
+            }
         )
 
     async def _async_search_location(self, config_data: dict[str, Any]) -> FlowResult:

@@ -360,23 +360,43 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     def _parse_daily(self, data: list) -> list:
         return [{
+            # 时间轴
             "datetime": f"{d.get('fxDate')}T00:00:00",
-            "native_temperature": self._to_f(d.get("tempMax"), 0.0),
-            "native_templow": self._to_f(d.get("tempMin"), 0.0),
+            # 天气状况 (昼/夜)
             "condition": CONDITION_MAP.get(d.get("iconDay"), "exceptional"),
             "condition_night": CONDITION_MAP.get(d.get("iconNight"), "exceptional"),
             "icon": d.get("iconDay"),
+            "icon_night": d.get("iconNight"),
             "text": d.get("textDay", "Unknown"),
-            "native_precipitation": self._to_f(d.get("precip"), 0.0),
+            "text_night": d.get("textNight", "Unknown"),
+            # 温度数值
+            "native_temperature": self._to_f(d.get("tempMax"), 0.0),
+            "native_templow": self._to_f(d.get("tempMin"), 0.0),
+            #  风力详情 (白天)
+            "wind_360_day": self._to_f(d.get("wind360Day"), 0.0),
+            "wind_dir_day": d.get("windDirDay"),
+            "wind_scale_day": d.get("windScaleDay"),
             "native_wind_speed": self._to_f(d.get("windSpeedDay"), 0.0),
-            "humidity": self._to_f(d.get("humidity"), 0.0),
-            "uv_index": d.get("uvIndex"),
-            "moon_phase": d.get("moonPhase"),
-            "moon_phase_icon": d.get("moonPhaseIcon"),
+            # 风力详情 (夜间)
+            "wind_360_night": self._to_f(d.get("wind360Night"), 0.0),
+            "wind_dir_night": d.get("windDirNight"),
+            "wind_scale_night": d.get("windScaleNight"),
+            "wind_speed_night": self._to_f(d.get("windSpeedNight"), 0.0),
+            # 太阳天文 
             "sunrise": d.get("sunrise"),
             "sunset": d.get("sunset"),
+            # 月亮天文 
             "moonrise": d.get("moonrise"),
             "moonset": d.get("moonset"),
+            "moon_phase": d.get("moonPhase"),
+            "moon_phase_icon": d.get("moonPhaseIcon"),
+            # 气象环境参数
+            "humidity": self._to_f(d.get("humidity"), 0.0),
+            "native_precipitation": self._to_f(d.get("precip"), 0.0),
+            "pressure": self._to_f(d.get("pressure"), 0.0),
+            "vis": self._to_f(d.get("vis"), 0.0),
+            "cloud": self._to_f(d.get("cloud"), 0.0),
+            "uv_index": d.get("uvIndex"),
         } for d in data]
 
     def _parse_hourly(self, data: list) -> list:

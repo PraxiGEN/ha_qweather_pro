@@ -98,15 +98,11 @@
 
     _getIcon(code, datetime = null) {
       if (!code) return "https://static.qweather.com/img/common/icon/202106d/100.png";
-
-      // 自动判断白天/夜晚
       let isDay = true;
-
       if (datetime) {
         const hour = new Date(datetime).getHours();
         isDay = hour >= 6 && hour < 18;
       }
-
       const suffix = isDay ? "d" : "n";
       return `https://static.qweather.com/img/common/icon/202106${suffix}/${code}.png`;
     }
@@ -128,7 +124,6 @@
     _renderBriefing() {
       const d = this._briefing.attributes;
       const zh = this._lang.startsWith("zh");
-
       const period = this._t(`period.${d.period}`);
       const tempTrend = `${this._t("temp_change_prefix")}${this._t(`temp_change_type.${d.temp_change_type}`)}`;
       const aqi = `${this._t("now_prefix")}${d.aqi_status}`;
@@ -138,7 +133,6 @@
       if (zh) {
         return `${period}${tonightText}，${tempTrend}。${aqi}，${uv}。`;
       }
-
       return `${period} ${tonightText}, ${tempTrend}. ${aqi}, ${uv}.`;
     }
 
@@ -186,16 +180,19 @@
             </div>
           </div>
 
-          <!-- Warnings -->
+          <!-- Warnings -支持全显与白字 -->
           ${a.warning?.length
             ? a.warning.map(w=>html`
               <div class="warning-section" style="background-color:${this._getWarningColor(w.level)}">
                 <ha-icon icon="mdi:alert-decagram"></ha-icon>
-                <div><div style="font-weight:bold;">${w.title}</div><div class="warning-text">${w.text}</div></div>
+                <div>
+                  <div style="font-weight:bold; font-size: 14px;">${w.title}</div>
+                  <div class="warning-text">${w.text}</div>
+                </div>
               </div>`)
             : ""}
 
-          <!-- 智能简报（已替换为后端摘要） -->
+          <!-- 智能简报 -->
           <div class="briefing-box">
             <div class="brief-item">
               <ha-icon icon="mdi:clock-fast"></ha-icon>
@@ -248,8 +245,8 @@
     }
 
     _getWarningColor(lv){
-      const c={"蓝色":"#2196f3","黄色":"#ffeb3b","橙色":"#ff9800","红色":"#f44336"};
-      return c[lv]||"var(--error-color)";
+      const c={"蓝色":"#2196f3","黄色":"#fdd835","橙色":"#ff9800","红色":"#f44336"};
+      return c[lv]||"#f44336";
     }
 
     _handleMoreInfo(){
@@ -272,8 +269,10 @@
         .current-temp span{font-size:16px;vertical-align:top;margin-left:2px;}
         .update-time{font-size:11px;color:var(--secondary-text-color);margin-top:4px;text-align:right;}
 
-        .warning-section{color:#333;padding:10px;border-radius:8px;margin-bottom:16px;display:flex;gap:10px;border:1px solid rgba(0,0,0,.1);}
-        .warning-text{font-size:12px;opacity:.9;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+        /* 预警：白字模式 */
+        .warning-section{color:white;padding:12px;border-radius:8px;margin-bottom:16px;display:flex;gap:12px;border:1px solid rgba(255,255,255,.2);line-height:1.4;}
+        .warning-section ha-icon{color:white;--mdc-icon-size:24px;flex-shrink:0;}
+        .warning-text{font-size:12px;opacity:.95;margin-top:4px;display:block;white-space:pre-wrap;}
 
         .briefing-box{background:var(--secondary-background-color);padding:12px;border-radius:10px;margin-bottom:24px;display:flex;flex-direction:column;gap:8px;}
         .brief-item{display:flex;align-items:center;gap:10px;}
@@ -296,7 +295,6 @@
         .forecast-scroll-container::-webkit-scrollbar-thumb{background:var(--divider-color);border-radius:4px;}
 
         .f-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--divider-color);}
-        .f-row:last-child{border-bottom:none;}
         .f-date{width:70px;font-size:13px;}
         .f-icon-box{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;}
         .f-icon{width:26px;height:26px;}
@@ -317,6 +315,6 @@
     type:"qweather-card",
     name:"QWeather Pro Card",
     preview:true,
-    description:"A compact weather card with 6 key metrics, bilingual support, and auto language detection."
+    description:"A professional weather card with full-text alerts and white-on-red warning support."
   });
 })();
