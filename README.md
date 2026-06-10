@@ -7,6 +7,7 @@
 [![Release](https://img.shields.io/github/v/release/hzonz/ha_qweather_pro)](https://github.com/hzonz/ha_qweather_pro/releases)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/hzonz/ha_qweather_pro/blob/main/LICENSE)
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+![](https://komarev.com/ghpvc/?username=hzonz&color=ff69b4)
 
 ## A deeply customized advanced QWeather (HeWeather) integration for Home Assistant.  
 Rebuilt using the latest 2026 development standards, delivering not only highly accurate meteorological data but also ultra-fast native SVG weather cards and professional-grade detail popups.
