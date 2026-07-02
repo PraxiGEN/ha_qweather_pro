@@ -5,19 +5,46 @@ import asyncio
 import time
 from typing import Any
 
-import jwt
 from aiohttp import ClientSession
-from cryptography.hazmat.primitives import serialization
-from tenacity import retry, stop_after_attempt, wait_exponential
 
 from .const import DOMAIN, LOGGER
+
+# JWT 相关依赖为可选导入（仅 JWT 模式需要，API Key 用户不需要）
+try:
+    import jwt
+    HAS_JWT = True
+except ImportError:
+    HAS_JWT = False
+    jwt = None  # type: ignore
+
+try:
+    from cryptography.hazmat.primitives import serialization
+    HAS_CRYPTO = True
+except ImportError:
+    HAS_CRYPTO = False
+    serialization = None  # type: ignore
+
+try:
+    from tenacity import retry, stop_after_attempt, wait_exponential
+    HAS_TENACITY = True
+except ImportError:
+    HAS_TENACITY = False
+    # 如果 tenacity 不可用，提供无重试的 fallback 装饰器
+    def retry(*args, **kwargs):
+        """Fallback: 不重试，直接执行原函数."""
+        def decorator(func):
+            return func
+        return decorator
+    stop_after_attempt = None
+    wait_exponential = None
+
 
 class QWeatherAPI:
     """和风天气 API 高级封装客户端."""
 
     def __init__(
-        self, 
-        session: ClientSession, 
+        self,
+        session: ClientSession,
         api_key: str | None = None,
         use_token: bool = False,
         project_id: str | None = None,
@@ -38,12 +65,15 @@ class QWeatherAPI:
         try:
             if not self.private_key:
                 return None
-            
+            if not HAS_JWT or not HAS_CRYPTO:
+                LOGGER.error("QWeather JWT 签名需要 PyJWT 和 cryptography 库")
+                return None
+
             # 加载 Ed25519 私钥
             private_key_obj = serialization.load_pem_private_key(
                 self.private_key.encode('utf-8'), password=None
             )
-            
+
             now_ts = int(time.time())
             # Payload: 仅包含 sub, iat, exp。移除所有默认字段。
             payload = {
@@ -51,14 +81,14 @@ class QWeatherAPI:
                 'iat': now_ts - 30,   # 解决服务器时钟不同步
                 'exp': now_ts + 900    # 有效期 15 分钟
             }
-            
+
             # Header: 显式指定 alg 和 kid
             headers = {'kid': self.key_id}
-            
+
             return jwt.encode(
-                payload, 
-                private_key_obj, 
-                algorithm='EdDSA', 
+                payload,
+                private_key_obj,
+                algorithm='EdDSA',
                 headers=headers
             )
         except Exception as err:
@@ -66,8 +96,8 @@ class QWeatherAPI:
             return None
 
     @retry(
-        wait=wait_exponential(multiplier=2, min=2, max=10),
-        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=2, min=2, max=10) if HAS_TENACITY else None,
+        stop=stop_after_attempt(3) if HAS_TENACITY else None,
         retry_error_callback=lambda retry_state: LOGGER.error(
             "和风天气 API 请求在 %s 次尝试后彻底失败: %s",
             retry_state.attempt_number, retry_state.outcome.exception()
@@ -78,10 +108,10 @@ class QWeatherAPI:
         """统一底层异步请求方法."""
 
         params = {k: v for k, v in params.items() if v is not None}
-        
+
         # 路径适配：V1 版本特殊处理，其他版本直接使用 version_path
         real_version = "geo/v2" if version_path == "v2" else version_path
-            
+
         # 如果 endpoint 包含占位符 {lat}/{lon}，则进行替换
         if "{lat}" in endpoint and "lat" in params and "lon" in params:
             url_endpoint = endpoint.format(lat=params.pop("lat"), lon=params.pop("lon"))
@@ -89,7 +119,7 @@ class QWeatherAPI:
             url_endpoint = endpoint
 
         url = f"https://{self.host}/{real_version}/{url_endpoint}"
-        
+
         headers = {
             "User-Agent": "HomeAssistant-QWeatherPro/2.0",
             "Accept-Encoding": "gzip"
@@ -118,8 +148,8 @@ class QWeatherAPI:
                         "http_status": resp.status,
                         "error_detail": data.get("error", {}).get("title", "Unknown Error")
                     }
-                
-                return data 
+
+                return data
         except asyncio.TimeoutError:
             LOGGER.debug("QWeather API 请求超时: %s", endpoint)
             raise # 触发重试
