@@ -103,7 +103,7 @@
       "aqi": {
         "name": "Качество воздуха",
         "state": {
-          "Unknown": "Неизвестно"
+          "unknown": "Неизвестно"
         },
         "state_attributes": {
           "aqi_value": { "name": "Значение AQI" },
@@ -111,7 +111,7 @@
           "primary_pollutant": {
             "name": "Основной загрязнитель",
             "state": {
-              "None": "Нет"
+              "none": "Нет"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -123,28 +123,23 @@
           "health_effect": {
             "name": "Воздействие на здоровье",
             "state": {
-              "No data available": "Нет данных",
-              "Please refer to the recommendations of the local meteorological authorities": "Смотрите рекомендации местных метеорологических служб"
+              "No data available": "Нет данных"
             }
           },
           "health_advice": { "name": "Советы по здоровью" },
           "stations": {
             "name": "Информация о станциях",
             "state": {
-              "No monitoring station information available": "Нет данных о станциях"
+              "stations_info": "Нет данных о станциях"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "мкг/м³",
-          "mg/m³": "мг/м³"
         }
       },
 
       "warning_info": {
         "name": "Метеорологическое предупреждение",
         "state": {
-          "Without warning": "Без предупреждений"
+          "without_warning": "Без предупреждений"
         },
         "state_attributes": {
           "id": { "name": "ID предупреждения" },
@@ -195,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "Сводка осадков",
-        "state": {
-          "No precipitation in the next two hours": "В ближайшие два часа осадков не ожидается"
-        },
         "state_attributes": {
           "detail": { "name": "Подробности" }
         }
@@ -284,13 +276,6 @@
           "city": { "name": "Город" },
           "warning": { "name": "Предупреждения" },
           "suggestion": { "name": "Рекомендации по жизненному индексу" }
-        },
-        "unit_of_measurement": {
-          "°C": "Градусы Цельсия",
-          "mmHg": "Миллиметры ртутного столба",
-          "km/h": "Км/ч",
-          "km": "Километры",
-          "mm": "Миллиметры"
         }
       }
     }

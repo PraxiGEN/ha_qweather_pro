@@ -103,7 +103,7 @@
       "aqi": {
         "name": "空氣品質",
         "state": {
-          "Unknown": "未知"
+          "unknown": "未知"
         },
         "state_attributes": {
           "aqi_value": { "name": "AQI 數值" },
@@ -111,7 +111,7 @@
           "primary_pollutant": {
             "name": "主要污染物",
             "state": {
-              "None": "無"
+              "none": "無"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -123,28 +123,23 @@
           "health_effect": {
             "name": "健康影響",
             "state": {
-              "No data available": "暫無資料",
-              "Please refer to the recommendations of the local meteorological authorities": "請參考當地氣象部門建議"
+              "No data available": "暫無資料"
             }
           },
           "health_advice": { "name": "健康建議" },
           "stations": {
             "name": "監測站資訊",
             "state": {
-              "No monitoring station information available": "暫無監測站資訊"
+              "stations_info": "暫無監測站資訊"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "微克/立方公尺",
-          "mg/m³": "毫克/立方公尺"
         }
       },
 
       "warning_info": {
         "name": "氣象預警",
         "state": {
-          "Without warning": "無預警"
+          "without_warning": "無預警"
         },
         "state_attributes": {
           "id": { "name": "預警 ID" },
@@ -195,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "降水簡報",
-        "state": {
-          "No precipitation in the next two hours": "未來兩小時無降水"
-        },
         "state_attributes": {
           "detail": { "name": "細節" }
         }
@@ -284,13 +276,6 @@
           "city": { "name": "城市" },
           "warning": { "name": "預警資訊" },
           "suggestion": { "name": "生活指數建議" }
-        },
-        "unit_of_measurement": {
-          "°C": "攝氏度",
-          "mmHg": "毫米汞柱",
-          "km/h": "公里/小時",
-          "km": "公里",
-          "mm": "毫米"
         }
       }
     }

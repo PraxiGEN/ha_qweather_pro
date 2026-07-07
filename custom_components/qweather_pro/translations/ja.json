@@ -103,7 +103,7 @@
       "aqi": {
         "name": "空気質",
         "state": {
-          "Unknown": "不明"
+          "unknown": "不明"
         },
         "state_attributes": {
           "aqi_value": { "name": "AQI 値" },
@@ -111,7 +111,7 @@
           "primary_pollutant": {
             "name": "主要汚染物質",
             "state": {
-              "None": "なし"
+              "none": "なし"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -123,28 +123,23 @@
           "health_effect": {
             "name": "健康への影響",
             "state": {
-              "No data available": "データなし",
-              "Please refer to the recommendations of the local meteorological authorities": "地域の気象当局の指示を参照してください"
+              "no_data_available": "データなし"
             }
           },
           "health_advice": { "name": "健康アドバイス" },
           "stations": {
             "name": "観測所情報",
             "state": {
-              "No monitoring station information available": "観測所情報なし"
+              "stations_info": "観測所情報なし"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "マイクログラム/立方メートル",
-          "mg/m³": "ミリグラム/立方メートル"
         }
       },
 
       "warning_info": {
         "name": "気象警報",
         "state": {
-          "Without warning": "警報なし"
+          "without_warning": "警報なし"
         },
         "state_attributes": {
           "id": { "name": "警報 ID" },
@@ -185,7 +180,7 @@
       "today_temp_range": {
         "name": "今日の気温範囲",
         "state": {
-          "Unknown": "不明"
+          "unknown": "不明"
         },
         "state_attributes": {
           "max_temp": { "name": "最高気温" },
@@ -195,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "降水概要",
-        "state": {
-          "No precipitation in the next two hours": "今後2時間は降水なし"
-        },
         "state_attributes": {
           "detail": { "name": "詳細" }
         }
@@ -284,13 +276,6 @@
           "city": { "name": "都市" },
           "warning": { "name": "警報情報" },
           "suggestion": { "name": "生活指数の提案" }
-        },
-        "unit_of_measurement": {
-          "°C": "摂氏度",
-          "mmHg": "ミリメートル水銀柱",
-          "km/h": "キロメートル/時",
-          "km": "キロメートル",
-          "mm": "ミリメートル"
         }
       }
     }

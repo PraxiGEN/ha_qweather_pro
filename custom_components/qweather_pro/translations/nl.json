@@ -103,7 +103,7 @@
       "aqi": {
         "name": "Luchtkwaliteit",
         "state": {
-          "Unknown": "Onbekend"
+          "unknown": "Onbekend"
         },
         "state_attributes": {
           "aqi_value": { "name": "AQI‑waarde" },
@@ -111,7 +111,7 @@
           "primary_pollutant": {
             "name": "Primaire verontreinigende stof",
             "state": {
-              "None": "Geen"
+              "none": "Geen"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -123,28 +123,23 @@
           "health_effect": {
             "name": "Gezondheidseffecten",
             "state": {
-              "No data available": "Geen gegevens beschikbaar",
-              "Please refer to the recommendations of the local meteorological authorities": "Raadpleeg de aanbevelingen van de lokale meteorologische autoriteiten"
+              "No data available": "Geen gegevens beschikbaar"
             }
           },
           "health_advice": { "name": "Gezondheidsadvies" },
           "stations": {
             "name": "Meetstationinformatie",
             "state": {
-              "No monitoring station information available": "Geen meetstationinformatie beschikbaar"
+              "stations_info": "Geen meetstationinformatie beschikbaar"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "microgram/m³",
-          "mg/m³": "milligram/m³"
         }
       },
 
       "warning_info": {
         "name": "Weeralarm",
         "state": {
-          "Without warning": "Geen waarschuwing"
+          "without_warning": "Geen waarschuwing"
         },
         "state_attributes": {
           "id": { "name": "Waarschuwing-ID" },
@@ -195,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "Neerslagoverzicht",
-        "state": {
-          "No precipitation in the next two hours": "Geen neerslag in de komende twee uur"
-        },
         "state_attributes": {
           "detail": { "name": "Details" }
         }
@@ -284,13 +276,6 @@
           "city": { "name": "Stad" },
           "warning": { "name": "Waarschuwingsinformatie" },
           "suggestion": { "name": "Levensindex‑advies" }
-        },
-        "unit_of_measurement": {
-          "°C": "Graden Celsius",
-          "mmHg": "Millimeter kwik",
-          "km/h": "Kilometer per uur",
-          "km": "Kilometer",
-          "mm": "Millimeter"
         }
       }
     }

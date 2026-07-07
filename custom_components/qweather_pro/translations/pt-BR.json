@@ -103,7 +103,7 @@
       "aqi": {
         "name": "Qualidade do ar",
         "state": {
-          "Unknown": "Desconhecido"
+          "unknown": "Desconhecido"
         },
         "state_attributes": {
           "aqi_value": { "name": "Valor AQI" },
@@ -111,7 +111,7 @@
           "primary_pollutant": {
             "name": "Poluente principal",
             "state": {
-              "None": "Nenhum"
+              "none": "Nenhum"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -123,28 +123,23 @@
           "health_effect": {
             "name": "Impacto na saúde",
             "state": {
-              "No data available": "Sem dados disponíveis",
-              "Please refer to the recommendations of the local meteorological authorities": "Consulte as recomendações das autoridades meteorológicas locais"
+              "No data available": "Sem dados disponíveis"
             }
           },
           "health_advice": { "name": "Recomendações de saúde" },
           "stations": {
             "name": "Informações das estações",
             "state": {
-              "No monitoring station information available": "Nenhuma informação de estação disponível"
+              "stations_info": "Nenhuma informação de estação disponível"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "microgramas/m³",
-          "mg/m³": "miligramas/m³"
         }
       },
 
       "warning_info": {
         "name": "Alerta meteorológico",
         "state": {
-          "Without warning": "Sem alerta"
+          "without_warning": "Sem alerta"
         },
         "state_attributes": {
           "id": { "name": "ID do alerta" },
@@ -195,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "Resumo de precipitação",
-        "state": {
-          "No precipitation in the next two hours": "Sem precipitação nas próximas duas horas"
-        },
         "state_attributes": {
           "detail": { "name": "Detalhes" }
         }
@@ -284,13 +276,6 @@
           "city": { "name": "Cidade" },
           "warning": { "name": "Informações de alerta" },
           "suggestion": { "name": "Sugestões do índice de vida" }
-        },
-        "unit_of_measurement": {
-          "°C": "Graus Celsius",
-          "mmHg": "Milímetros de mercúrio",
-          "km/h": "Quilômetros por hora",
-          "km": "Quilômetros",
-          "mm": "Milímetros"
         }
       }
     }

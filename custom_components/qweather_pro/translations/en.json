@@ -103,7 +103,7 @@
       "aqi": {
         "name": "Air Quality",
         "state": {
-          "Unknown": "Unknown"
+          "unknown": "Unknown"
         },
         "state_attributes": {
           "aqi_value": { "name": "AQI Value" },
@@ -111,7 +111,7 @@
           "primary_pollutant": {
             "name": "Primary Pollutant",
             "state": {
-              "None": "None"
+              "none": "None"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -123,21 +123,16 @@
           "health_effect": {
             "name": "Health Effect",
             "state": {
-              "No data available": "No data available",
-              "Please refer to the recommendations of the local meteorological authorities": "Please refer to the recommendations of the local meteorological authorities"
+              "no_data_available": "No data available"
             }
           },
           "health_advice": { "name": "Health Advice" },
           "stations": {
             "name": "Monitoring Station Information",
             "state": {
-              "No monitoring station information available": "No monitoring station information available"
+              "stations_info": "No monitoring station information available"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "μg/m³",
-          "mg/m³": "mg/m³"
         }
       },
 
@@ -195,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "Precipitation Forecast",
-        "state": {
-          "No precipitation in the next two hours": "No precipitation in the next two hours"
-        },
         "state_attributes": {
           "detail": { "name": "Detail" }
         }
@@ -284,13 +276,6 @@
           "city": { "name": "City" },
           "warning": { "name": "Warnings and Advisories" },
           "suggestion": { "name": "Life Index Suggestions" }
-        },
-        "unit_of_measurement": {
-          "°C": "Celsius",
-          "mmHg": "mmHG",
-          "km/h": "kmh",
-          "km": "km",
-          "mm": "mm"
         }
       }
     }

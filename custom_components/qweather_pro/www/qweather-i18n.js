@@ -22,7 +22,7 @@ window.QW_I18N = {
     receiving:"Daten werden empfangen...",
     weekday:["So","Mo","Di","Mi","Do","Fr","Sa"],
     /* Popup-Karte */
-    night_weather_info:"Nachtwetter",
+    night_weather_info:"Futuro Wetter",
     instant_weather:"Aktuelles Wetter",
     pressure:"Luftdruck",
     forecast_pressure:"Prognostizierter Luftdruck",
@@ -82,7 +82,7 @@ window.QW_I18N = {
     receiving:"Receiving data...",
     weekday:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
     /* Popup Card */
-    night_weather_info:"Night Weather",
+    night_weather_info:"Future Weather",
     instant_weather:"Instant Weather",
     pressure:"Pressure",
     forecast_pressure:"Forecast Pressure",
@@ -142,7 +142,7 @@ window.QW_I18N = {
     receiving:"Recibiendo datos...",
     weekday:["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"],
     /* Tarjeta emergente */
-    night_weather_info:"Clima nocturno",
+    night_weather_info:"Clima futuro",
     instant_weather:"Clima actual",
     pressure:"Presión",
     forecast_pressure:"Presión prevista",
@@ -202,7 +202,7 @@ window.QW_I18N = {
     receiving:"Réception des données...",
     weekday:["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"],
     /* Carte popup */
-    night_weather_info:"Météo nocturne",
+    night_weather_info:"Météo futur",
     instant_weather:"Météo actuelle",
     pressure:"Pression",
     forecast_pressure:"Pression prévue",
@@ -262,7 +262,7 @@ window.QW_I18N = {
     receiving:"Ricezione dati...",
     weekday:["Dom","Lun","Mar","Mer","Gio","Ven","Sab"],
     /* Scheda popup */
-    night_weather_info:"Meteo notturno",
+    night_weather_info:"Meteo futuro",
     instant_weather:"Meteo attuale",
     pressure:"Pressione",
     forecast_pressure:"Pressione prevista",
@@ -322,7 +322,7 @@ window.QW_I18N = {
     receiving:"データ受信中...",
     weekday:["日","月","火","水","木","金","土"],
     /* ポップアップカード */
-    night_weather_info:"夜間の天気",
+    night_weather_info:"未来の天気",
     instant_weather:"現在の天気",
     pressure:"気圧",
     forecast_pressure:"予測気圧",
@@ -382,7 +382,7 @@ window.QW_I18N = {
     receiving:"데이터 수신 중...",
     weekday:["일","월","화","수","목","금","토"],
     /* 팝업 카드 */
-    night_weather_info:"야간 날씨",
+    night_weather_info:"미래 날씨",
     instant_weather:"현재 날씨",
     pressure:"기압",
     forecast_pressure:"예상 기압",
@@ -442,7 +442,7 @@ window.QW_I18N = {
     receiving:"Gegevens worden ontvangen...",
     weekday:["Zo","Ma","Di","Wo","Do","Vr","Za"],
     /* Popupkaart */
-    night_weather_info:"Nachtweer",
+    night_weather_info:"Futuro weergave",
     instant_weather:"Actueel weer",
     pressure:"Luchtdruk",
     forecast_pressure:"Verwachte luchtdruk",
@@ -502,7 +502,7 @@ window.QW_I18N = {
     receiving:"Recebendo dados...",
     weekday:["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"],
     /* Cartão popup */
-    night_weather_info:"Clima noturno",
+    night_weather_info:"Clima futuro",
     instant_weather:"Clima atual",
     pressure:"Pressão",
     forecast_pressure:"Pressão prevista",
@@ -562,7 +562,7 @@ window.QW_I18N = {
     receiving:"Получение данных...",
     weekday:["Вс","Пн","Вт","Ср","Чт","Пт","Сб"],
     /* Всплывающая карточка */
-    night_weather_info:"Ночная погода",
+    night_weather_info:"Бущая погода",
     instant_weather:"Текущая погода",
     pressure:"Давление",
     forecast_pressure:"Прогноз давления",
@@ -622,7 +622,7 @@ window.QW_I18N = {
     receiving: "数据接收中...",
     weekday: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
     /* 弹出卡 */
-    night_weather_info: "夜间天气",
+    night_weather_info: "未来天气",
     instant_weather: "即时天气",
     pressure: "气压",
     forecast_pressure: "未来气压",
@@ -682,7 +682,7 @@ window.QW_I18N = {
     receiving:"資料接收中...",
     weekday:["周日","周一","周二","周三","周四","周五","周六"],
     /* 彈出卡 */
-    night_weather_info:"夜間天氣",
+    night_weather_info:"未來天氣",
     instant_weather:"即時天氣",
     pressure:"氣壓",
     forecast_pressure:"未來氣壓",

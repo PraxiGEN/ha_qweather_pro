@@ -103,7 +103,7 @@
       "aqi": {
         "name": "Qualità dell’aria",
         "state": {
-          "Unknown": "Sconosciuto"
+          "unknown": "Sconosciuto"
         },
         "state_attributes": {
           "aqi_value": { "name": "Valore AQI" },
@@ -111,7 +111,7 @@
           "primary_pollutant": {
             "name": "Inquinante principale",
             "state": {
-              "None": "Nessuno"
+              "none": "Nessuno"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -123,28 +123,23 @@
           "health_effect": {
             "name": "Effetti sulla salute",
             "state": {
-              "No data available": "Nessun dato disponibile",
-              "Please refer to the recommendations of the local meteorological authorities": "Consulta le raccomandazioni delle autorità meteorologiche locali"
+              "no_data_available": "Nessun dato disponibile"
             }
           },
           "health_advice": { "name": "Consigli sanitari" },
           "stations": {
             "name": "Informazioni sulle stazioni",
             "state": {
-              "No monitoring station information available": "Nessuna informazione sulle stazioni"
+              "stations_info": "Nessuna informazione sulle stazioni"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "microgrammi/m³",
-          "mg/m³": "milligrammi/m³"
         }
       },
 
       "warning_info": {
         "name": "Allerta meteorologica",
         "state": {
-          "Without warning": "Nessuna allerta"
+          "without_warning": "Nessuna allerta"
         },
         "state_attributes": {
           "id": { "name": "ID dell’allerta" },
@@ -185,7 +180,7 @@
       "today_temp_range": {
         "name": "Intervallo di temperatura di oggi",
         "state": {
-          "Unknown": "Sconosciuto"
+          "unknown": "Sconosciuto"
         },
         "state_attributes": {
           "max_temp": { "name": "Temperatura massima" },
@@ -195,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "Riepilogo precipitazioni",
-        "state": {
-          "No precipitation in the next two hours": "Nessuna precipitazione nelle prossime due ore"
-        },
         "state_attributes": {
           "detail": { "name": "Dettagli" }
         }
@@ -284,13 +276,6 @@
           "city": { "name": "Città" },
           "warning": { "name": "Informazioni di allerta" },
           "suggestion": { "name": "Suggerimenti dell’indice di vita" }
-        },
-        "unit_of_measurement": {
-          "°C": "Gradi Celsius",
-          "mmHg": "Millimetri di mercurio",
-          "km/h": "Chilometri orari",
-          "km": "Chilometri",
-          "mm": "Millimetri"
         }
       }
     }

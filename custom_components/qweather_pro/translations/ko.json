@@ -103,7 +103,7 @@
       "aqi": {
         "name": "대기질",
         "state": {
-          "Unknown": "알 수 없음"
+          "unknown": "알 수 없음"
         },
         "state_attributes": {
           "aqi_value": { "name": "AQI 값" },
@@ -111,7 +111,7 @@
           "primary_pollutant": {
             "name": "주요 오염물질",
             "state": {
-              "None": "없음"
+              "none": "없음"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -123,28 +123,23 @@
           "health_effect": {
             "name": "건강 영향",
             "state": {
-              "No data available": "데이터 없음",
-              "Please refer to the recommendations of the local meteorological authorities": "지역 기상청의 권고를 참고하세요"
+              "no_data_available": "데이터 없음"
             }
           },
           "health_advice": { "name": "건강 조언" },
           "stations": {
             "name": "관측소 정보",
             "state": {
-              "No monitoring station information available": "관측소 정보 없음"
+              "stations_info": "관측소 정보 없음"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "마이크로그램/세제곱미터",
-          "mg/m³": "밀리그램/세제곱미터"
         }
       },
 
       "warning_info": {
         "name": "기상 경보",
         "state": {
-          "Without warning": "경보 없음"
+          "without_warning": "경보 없음"
         },
         "state_attributes": {
           "id": { "name": "경보 ID" },
@@ -195,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "강수 요약",
-        "state": {
-          "No precipitation in the next two hours": "향후 2시간 동안 강수 없음"
-        },
         "state_attributes": {
           "detail": { "name": "세부 정보" }
         }
@@ -284,13 +276,6 @@
           "city": { "name": "도시" },
           "warning": { "name": "경보 정보" },
           "suggestion": { "name": "생활 지수 제안" }
-        },
-        "unit_of_measurement": {
-          "°C": "섭씨",
-          "mmHg": "밀리미터 수은주",
-          "km/h": "킬로미터/시간",
-          "km": "킬로미터",
-          "mm": "밀리미터"
         }
       }
     }

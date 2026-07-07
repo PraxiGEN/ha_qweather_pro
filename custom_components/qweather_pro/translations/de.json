@@ -103,7 +103,7 @@
       "aqi": {
         "name": "Luftqualität",
         "state": {
-          "Unknown": "Unbekannt"
+          "unknown": "Unbekannt"
         },
         "state_attributes": {
           "aqi_value": { "name": "AQI-Wert" },
@@ -111,7 +111,7 @@
           "primary_pollutant": {
             "name": "Hauptschadstoff",
             "state": {
-              "None": "Keiner"
+              "none": "Keiner"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -123,21 +123,16 @@
           "health_effect": {
             "name": "Gesundheitliche Auswirkungen",
             "state": {
-              "No data available": "Keine Daten verfügbar",
-              "Please refer to the recommendations of the local meteorological authorities": "Bitte Empfehlungen der lokalen Wetterbehörden beachten"
+              "no_data_available": "Keine Daten verfügbar"
             }
           },
           "health_advice": { "name": "Gesundheitshinweise" },
           "stations": {
             "name": "Messstationen",
             "state": {
-              "No monitoring station information available": "Keine Stationsdaten verfügbar"
+              "stations_info": "Keine Stationsdaten verfügbar"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "Mikrogramm/m³",
-          "mg/m³": "Milligramm/m³"
         }
       },
 
@@ -195,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "Niederschlagsübersicht",
-        "state": {
-          "No precipitation in the next two hours": "In den nächsten zwei Stunden kein Niederschlag"
-        },
         "state_attributes": {
           "detail": { "name": "Details" }
         }
@@ -284,13 +276,6 @@
           "city": { "name": "Stadt" },
           "warning": { "name": "Warninformationen" },
           "suggestion": { "name": "Lebensindextipps" }
-        },
-        "unit_of_measurement": {
-          "°C": "Grad Celsius",
-          "mmHg": "Millimeter Quecksilbersäule",
-          "km/h": "Kilometer pro Stunde",
-          "km": "Kilometer",
-          "mm": "Millimeter"
         }
       }
     }

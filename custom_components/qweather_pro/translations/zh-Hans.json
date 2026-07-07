@@ -103,7 +103,7 @@
       "aqi": {
         "name": "空气质量",
         "state": {
-          "Unknown": "未知"
+          "unknown": "未知"
         },
         "state_attributes": {
           "aqi_value": { "name": "AQI 数值" },
@@ -111,7 +111,7 @@
           "primary_pollutant": {
             "name": "主要污染物",
             "state": {
-              "None": "无"
+              "none": "无"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -123,28 +123,23 @@
           "health_effect": {
             "name": "健康影响",
             "state": {
-              "No data available": "暂无数据",
-              "Please refer to the recommendations of the local meteorological authorities": "请参考当地气象部门建议"
+              "no_data_available": "暂无数据"
             }
           },
           "health_advice": { "name": "健康建议" },
           "stations": {
             "name": "监测站信息",
             "state": {
-              "No monitoring station information available": "暂无监测站信息"
+              "stations_info": "暂无监测站信息"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "微克/立方米",
-          "mg/m³": "毫克/立方米"
         }
       },
 
       "warning_info": {
         "name": "气象预警",
         "state": {
-          "Without warning": "无预警"
+          "without_warning": "无预警"
         },
         "state_attributes": {
           "id": { "name": "预警 ID" },
@@ -185,7 +180,7 @@
       "today_temp_range": {
         "name": "今日温度范围",
         "state": {
-          "Unknown": "未知"
+          "unknown": "未知"
         },
         "state_attributes": {
           "max_temp": { "name": "最高温度" },
@@ -195,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "降水简报",
-        "state": {
-          "No precipitation in the next two hours": "未来两小时无降水"
-        },
         "state_attributes": {
           "detail": { "name": "细节" }
         }
@@ -284,13 +276,6 @@
           "city": { "name": "城市" },
           "warning": { "name": "预警信息" },
           "suggestion": { "name": "生活指数建议" }
-        },
-        "unit_of_measurement": {
-          "°C": "摄氏度",
-          "mmHg": "毫米汞柱",
-          "km/h": "公里/小时",
-          "km": "公里",
-          "mm": "毫米"
         }
       }
     }
