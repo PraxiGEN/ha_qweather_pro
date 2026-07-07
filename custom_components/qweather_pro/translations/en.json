@@ -1,4 +1,5 @@
 {
+  "title": "QWeather Pro",
   "config": {
     "step": {
       "user": {
@@ -52,20 +53,22 @@
       }
     },  
     "error": {
-      "invalid_parameter": "Invalid parameters",
-      "location_not_found": "Location not found",
-      "data_not_available": "Data not available for this location",
-      "invalid_auth": "Invalid API Key or JWT",
-      "no_credit": "No credit or overdue payment",
-      "security_restriction": "Security restriction (IP/Ref filter)",
-      "invalid_host": "Invalid API Host",
-      "account_suspended": "Account suspended",
-      "forbidden": "No permission for this data",
-      "not_found": "Resource not found (404)",
-      "too_many_requests": "Too many requests (Rate limit)",
-      "over_monthly_limit": "Monthly quota exceeded",
-      "server_error": "Server error (500)",
-      "cannot_connect": "Connection failed"
+      "invalid_parameter": "Invalid request parameters, please check the input format",
+      "location_not_found": "Location not found, please try entering precise “longitude,latitude”",
+      "data_not_available": "No weather data available for this location",
+      "invalid_auth": "Authentication failed, please check your Key or JWT configuration",
+      "no_credit": "Insufficient account credit or overdue status, please check the billing in the HeWeather console",
+      "security_restriction": "Request violates your IP or security restrictions set in the console",
+      "invalid_host": "API host error, please ensure you are using your dedicated endpoint",
+      "account_suspended": "Your HeWeather account has been suspended",
+      "forbidden": "Your current plan does not have permission to request this data",
+      "not_found": "Incorrect API path or resource not found (404)",
+      "method_not_allowed": "Invalid request method (405)",
+      "too_many_requests": "Too many requests or QPM limit exceeded, please try again later",
+      "over_monthly_limit": "Monthly request limit reached",
+      "server_error": "Unknown server error occurred on HeWeather (500)",
+      "cannot_connect": "Unable to connect to API host, please check network or address",
+      "api_host_deprecated": "Public domain is deprecated, please use your personal API host"
     },
     "abort": {
       "already_configured": "This location has already been configured",
@@ -98,25 +101,197 @@
   "entity": {
     "sensor": {
       "aqi": {
-        "name": "Air Quality"
+        "name": "Air Quality",
+        "state": {
+          "Unknown": "Unknown"
+        },
+        "state_attributes": {
+          "aqi_value": { "name": "AQI Value" },
+          "aqi_level": { "name": "Level" },
+          "primary_pollutant": {
+            "name": "Primary Pollutant",
+            "state": {
+              "None": "None"
+            }
+          },
+          "pm2p5": { "name": "PM2.5" },
+          "pm10": { "name": "PM10" },
+          "no2": { "name": "NO2" },
+          "so2": { "name": "SO2" },
+          "o3": { "name": "O3" },
+          "co": { "name": "CO" },
+          "health_effect": {
+            "name": "Health Effect",
+            "state": {
+              "No data available": "No data available",
+              "Please refer to the recommendations of the local meteorological authorities": "Please refer to the recommendations of the local meteorological authorities"
+            }
+          },
+          "health_advice": { "name": "Health Advice" },
+          "stations": {
+            "name": "Monitoring Station Information",
+            "state": {
+              "No monitoring station information available": "No monitoring station information available"
+            }
+          }
+        },
+        "unit_of_measurement": {
+          "μg/m³": "μg/m³",
+          "mg/m³": "mg/m³"
+        }
       },
+
       "warning_info": {
-        "name": "Weather Warnings"
+        "name": "Weather Warnings",
+        "state": {
+          "Without warning": "Without warning"
+        },
+        "state_attributes": {
+          "id": { "name": "Warning ID" },
+          "sender": { "name": "Sender" },
+          "issued": { "name": "Issued" },
+          "title": { "name": "Title" },
+          "text": { "name": "Text" },
+          "instruction": { "name": "Instruction" },
+          "level": {
+            "name": "Level",
+            "state": {
+              "unknown": "Unknown",
+              "minor": "Minor",
+              "moderate": "Moderate",
+              "severe": "Severe",
+              "extreme": "Extreme"
+            }
+          },
+          "color": {
+            "name": "Color",
+            "state": {
+              "white": "White",
+              "gray": "Gray",
+              "green": "Green",
+              "blue": "Blue",
+              "yellow": "Yellow",
+              "amber": "Amber",
+              "orange": "Orange",
+              "red": "Red",
+              "purple": "Purple",
+              "black": "Black"
+            }
+          },
+          "type_name": { "name": "Type Name" }
+        }
       },
+
       "today_temp_range": {
-        "name": "Today Temperature Range"
+        "name": "Today Temperature Range",
+        "state": {
+          "Unknown": "Unknown"
+        },
+        "state_attributes": {
+          "max_temp": { "name": "Maximum Temperature" },
+          "min_temp": { "name": "Minimum Temperature" }
+        }
       },
+
       "precipitation_summary": {
-        "name": "Precipitation Forecast"
+        "name": "Precipitation Forecast",
+        "state": {
+          "No precipitation in the next two hours": "No precipitation in the next two hours"
+        },
+        "state_attributes": {
+          "detail": { "name": "Detail" }
+        }
       },
+
       "weather_summary": {
-        "name": "Weather Briefing"
+        "name": "Weather Briefing",
+        "state_attributes": {
+          "period": {
+            "name": "Period",
+            "state": {
+              "morning": "Today Morning",
+              "afternoon": "Today Afternoon",
+              "evening": "Today Evening",
+              "night": "Tomorrow Night"
+            }
+          },
+          "tonight_text": { "name": "Tomorrow Night Weather" },
+          "temp_change_type": {
+            "name": "Temperature Change Trend",
+            "state": {
+              "heat_surge": "Heat Surge",
+              "warmer": "Warmer Temperature",
+              "steady": "Steady Temperature Change",
+              "colder": "Cool Temperature",
+              "cold_snap": "Cold Snap Temperature"
+            }
+          },
+          "current_temp": { "name": "Current Temperature" },
+          "wind_status": { 
+            "name": "Wind Status",
+            "state": {
+              "no_wind": "No Wind",
+              "windy": "Wind",
+              "calm": "Calm Wind"
+            }
+          },
+          "aqi_level": { 
+            "name": "Air Quality Level",
+            "state": {
+              "good": "Air is excellent",
+              "moderate": "Air is good",
+              "unhealthy": "Air is average",
+              "very_unhealthy": "Air is poor",
+              "extazardous": "Air is hazardous"
+            }
+          }
+        }
       }
     },
 
     "weather": {
       "weather": {
-        "name": "Weather"
+        "name": "Weather",
+        "state_attributes": {
+          "qweather_icon": { "name": "Weather Icon" },
+          "update_time": { "name": "Update Time" },
+          "obs_time": { "name": "Observation Time" },
+          "condition_cn": { "name": "Weather Condition (English)" },
+          "wind_dir": { "name": "Wind Direction" },
+          "cloud": { "name": "Cloud Cover" },
+          "dew": { "name": "Dew Point Temperature" },
+          "precip": { "name": "Precipitation" },
+          "precip_probability": { "name": "Precipitation Probability" },
+          "feels_like": { "name": "Feels Temperature" },
+          "wind_scale": { "name": "Wind Scale" },
+          "sunrise": { "name": "Sunrise Time" },
+          "sunset": { "name": "Sunset Time" },
+          "moon_phase": { "name": "Moon Phase" },
+          "moonrise": { "name": "Moonrise Time" },
+          "moonset": { "name": "Moonset Time" },
+          "minutely_summary": { "name": "Minute Summary" },
+          "moon_phase_icon": { "name": "Moon Phase Icon" },
+          "text_night": { "name": "Night Weather Condition" },
+          "icon_night": { "name": "Night Icon" },
+          "wind_scale_day": { "name": "Day Wind Scale" },
+          "wind_scale_night": { "name": "Night Wind Scale" },
+          "wind_dir_day": { "name": "Day Wind Direction" },
+          "wind_dir_night": { "name": "Night Wind Direction" },
+          "forecast_pressure": { "name": "Forecast Pressure" },
+          "forecast_vis": { "name": "Forecast Visibility Distance" },
+          "forecast_cloud": { "name": "Forecast Cloud Cover" },
+          "aqi": { "name": "Air Quality Index" },
+          "city": { "name": "City" },
+          "warning": { "name": "Warnings and Advisories" },
+          "suggestion": { "name": "Life Index Suggestions" }
+        },
+        "unit_of_measurement": {
+          "°C": "Celsius",
+          "mmHg": "mmHG",
+          "km/h": "kmh",
+          "km": "km",
+          "mm": "mm"
+        }
       }
     }
   }

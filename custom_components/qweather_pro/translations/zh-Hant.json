@@ -53,20 +53,22 @@
       }
     },
     "error": {
-      "invalid_parameter": "無效的參數",
-      "location_not_found": "找不到位置",
-      "data_not_available": "此位置的資料不可用",
-      "invalid_auth": "無效的 API Key 或 JWT",
-      "no_credit": "無可用額度或帳務逾期",
-      "security_restriction": "安全限制（IP/Ref 過濾）",
-      "invalid_host": "無效的 API Host",
-      "account_suspended": "帳號已被停用",
-      "forbidden": "無權存取此資料",
-      "not_found": "找不到資源（404）",
-      "too_many_requests": "請求過多（達到速率限制）",
-      "over_monthly_limit": "超出每月額度",
-      "server_error": "伺服器錯誤（500）",
-      "cannot_connect": "連線失敗"
+      "invalid_parameter": "請求參數錯誤，請檢查輸入格式是否正確",
+      "location_not_found": "未找到該位置，請試試輸入更精准的“經度,緯度”",
+      "data_not_available": "該位置暫時無天氣數據支持",
+      "invalid_auth": "身份驗證失敗，請檢查您的 Key 或 JWT 配置",
+      "no_credit": "账号额度不足或已逾期，請檢查您的和風控制台账单",
+      "security_restriction": "請求违反您在控制台設定的 IP 或安全限制",
+      "invalid_host": "API Host 錯誤，請確保您輸入的地址是您的專屬接口地址",
+      "account_suspended": "您的和風帳號已被冻结",
+      "forbidden": "您當前的套餐無法請求此數據",
+      "not_found": "接口路徑錯誤或資源不存在 (404)",
+      "method_not_allowed": "错误的请求方法 (405)",
+      "too_many_requests": "请求过于频繁或超过 QPM 限制，请稍后再试",
+      "over_monthly_limit": "本月请求量已达上限",
+      "server_error": "和風天氣伺服器發生未知故障 (500)",
+      "cannot_connect": "無法連線到 API Host，請檢查網路或地址是否正確",
+      "api_host_deprecated": "公共域名已失效，請使用個人 API Host。"
     },
     "abort": {
       "already_configured": "此位置已經設定過",
@@ -224,15 +226,25 @@
               "cold_snap": "氣溫驟降"
             }
           },
-          "aqi_status": { "name": "空氣品質狀態" },
-          "uv_risk": {
-            "name": "紫外線強度",
+          "current_temp": { "name": "當前溫度" },
+          "wind_status": { 
+            "name": "風力狀態",
             "state": {
-              "normal": "紫外線強度適中",
-              "high": "紫外線極強"
+              "no_wind": "無風",
+              "windy": "有風",
+              "calm": "微風"
             }
           },
-          "tonight_text": { "name": "今晚天氣狀況" }
+          "aqi_level": { 
+            "name": "空氣品質等級",
+            "state": {
+              "good": "空氣品質很好",
+              "moderate": "空氣品質不错",
+              "unhealthy": "空氣品質一般",
+              "very_unhealthy": "空氣品質差",
+              "extazardous": "空氣品質有危险性"
+            }
+          }
         }
       }
     },

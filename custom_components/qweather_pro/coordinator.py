@@ -296,16 +296,12 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         }
 
     def _generate_smart_abstract(self, c: dict, now_dt: datetime) -> dict[str, Any]:
-        """全天候智能语义引擎"""
-        # 基础数据提取
+        """全天候智能语义引擎 - 国际化逻辑版"""
         now_raw = c.get("now", {}).get("now", {})
         daily = c.get("daily", {}).get("daily", [])
         air_raw = c.get("air", {})
-        # 获取第一个指数对象 (通常是本地标准)
-        air_indexes = air_raw.get("indexes", [])
-        idx = air_indexes[0] if air_indexes else {}
-
-        # 数据不足保护：如果预报还没抓到，返回基础状态
+        idx = air_raw.get("indexes", [{}])[0]
+        
         if not daily or len(daily) < 2:
             return {"display_state": now_raw.get("text", "Loading"), "status": "loading"}
 
@@ -347,17 +343,43 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         else:
             temp_type = "steady"        # 气温平稳
 
-        # ---封装语义包 ---
+        # --- 风力判定 (Wind Scale) ---
+        # 3级以上视为“有风”
+        wind_scale = int(now_raw.get("windScale", 0))
+
+        if wind_scale == 0:
+            wind_status = "no_wind"
+        elif wind_scale < 3:
+            wind_status = "calm"
+        else:
+            wind_status = "windy"
+
+        # --- 空气质量等级 (AQI Level) ---
+        # 即使 category 是中文，我们也可以根据 aqi 数值输出逻辑 key
+        aqi_val = self._to_f(idx.get("aqi"), 0.0)
+
+        if aqi_val <= 50:
+            aqi_level = "good"
+        elif aqi_val <= 100:
+            aqi_level = "moderate"
+        elif aqi_val <= 150:
+            aqi_level = "unhealthy"
+        elif aqi_val <= 200:
+            aqi_level = "very_unhealthy"
+        else:
+            aqi_level = "extazardous"
+
+        # --- 组装逻辑包 (全部使用英文 Key) ---
         return {
-            "period": period,
-            "temp_change_type": temp_type,
-            "aqi_status": idx.get("category"),
-            "uv_risk": "high" if int(today.get("uvIndex", 0)) >= 6 else "normal",
+            "period": period, 
             "tonight_text": display_state,
+            "temp_change_type": temp_type,
+            "current_temp": int(self._to_f(now_raw.get("temp"), 0)),
+            "wind_status": wind_status, 
+            "aqi_level": aqi_level, 
         }
 
     # --- 解析辅助方法 (逻辑下沉) ---
-
     def _parse_daily(self, data: list) -> list:
         return [{
             # 时间轴

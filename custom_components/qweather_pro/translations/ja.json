@@ -53,20 +53,22 @@
       }
     },
     "error": {
-      "invalid_parameter": "無効なパラメーター",
-      "location_not_found": "位置情報が見つかりません",
-      "data_not_available": "この位置のデータは利用できません",
-      "invalid_auth": "無効な API Key または JWT",
-      "no_credit": "クレジット不足または未払い",
-      "security_restriction": "セキュリティ制限（IP/Ref フィルター）",
-      "invalid_host": "無効な API Host",
-      "account_suspended": "アカウントが停止されています",
-      "forbidden": "このデータへのアクセス権がありません",
-      "not_found": "リソースが見つかりません（404）",
-      "too_many_requests": "リクエスト過多（レート制限）",
-      "over_monthly_limit": "月間クォータ超過",
-      "server_error": "サーバーエラー（500）",
-      "cannot_connect": "接続に失敗しました"
+      "invalid_parameter": "リクエストパラメータが無効です。入力形式を確認してください",
+      "location_not_found": "位置が見つかりません。正確な「経度,緯度」を入力してください",
+      "data_not_available": "この地点には気象データがありません",
+      "invalid_auth": "認証に失敗しました。Key または JWT 設定を確認してください",
+      "no_credit": "アカウントの残高不足または期限切れです。HeWeather コンソールの請求情報を確認してください",
+      "security_restriction": "リクエストがコンソールで設定した IP またはセキュリティ制限に違反しています",
+      "invalid_host": "API ホストエラー。専用のインターフェースアドレスを使用していることを確認してください",
+      "account_suspended": "あなたの HeWeather アカウントは凍結されています",
+      "forbidden": "現在のプランではこのデータを要求する権限がありません",
+      "not_found": "API パスが誤っているかリソースが存在しません (404)",
+      "method_not_allowed": "無効なリクエスト方法です (405)",
+      "too_many_requests": "リクエストが多すぎるか QPM 制限を超えています。後でもう一度試してください",
+      "over_monthly_limit": "今月のリクエスト上限に達しました",
+      "server_error": "HeWeather サーバーで不明なエラーが発生しました (500)",
+      "cannot_connect": "API ホストに接続できません。ネットワークまたはアドレスを確認してください",
+      "api_host_deprecated": "公共ドメインは無効です。個人の API ホストを使用してください"
     },
     "abort": {
       "already_configured": "この位置情報はすでに設定されています",
@@ -224,15 +226,25 @@
               "cold_snap": "急降下"
             }
           },
-          "aqi_status": { "name": "空気質状態" },
-          "uv_risk": {
-            "name": "紫外線強度",
+          "current_temp": { "name": "現在の気温" },
+          "wind_status": { 
+            "name": "風の状態",
             "state": {
-              "normal": "適度",
-              "high": "非常に強い"
+              "no_wind": "無風",
+              "windy": "風あり",
+              "calm": "そよ風"
             }
           },
-          "tonight_text": { "name": "今夜の天気" }
+          "aqi_level": { 
+            "name": "空気質",
+            "state": {
+              "good": "空気はとても良い",
+              "moderate": "空気は良い",
+              "unhealthy": "空気は普通",
+              "very_unhealthy": "空気は悪い",
+              "extazardous": "空気は危険"
+            }
+          }
         }
       }
     },

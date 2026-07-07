@@ -206,7 +206,6 @@
       "weather_summary": {
         "name": "天气概况",
         "state_attributes": {
-          "display_state": { "name": "显示状态" },
           "period": {
             "name": "当前时段",
             "state": {
@@ -216,6 +215,7 @@
               "night": "明天"
             }
           },
+          "tonight_text": { "name": "未来天气状况" },
           "temp_change_type": {
             "name": "气温趋势",
             "state": {
@@ -226,15 +226,25 @@
               "cold_snap": "气温骤降"
             }
           },
-          "aqi_status": { "name": "空气质量状态" },
-          "uv_risk": {
-            "name": "紫外线强度",
+          "current_temp": { "name": "当前温度" },
+          "wind_status": { 
+            "name": "风力",
             "state": {
-              "normal": "紫外线强度适中",
-              "high": "紫外线极强"
+              "no_wind": "无风",
+              "windy": "有风",
+              "calm": "微风"
             }
           },
-          "tonight_text": { "name": "今晚天气状况" }
+          "aqi_level": { 
+            "name": "空气质量",
+            "state": {
+              "good": "空气很好",
+              "moderate": "空气不错",
+              "unhealthy": "空气一般",
+              "very_unhealthy": "空气差",
+              "extazardous": "空气危险"
+            }
+          }
         }
       }
     },

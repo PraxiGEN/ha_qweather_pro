@@ -1,4 +1,5 @@
 {
+  "title": "QWeather Pro",
   "config": {
     "step": {
       "user": {
@@ -52,20 +53,22 @@
       }
     },
     "error": {
-      "invalid_parameter": "Paramètres invalides",
-      "location_not_found": "Emplacement introuvable",
-      "data_not_available": "Données non disponibles pour cet emplacement",
-      "invalid_auth": "Clé API ou JWT invalide",
-      "no_credit": "Crédit insuffisant ou paiement en retard",
-      "security_restriction": "Restriction de sécurité (filtre IP/Ref)",
-      "invalid_host": "API Host invalide",
-      "account_suspended": "Compte suspendu",
-      "forbidden": "Aucune autorisation pour ces données",
-      "not_found": "Ressource introuvable (404)",
-      "too_many_requests": "Trop de requêtes (limite atteinte)",
-      "over_monthly_limit": "Quota mensuel dépassé",
-      "server_error": "Erreur serveur (500)",
-      "cannot_connect": "Connexion impossible"
+      "invalid_parameter": "Paramètres de requête invalides, veuillez vérifier le format d’entrée",
+      "location_not_found": "Emplacement introuvable, essayez d’entrer « longitude,latitude » avec précision",
+      "data_not_available": "Aucune donnée météorologique disponible pour cet endroit",
+      "invalid_auth": "Échec de l’authentification, veuillez vérifier votre Key ou configuration JWT",
+      "no_credit": "Crédit insuffisant ou compte en retard, vérifiez la facturation dans la console HeWeather",
+      "security_restriction": "La requête viole les restrictions IP ou de sécurité définies dans la console",
+      "invalid_host": "Erreur d’hôte API, assurez-vous d’utiliser votre adresse dédiée",
+      "account_suspended": "Votre compte HeWeather a été suspendu",
+      "forbidden": "Votre forfait actuel ne permet pas d’accéder à ces données",
+      "not_found": "Chemin API incorrect ou ressource introuvable (404)",
+      "method_not_allowed": "Méthode de requête invalide (405)",
+      "too_many_requests": "Trop de requêtes ou limite QPM dépassée, réessayez plus tard",
+      "over_monthly_limit": "Limite mensuelle de requêtes atteinte",
+      "server_error": "Erreur serveur inconnue chez HeWeather (500)",
+      "cannot_connect": "Impossible de se connecter à l’hôte API, vérifiez le réseau ou l’adresse",
+      "api_host_deprecated": "Le domaine public est obsolète, utilisez votre hôte API personnel"
     },
     "abort": {
       "already_configured": "Cet emplacement est déjà configuré",
@@ -223,15 +226,25 @@
               "cold_snap": "Chute brutale"
             }
           },
-          "aqi_status": { "name": "Qualité de l’air" },
-          "uv_risk": {
-            "name": "Intensité UV",
+          "current_temp": { "name": "Température Actuelle" },
+          "wind_status": { 
+            "name": "Force du Vent",
             "state": {
-              "normal": "Modérée",
-              "high": "Très forte"
+              "no_wind": "Pas de vent",
+              "windy": "Venteux",
+              "calm": "Brise légère"
             }
           },
-          "tonight_text": { "name": "Météo de ce soir" }
+          "aqi_level": { 
+            "name": "Qualité de l’Air",
+            "state": {
+              "good": "Air excellent",
+              "moderate": "Air bon",
+              "unhealthy": "Air moyen",
+              "very_unhealthy": "Air mauvais",
+              "extazardous": "Air dangereux"
+            }
+          }
         }
       }
     },
