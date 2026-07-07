@@ -1,4 +1,5 @@
 {
+  "title": "QWeather Pro",
   "config": {
     "step": {
       "user": {
@@ -52,20 +53,22 @@
       }
     },
     "error": {
-      "invalid_parameter": "Parametri non validi",
-      "location_not_found": "Posizione non trovata",
-      "data_not_available": "Dati non disponibili per questa posizione",
-      "invalid_auth": "API Key o JWT non valido",
-      "no_credit": "Credito insufficiente o pagamento scaduto",
-      "security_restriction": "Restrizione di sicurezza (filtro IP/Ref)",
-      "invalid_host": "API Host non valido",
-      "account_suspended": "Account sospeso",
-      "forbidden": "Nessun permesso per questi dati",
-      "not_found": "Risorsa non trovata (404)",
-      "too_many_requests": "Troppe richieste (limite superato)",
-      "over_monthly_limit": "Limite mensile superato",
-      "server_error": "Errore del server (500)",
-      "cannot_connect": "Connessione fallita"
+      "invalid_parameter": "Parametri della richiesta non validi, controllare il formato di input",
+      "location_not_found": "Località non trovata, provare a inserire “longitudine,latitudine” con precisione",
+      "data_not_available": "Nessun dato meteorologico disponibile per questa località",
+      "invalid_auth": "Autenticazione fallita, verificare la Key o la configurazione JWT",
+      "no_credit": "Credito insufficiente o account scaduto, controllare la fatturazione nella console HeWeather",
+      "security_restriction": "La richiesta viola le restrizioni IP o di sicurezza impostate nella console",
+      "invalid_host": "Errore API Host, assicurarsi di utilizzare il proprio indirizzo dedicato",
+      "account_suspended": "Il tuo account HeWeather è stato sospeso",
+      "forbidden": "Il tuo piano attuale non ha i permessi per richiedere questi dati",
+      "not_found": "Percorso API errato o risorsa inesistente (404)",
+      "method_not_allowed": "Metodo di richiesta non valido (405)",
+      "too_many_requests": "Troppe richieste o limite QPM superato, riprovare più tardi",
+      "over_monthly_limit": "Limite mensile di richieste raggiunto",
+      "server_error": "Errore sconosciuto del server HeWeather (500)",
+      "cannot_connect": "Impossibile connettersi all’API Host, verificare rete o indirizzo",
+      "api_host_deprecated": "Il dominio pubblico è obsoleto, utilizzare il proprio API Host personale"
     },
     "abort": {
       "already_configured": "Questa posizione è già configurata",
@@ -100,7 +103,7 @@
       "aqi": {
         "name": "Qualità dell’aria",
         "state": {
-          "Unknown": "Sconosciuto"
+          "unknown": "Sconosciuto"
         },
         "state_attributes": {
           "aqi_value": { "name": "Valore AQI" },
@@ -108,7 +111,7 @@
           "primary_pollutant": {
             "name": "Inquinante principale",
             "state": {
-              "None": "Nessuno"
+              "none": "Nessuno"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -120,28 +123,23 @@
           "health_effect": {
             "name": "Effetti sulla salute",
             "state": {
-              "No data available": "Nessun dato disponibile",
-              "Please refer to the recommendations of the local meteorological authorities": "Consulta le raccomandazioni delle autorità meteorologiche locali"
+              "no_data_available": "Nessun dato disponibile"
             }
           },
           "health_advice": { "name": "Consigli sanitari" },
           "stations": {
             "name": "Informazioni sulle stazioni",
             "state": {
-              "No monitoring station information available": "Nessuna informazione sulle stazioni"
+              "stations_info": "Nessuna informazione sulle stazioni"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "microgrammi/m³",
-          "mg/m³": "milligrammi/m³"
         }
       },
 
       "warning_info": {
         "name": "Allerta meteorologica",
         "state": {
-          "Without warning": "Nessuna allerta"
+          "without_warning": "Nessuna allerta"
         },
         "state_attributes": {
           "id": { "name": "ID dell’allerta" },
@@ -182,7 +180,7 @@
       "today_temp_range": {
         "name": "Intervallo di temperatura di oggi",
         "state": {
-          "Unknown": "Sconosciuto"
+          "unknown": "Sconosciuto"
         },
         "state_attributes": {
           "max_temp": { "name": "Temperatura massima" },
@@ -192,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "Riepilogo precipitazioni",
-        "state": {
-          "No precipitation in the next two hours": "Nessuna precipitazione nelle prossime due ore"
-        },
         "state_attributes": {
           "detail": { "name": "Dettagli" }
         }
@@ -223,15 +218,25 @@
               "cold_snap": "Calo improvviso"
             }
           },
-          "aqi_status": { "name": "Qualità dell’aria" },
-          "uv_risk": {
-            "name": "Intensità UV",
+          "current_temp": { "name": "Temperatura Attuale" },
+          "wind_status": { 
+            "name": "Forza del Vento",
             "state": {
-              "normal": "Moderata",
-              "high": "Molto alta"
+              "no_wind": "Nessun vento",
+              "windy": "Ventoso",
+              "calm": "Brezza leggera"
             }
           },
-          "tonight_text": { "name": "Meteo di questa sera" }
+          "aqi_level": { 
+            "name": "Qualità dell’Aria",
+            "state": {
+              "good": "Aria eccellente",
+              "moderate": "Aria buona",
+              "unhealthy": "Aria discreta",
+              "very_unhealthy": "Aria scarsa",
+              "extazardous": "Aria pericolosa"
+            }
+          }
         }
       }
     },
@@ -271,13 +276,6 @@
           "city": { "name": "Città" },
           "warning": { "name": "Informazioni di allerta" },
           "suggestion": { "name": "Suggerimenti dell’indice di vita" }
-        },
-        "unit_of_measurement": {
-          "°C": "Gradi Celsius",
-          "mmHg": "Millimetri di mercurio",
-          "km/h": "Chilometri orari",
-          "km": "Chilometri",
-          "mm": "Millimetri"
         }
       }
     }

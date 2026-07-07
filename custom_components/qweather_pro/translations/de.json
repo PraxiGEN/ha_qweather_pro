@@ -1,4 +1,5 @@
 {
+  "name": "QWeather Pro",
   "config": {
     "step": {
       "user": {
@@ -52,20 +53,22 @@
       }
     },
     "error": {
-      "invalid_parameter": "Ungültige Parameter",
-      "location_not_found": "Standort nicht gefunden",
-      "data_not_available": "Keine Daten für diesen Standort verfügbar",
-      "invalid_auth": "Ungültiger API-Schlüssel oder JWT",
-      "no_credit": "Kein Guthaben oder überfällige Zahlung",
-      "security_restriction": "Sicherheitsbeschränkung (IP/Ref-Filter)",
-      "invalid_host": "Ungültiger API-Host",
-      "account_suspended": "Konto gesperrt",
-      "forbidden": "Keine Berechtigung für diese Daten",
-      "not_found": "Ressource nicht gefunden (404)",
-      "too_many_requests": "Zu viele Anfragen (Rate-Limit)",
-      "over_monthly_limit": "Monatliches Kontingent überschritten",
-      "server_error": "Serverfehler (500)",
-      "cannot_connect": "Verbindung fehlgeschlagen"
+      "invalid_parameter": "Ungültige Anforderungsparameter, bitte überprüfen Sie das Eingabeformat",
+      "location_not_found": "Standort nicht gefunden, bitte versuchen Sie präzise „Längengrad,Breitengrad“ einzugeben",
+      "data_not_available": "Für diesen Ort sind keine Wetterdaten verfügbar",
+      "invalid_auth": "Authentifizierung fehlgeschlagen, bitte überprüfen Sie Ihren Key oder Ihre JWT-Konfiguration",
+      "no_credit": "Unzureichendes Guthaben oder überfälliges Konto, bitte prüfen Sie die Abrechnung in der HeWeather-Konsole",
+      "security_restriction": "Die Anfrage verstößt gegen Ihre IP- oder Sicherheitsbeschränkungen in der Konsole",
+      "invalid_host": "API-Host-Fehler, bitte stellen Sie sicher, dass Sie Ihre exklusive Schnittstellenadresse verwenden",
+      "account_suspended": "Ihr HeWeather-Konto wurde gesperrt",
+      "forbidden": "Ihr aktuelles Paket hat keine Berechtigung, diese Daten anzufordern",
+      "not_found": "Fehlerhafter API-Pfad oder Ressource nicht gefunden (404)",
+      "method_not_allowed": "Ungültige Anfragemethode (405)",
+      "too_many_requests": "Zu viele Anfragen oder QPM-Limit überschritten, bitte versuchen Sie es später erneut",
+      "over_monthly_limit": "Das monatliche Anfragekontingent wurde erreicht",
+      "server_error": "Unbekannter Serverfehler bei HeWeather (500)",
+      "cannot_connect": "Verbindung zum API-Host nicht möglich, bitte prüfen Sie Netzwerk oder Adresse",
+      "api_host_deprecated": "Die öffentliche Domain ist ungültig, bitte verwenden Sie Ihren persönlichen API-Host"
     },
     "abort": {
       "already_configured": "Dieser Standort wurde bereits konfiguriert",
@@ -100,7 +103,7 @@
       "aqi": {
         "name": "Luftqualität",
         "state": {
-          "Unknown": "Unbekannt"
+          "unknown": "Unbekannt"
         },
         "state_attributes": {
           "aqi_value": { "name": "AQI-Wert" },
@@ -108,7 +111,7 @@
           "primary_pollutant": {
             "name": "Hauptschadstoff",
             "state": {
-              "None": "Keiner"
+              "none": "Keiner"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -120,28 +123,23 @@
           "health_effect": {
             "name": "Gesundheitliche Auswirkungen",
             "state": {
-              "No data available": "Keine Daten verfügbar",
-              "Please refer to the recommendations of the local meteorological authorities": "Bitte Empfehlungen der lokalen Wetterbehörden beachten"
+              "no_data_available": "Keine Daten verfügbar"
             }
           },
           "health_advice": { "name": "Gesundheitshinweise" },
           "stations": {
             "name": "Messstationen",
             "state": {
-              "No monitoring station information available": "Keine Stationsdaten verfügbar"
+              "stations_info": "Keine Stationsdaten verfügbar"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "Mikrogramm/m³",
-          "mg/m³": "Milligramm/m³"
         }
       },
 
       "warning_info": {
         "name": "Wetterwarnung",
         "state": {
-          "Without warning": "Keine Warnung"
+          "without_warning": "Keine Warnung"
         },
         "state_attributes": {
           "id": { "name": "Warnungs-ID" },
@@ -182,7 +180,7 @@
       "today_temp_range": {
         "name": "Temperaturbereich heute",
         "state": {
-          "Unknown": "Unbekannt"
+          "unknown": "Unbekannt"
         },
         "state_attributes": {
           "max_temp": { "name": "Höchsttemperatur" },
@@ -192,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "Niederschlagsübersicht",
-        "state": {
-          "No precipitation in the next two hours": "In den nächsten zwei Stunden kein Niederschlag"
-        },
         "state_attributes": {
           "detail": { "name": "Details" }
         }
@@ -223,15 +218,25 @@
               "cold_snap": "Starker Abfall"
             }
           },
-          "aqi_status": { "name": "Luftqualitätsstatus" },
-          "uv_risk": {
-            "name": "UV-Intensität",
+          "current_temp": { "name": "Temperatur am Moment" },
+          "wind_status": { 
+            "name": "Windstatus",
             "state": {
-              "normal": "Mittel",
-              "high": "Sehr hoch"
+              "no_wind": "Kein Wind",
+              "windy": "Windig",
+              "calm": "Wind ruhig ist"
             }
           },
-          "tonight_text": { "name": "Wetter heute Abend" }
+          "aqi_level": { 
+            "name": "Luftqualitätsgrad",
+            "state": {
+              "good": "Sehr gute Luft",
+              "moderate": "Gute Luft",
+              "unhealthy": "Mäßige Luftqualität",
+              "very_unhealthy": "Schlechte Luft",
+              "extazardous": "Gefährliche Luft"
+            }
+          }
         }
       }
     },
@@ -271,13 +276,6 @@
           "city": { "name": "Stadt" },
           "warning": { "name": "Warninformationen" },
           "suggestion": { "name": "Lebensindextipps" }
-        },
-        "unit_of_measurement": {
-          "°C": "Grad Celsius",
-          "mmHg": "Millimeter Quecksilbersäule",
-          "km/h": "Kilometer pro Stunde",
-          "km": "Kilometer",
-          "mm": "Millimeter"
         }
       }
     }

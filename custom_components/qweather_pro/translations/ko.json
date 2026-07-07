@@ -1,4 +1,5 @@
 {
+  "title": "QWeather Pro",
   "config": {
     "step": {
       "user": {
@@ -52,20 +53,22 @@
       }
     },
     "error": {
-      "invalid_parameter": "잘못된 매개변수",
-      "location_not_found": "위치를 찾을 수 없음",
-      "data_not_available": "이 위치의 데이터를 사용할 수 없음",
-      "invalid_auth": "잘못된 API Key 또는 JWT",
-      "no_credit": "크레딧 부족 또는 연체",
-      "security_restriction": "보안 제한(IP/Ref 필터)",
-      "invalid_host": "잘못된 API Host",
-      "account_suspended": "계정이 정지됨",
-      "forbidden": "이 데이터에 대한 권한 없음",
-      "not_found": "리소스를 찾을 수 없음(404)",
-      "too_many_requests": "요청 과다(요청 제한 초과)",
-      "over_monthly_limit": "월간 할당량 초과",
-      "server_error": "서버 오류(500)",
-      "cannot_connect": "연결 실패"
+      "invalid_parameter": "요청 매개변수가 잘못되었습니다. 입력 형식을 확인하세요",
+      "location_not_found": "위치를 찾을 수 없습니다. 정확한 “경도,위도”를 입력해 보세요",
+      "data_not_available": "해당 위치에는 기상 데이터가 제공되지 않습니다",
+      "invalid_auth": "인증 실패, Key 또는 JWT 설정을 확인하세요",
+      "no_credit": "계정 크레딧 부족 또는 연체 상태입니다. HeWeather 콘솔의 청구서를 확인하세요",
+      "security_restriction": "요청이 콘솔에서 설정한 IP 또는 보안 제한을 위반했습니다",
+      "invalid_host": "API Host 오류입니다. 전용 인터페이스 주소를 사용하고 있는지 확인하세요",
+      "account_suspended": "HeWeather 계정이 정지되었습니다",
+      "forbidden": "현재 요금제에서는 이 데이터를 요청할 권한이 없습니다",
+      "not_found": "API 경로 오류 또는 리소스 없음 (404)",
+      "method_not_allowed": "잘못된 요청 방식입니다 (405)",
+      "too_many_requests": "요청이 너무 많거나 QPM 제한을 초과했습니다. 잠시 후 다시 시도하세요",
+      "over_monthly_limit": "이번 달 요청량이 상한에 도달했습니다",
+      "server_error": "HeWeather 서버에서 알 수 없는 오류가 발생했습니다 (500)",
+      "cannot_connect": "API Host에 연결할 수 없습니다. 네트워크 또는 주소를 확인하세요",
+      "api_host_deprecated": "공용 도메인은 더 이상 사용할 수 없습니다. 개인 API Host를 사용하세요"
     },
     "abort": {
       "already_configured": "이 위치는 이미 구성되어 있습니다",
@@ -100,7 +103,7 @@
       "aqi": {
         "name": "대기질",
         "state": {
-          "Unknown": "알 수 없음"
+          "unknown": "알 수 없음"
         },
         "state_attributes": {
           "aqi_value": { "name": "AQI 값" },
@@ -108,7 +111,7 @@
           "primary_pollutant": {
             "name": "주요 오염물질",
             "state": {
-              "None": "없음"
+              "none": "없음"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -120,28 +123,23 @@
           "health_effect": {
             "name": "건강 영향",
             "state": {
-              "No data available": "데이터 없음",
-              "Please refer to the recommendations of the local meteorological authorities": "지역 기상청의 권고를 참고하세요"
+              "no_data_available": "데이터 없음"
             }
           },
           "health_advice": { "name": "건강 조언" },
           "stations": {
             "name": "관측소 정보",
             "state": {
-              "No monitoring station information available": "관측소 정보 없음"
+              "stations_info": "관측소 정보 없음"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "마이크로그램/세제곱미터",
-          "mg/m³": "밀리그램/세제곱미터"
         }
       },
 
       "warning_info": {
         "name": "기상 경보",
         "state": {
-          "Without warning": "경보 없음"
+          "without_warning": "경보 없음"
         },
         "state_attributes": {
           "id": { "name": "경보 ID" },
@@ -182,7 +180,7 @@
       "today_temp_range": {
         "name": "오늘의 기온 범위",
         "state": {
-          "Unknown": "알 수 없음"
+          "unknown": "알 수 없음"
         },
         "state_attributes": {
           "max_temp": { "name": "최고 기온" },
@@ -192,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "강수 요약",
-        "state": {
-          "No precipitation in the next two hours": "향후 2시간 동안 강수 없음"
-        },
         "state_attributes": {
           "detail": { "name": "세부 정보" }
         }
@@ -223,15 +218,25 @@
               "cold_snap": "급강하"
             }
           },
-          "aqi_status": { "name": "대기질 상태" },
-          "uv_risk": {
-            "name": "자외선 강도",
+          "current_temp": { "name": "현재 온도" },
+          "wind_status": { 
+            "name": "풍속",
             "state": {
-              "normal": "보통",
-              "high": "매우 강함"
+              "no_wind": "바람 없음",
+              "windy": "바람 있음",
+              "calm": "산들바람"
             }
           },
-          "tonight_text": { "name": "오늘 밤 날씨" }
+          "aqi_level": { 
+            "name": "공기질",
+            "state": {
+              "good": "공기가 매우 좋음",
+              "moderate": "공기가 좋음",
+              "unhealthy": "공기가 보통",
+              "very_unhealthy": "공기가 나쁨",
+              "extazardous": "공기가 위험함"
+            }
+          }
         }
       }
     },
@@ -271,13 +276,6 @@
           "city": { "name": "도시" },
           "warning": { "name": "경보 정보" },
           "suggestion": { "name": "생활 지수 제안" }
-        },
-        "unit_of_measurement": {
-          "°C": "섭씨",
-          "mmHg": "밀리미터 수은주",
-          "km/h": "킬로미터/시간",
-          "km": "킬로미터",
-          "mm": "밀리미터"
         }
       }
     }

@@ -1,4 +1,5 @@
 {
+  "title": "QWeather Pro",
   "config": {
     "step": {
       "user": {
@@ -52,20 +53,22 @@
       }
     },
     "error": {
-      "invalid_parameter": "Недействительные параметры",
-      "location_not_found": "Местоположение не найдено",
-      "data_not_available": "Данные недоступны для этого местоположения",
-      "invalid_auth": "Недействительный API Key или JWT",
-      "no_credit": "Недостаточно средств или просроченный платёж",
-      "security_restriction": "Ограничение безопасности (IP/Ref фильтр)",
-      "invalid_host": "Недействительный API Host",
-      "account_suspended": "Учётная запись заблокирована",
-      "forbidden": "Нет доступа к этим данным",
-      "not_found": "Ресурс не найден (404)",
-      "too_many_requests": "Слишком много запросов (превышен лимит)",
-      "over_monthly_limit": "Превышен месячный лимит",
-      "server_error": "Ошибка сервера (500)",
-      "cannot_connect": "Не удалось подключиться"
+      "invalid_parameter": "Неверные параметры запроса, проверьте формат ввода",
+      "location_not_found": "Местоположение не найдено, попробуйте ввести точные «долготу,широту»",
+      "data_not_available": "Для этого места нет доступных метеоданных",
+      "invalid_auth": "Ошибка аутентификации, проверьте ваш Key или настройки JWT",
+      "no_credit": "Недостаточно средств или просроченный аккаунт, проверьте счёт в консоли HeWeather",
+      "security_restriction": "Запрос нарушает ограничения IP или безопасности, установленные в консоли",
+      "invalid_host": "Ошибка API Host, убедитесь, что используете ваш персональный адрес",
+      "account_suspended": "Ваш аккаунт HeWeather заблокирован",
+      "forbidden": "Ваш текущий тариф не позволяет запрашивать эти данные",
+      "not_found": "Неверный путь API или ресурс не найден (404)",
+      "method_not_allowed": "Недопустимый метод запроса (405)",
+      "too_many_requests": "Слишком много запросов или превышен лимит QPM, попробуйте позже",
+      "over_monthly_limit": "Достигнут месячный лимит запросов",
+      "server_error": "Неизвестная ошибка сервера HeWeather (500)",
+      "cannot_connect": "Не удаётся подключиться к API Host, проверьте сеть или адрес",
+      "api_host_deprecated": "Публичный домен устарел, используйте ваш персональный API Host"
     },
     "abort": {
       "already_configured": "Это местоположение уже настроено",
@@ -100,7 +103,7 @@
       "aqi": {
         "name": "Качество воздуха",
         "state": {
-          "Unknown": "Неизвестно"
+          "unknown": "Неизвестно"
         },
         "state_attributes": {
           "aqi_value": { "name": "Значение AQI" },
@@ -108,7 +111,7 @@
           "primary_pollutant": {
             "name": "Основной загрязнитель",
             "state": {
-              "None": "Нет"
+              "none": "Нет"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -120,28 +123,23 @@
           "health_effect": {
             "name": "Воздействие на здоровье",
             "state": {
-              "No data available": "Нет данных",
-              "Please refer to the recommendations of the local meteorological authorities": "Смотрите рекомендации местных метеорологических служб"
+              "No data available": "Нет данных"
             }
           },
           "health_advice": { "name": "Советы по здоровью" },
           "stations": {
             "name": "Информация о станциях",
             "state": {
-              "No monitoring station information available": "Нет данных о станциях"
+              "stations_info": "Нет данных о станциях"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "мкг/м³",
-          "mg/m³": "мг/м³"
         }
       },
 
       "warning_info": {
         "name": "Метеорологическое предупреждение",
         "state": {
-          "Without warning": "Без предупреждений"
+          "without_warning": "Без предупреждений"
         },
         "state_attributes": {
           "id": { "name": "ID предупреждения" },
@@ -182,7 +180,7 @@
       "today_temp_range": {
         "name": "Диапазон температур сегодня",
         "state": {
-          "Unknown": "Неизвестно"
+          "unknown": "Неизвестно"
         },
         "state_attributes": {
           "max_temp": { "name": "Максимальная температура" },
@@ -192,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "Сводка осадков",
-        "state": {
-          "No precipitation in the next two hours": "В ближайшие два часа осадков не ожидается"
-        },
         "state_attributes": {
           "detail": { "name": "Подробности" }
         }
@@ -223,15 +218,25 @@
               "cold_snap": "Резкое похолодание"
             }
           },
-          "aqi_status": { "name": "Качество воздуха статус" },
-          "uv_risk": {
-            "name": "Интенсивность УФ",
+          "current_temp": { "name": "Текущая температура" },
+          "wind_status": { 
+            "name": "Сила ветра",
             "state": {
-              "normal": "Умеренная",
-              "high": "Очень высокая"
+              "no_wind": "Нет ветра",
+              "windy": "Ветрено",
+              "calm": "Лёгкий бриз"
             }
           },
-          "tonight_text": { "name": "Погода сегодня вечером" }
+          "aqi_level": { 
+            "name": "Качество воздуха",
+            "state": {
+              "good": "Воздух отличный",
+              "moderate": "Воздух хороший",
+              "unhealthy": "Воздух средний",
+              "very_unhealthy": "Воздух плохой",
+              "extazardous": "Воздух опасный"
+            }
+          }
         }
       }
     },
@@ -271,13 +276,6 @@
           "city": { "name": "Город" },
           "warning": { "name": "Предупреждения" },
           "suggestion": { "name": "Рекомендации по жизненному индексу" }
-        },
-        "unit_of_measurement": {
-          "°C": "Градусы Цельсия",
-          "mmHg": "Миллиметры ртутного столба",
-          "km/h": "Км/ч",
-          "km": "Километры",
-          "mm": "Миллиметры"
         }
       }
     }

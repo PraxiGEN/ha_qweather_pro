@@ -1,7 +1,4 @@
-/**
- * QWeather More Info 
- */
-
+/** QWeather More Info */
 (async () => {
   await customElements.whenDefined("ha-card");
 
@@ -91,8 +88,6 @@
       const a = this.stateObj.attributes;
       const aqiVal = a.aqi?.aqi || "--";
       const aqiCat = a.aqi?.aqi_category || (this._lang === "zh" ? "未知" : "Unknown");
-
-      // 修改：不再限制 lifeTypes，显示后端传来的所有指数以供滚动查看
       const lifeList = a.suggestion || []; 
 
       return html`
@@ -104,28 +99,45 @@
               <div class="weather-icon" style="background-image:url(${this._getIcon(a.qweather_icon)})"></div>
               <div>
                 <div class="state-text">${a.condition_cn || this.stateObj.state}</div>
-                <div class="obs-time">${this._t("observed")}: ${a.obs_time || "--"}</div>
+                <div class="night_weather_info">
+                  <span class="label">${this._t("night_weather_info")}：</span>
+                  <span>${a.text_night || "--"}</span>
+                  <span>·</span>
+                  <span>${a.wind_dir_night || "--"}</span>
+                  <span>·</span>
+                  <span>${a.moon_phase || "--"}</span>
+                </div>
               </div>
             </div>
             <div class="temp-text">${Math.round(a.temperature)}<sup>°C</sup></div>
           </div>
 
-          <!-- 即时天气 6 项 -->
+          <!-- 即时天气 4 项 -->
           <div class="section-title">${this._t("instant_weather")}</div>
-          <div class="grid-3x2">
-            ${this._renderAttr("mdi:thermometer", this._t("pressure"), `${a.pressure} hPa`)}
-            ${this._renderAttr("mdi:thermometer-plus", this._t("feels_like"), `${a.feels_like}°C`)}
-            ${this._renderAttr("mdi:compass", this._t("wind_dir"), a.wind_dir || "--")}
-            ${this._renderAttr("mdi:weather-windy", this._t("wind_scale"), `${a.wind_scale}${this._t("level")}`)}
-            ${this._renderAttr("mdi:water-percent", this._t("humidity"), `${a.humidity}%`)}
-            ${this._renderAttr("mdi:eye", this._t("visibility"), `${a.visibility} km`)}
+          <div class="grid-2x2">
+            ${this._renderAttr(
+              "mdi:gauge",
+              `${this._t("pressure")} · ${this._t("forecast_pressure")}`,
+              `${a.pressure || "--"} · ${a.forecast_pressure || "--"} hPa`
+            )}
+            ${this._renderAttr("mdi:thermometer", this._t("dew_point"), `${a.dew_point} °C`)}
+            ${this._renderAttr(
+              "mdi:cloud-outline",
+              `${this._t("cloud_coverage")} · ${this._t("forecast_cloud")}`,
+              `${a.cloud_coverage || "--"} · ${a.forecast_cloud|| "--"} %`
+            )}
+            ${this._renderAttr(
+              "mdi:weather-windy",
+               `${this._t("precip")} · ${this._t("precip_probability")}`, 
+               `${a.precip || "--"} mm · ${a.precip_probability || "--"} %`
+            )}
           </div>
 
-          <!-- 空气质量 8 项（4×2） -->
-          <div class="section-title">${this._t("aqi")}</div>
-          <div class="grid-4x2">
-            ${this._renderAttr("mdi:air-filter", this._t("aqi"), aqiVal)}
-            ${this._renderAttr("mdi:alert-circle", this._t("aqi_cat"), aqiCat)}
+          <!-- 空气质量 6 项（3×2） -->
+          <div class="section-title">${this._t("aqi")} </div>
+          <div class="grid-3x2">
+            <!-- ${this._renderAttr("mdi:air-filter", this._t("aqi"), aqiVal)} -->
+            <!-- ${this._renderAttr("mdi:alert-circle", this._t("aqi_cat"), aqiCat)} -->
             ${this._renderAttr("mdi:blur", "PM2.5", stripUnit(a.aqi?.pollutants?.pm2p5) || "--")}
             ${this._renderAttr("mdi:blur", "PM10", stripUnit(a.aqi?.pollutants?.pm10) || "--")}
             ${this._renderAttr("mdi:chemical-weapon", "NO₂", stripUnit(a.aqi?.pollutants?.no2) || "--")}
@@ -150,7 +162,7 @@
           <!-- 页脚 -->
           <div class="footer">
             ${this._t("data_source")}: QWeather |
-            ${this._t("update_at")}: ${a.update_time || this._t("just_now")}
+            ${this._t("observed")}: ${a.obs_time.slice(5, 16).replace("T", " ")}
           </div>
         </div>
       `;
@@ -164,12 +176,12 @@
         .main-info { display:flex; align-items:center; }
         .weather-icon { width:60px; height:60px; background-size:contain; background-repeat:no-repeat; margin-right:14px; }
         .state-text { font-size:22px; font-weight:500; }
-        .obs-time { font-size:12px; opacity:.6; margin-top:4px; }
+        .night_weather_info { font-size:12px; opacity:.6; margin-top:4px; }
         .temp-text { font-size:42px; font-weight:300; }
         .temp-text sup { font-size:18px; }
 
+        .grid-2x2 { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:24px; }
         .grid-3x2 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:24px; }
-        .grid-4x2 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
         .grid-4x1 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
 
         .attr-item { background:var(--secondary-background-color); padding:12px 14px; border-radius:12px; display:flex; align-items:center; min-width:0; }
@@ -201,6 +213,38 @@
 
         .no-data { text-align:center; opacity:.6; padding:10px; font-size:13px; }
         .footer { text-align:center; font-size:11px; opacity:.6; margin-top:20px; }
+        
+        @media (max-width: 600px) {
+
+          .grid-3x2,
+          .grid-4x2,
+          .grid-4x1 {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+
+          .attr-item {
+            padding: 10px 12px;
+          }
+
+          .attr-item ha-icon {
+            --mdc-icon-size: 20px;
+            margin-right: 8px;
+          }
+
+          .weather-icon {
+            width: 48px;
+            height: 48px;
+          }
+
+          .temp-text {
+            font-size: 34px;
+          }
+
+          .section-title {
+            font-size: 14px;
+            margin: 14px 0 8px;
+          }
+        }    
       `;
     }
   }

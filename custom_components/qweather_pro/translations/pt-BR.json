@@ -1,4 +1,5 @@
 {
+  "title": "QWeather Pro",
   "config": {
     "step": {
       "user": {
@@ -52,20 +53,22 @@
       }
     },
     "error": {
-      "invalid_parameter": "Parâmetros inválidos",
-      "location_not_found": "Localização não encontrada",
-      "data_not_available": "Dados indisponíveis para esta localização",
-      "invalid_auth": "API Key ou JWT inválido",
-      "no_credit": "Sem crédito ou pagamento pendente",
-      "security_restriction": "Restrição de segurança (filtro IP/Ref)",
-      "invalid_host": "API Host inválido",
-      "account_suspended": "Conta suspensa",
-      "forbidden": "Sem permissão para estes dados",
-      "not_found": "Recurso não encontrado (404)",
-      "too_many_requests": "Muitas solicitações (limite excedido)",
-      "over_monthly_limit": "Limite mensal excedido",
-      "server_error": "Erro no servidor (500)",
-      "cannot_connect": "Falha na conexão"
+      "invalid_parameter": "Parâmetros de solicitação inválidos, verifique o formato de entrada",
+      "location_not_found": "Local não encontrado, tente inserir “longitude,latitude” com precisão",
+      "data_not_available": "Não há dados meteorológicos disponíveis para este local",
+      "invalid_auth": "Falha na autenticação, verifique sua Key ou configuração JWT",
+      "no_credit": "Crédito insuficiente ou conta vencida, verifique a fatura no console HeWeather",
+      "security_restriction": "A solicitação viola as restrições de IP ou segurança definidas no console",
+      "invalid_host": "Erro no API Host, certifique-se de usar seu endereço exclusivo",
+      "account_suspended": "Sua conta HeWeather foi suspensa",
+      "forbidden": "Seu plano atual não tem permissão para solicitar esses dados",
+      "not_found": "Caminho da API incorreto ou recurso inexistente (404)",
+      "method_not_allowed": "Método de solicitação inválido (405)",
+      "too_many_requests": "Solicitações excessivas ou limite de QPM excedido, tente novamente mais tarde",
+      "over_monthly_limit": "Limite mensal de solicitações atingido",
+      "server_error": "Erro desconhecido no servidor HeWeather (500)",
+      "cannot_connect": "Não foi possível conectar ao API Host, verifique a rede ou o endereço",
+      "api_host_deprecated": "O domínio público está obsoleto, use seu API Host pessoal"
     },
     "abort": {
       "already_configured": "Esta localização já foi configurada",
@@ -100,7 +103,7 @@
       "aqi": {
         "name": "Qualidade do ar",
         "state": {
-          "Unknown": "Desconhecido"
+          "unknown": "Desconhecido"
         },
         "state_attributes": {
           "aqi_value": { "name": "Valor AQI" },
@@ -108,7 +111,7 @@
           "primary_pollutant": {
             "name": "Poluente principal",
             "state": {
-              "None": "Nenhum"
+              "none": "Nenhum"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -120,28 +123,23 @@
           "health_effect": {
             "name": "Impacto na saúde",
             "state": {
-              "No data available": "Sem dados disponíveis",
-              "Please refer to the recommendations of the local meteorological authorities": "Consulte as recomendações das autoridades meteorológicas locais"
+              "No data available": "Sem dados disponíveis"
             }
           },
           "health_advice": { "name": "Recomendações de saúde" },
           "stations": {
             "name": "Informações das estações",
             "state": {
-              "No monitoring station information available": "Nenhuma informação de estação disponível"
+              "stations_info": "Nenhuma informação de estação disponível"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "microgramas/m³",
-          "mg/m³": "miligramas/m³"
         }
       },
 
       "warning_info": {
         "name": "Alerta meteorológico",
         "state": {
-          "Without warning": "Sem alerta"
+          "without_warning": "Sem alerta"
         },
         "state_attributes": {
           "id": { "name": "ID do alerta" },
@@ -182,7 +180,7 @@
       "today_temp_range": {
         "name": "Faixa de temperatura de hoje",
         "state": {
-          "Unknown": "Desconhecido"
+          "unknown": "Desconhecido"
         },
         "state_attributes": {
           "max_temp": { "name": "Temperatura máxima" },
@@ -192,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "Resumo de precipitação",
-        "state": {
-          "No precipitation in the next two hours": "Sem precipitação nas próximas duas horas"
-        },
         "state_attributes": {
           "detail": { "name": "Detalhes" }
         }
@@ -223,15 +218,25 @@
               "cold_snap": "Queda brusca"
             }
           },
-          "aqi_status": { "name": "Status do índice de qualidade do ar" },
-          "uv_risk": {
-            "name": "Intensidade UV",
+          "current_temp": { "name": "Temperatura Atual" },
+          "wind_status": { 
+            "name": "Condição do Vento",
             "state": {
-              "normal": "Moderada",
-              "high": "Muito alta"
+              "no_wind": "Sem vento",
+              "windy": "Com vento",
+              "calm": "Brisa leve"
             }
           },
-          "tonight_text": { "name": "Clima desta noite" }
+          "aqi_level": { 
+            "name": "Qualidade do Ar",
+            "state": {
+              "good": "Ar excelente",
+              "moderate": "Ar bom",
+              "unhealthy": "Ar mediano",
+              "very_unhealthy": "Ar ruim",
+              "extazardous": "Ar perigoso"
+            }
+          }
         }
       }
     },
@@ -271,13 +276,6 @@
           "city": { "name": "Cidade" },
           "warning": { "name": "Informações de alerta" },
           "suggestion": { "name": "Sugestões do índice de vida" }
-        },
-        "unit_of_measurement": {
-          "°C": "Graus Celsius",
-          "mmHg": "Milímetros de mercúrio",
-          "km/h": "Quilômetros por hora",
-          "km": "Quilômetros",
-          "mm": "Milímetros"
         }
       }
     }

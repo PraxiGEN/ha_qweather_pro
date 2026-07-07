@@ -1,4 +1,5 @@
 {
+  "title": "QWeather Pro",
   "config": {
     "step": {
       "user": {
@@ -52,20 +53,22 @@
       }
     },
     "error": {
-      "invalid_parameter": "Ongeldige parameters",
-      "location_not_found": "Locatie niet gevonden",
-      "data_not_available": "Geen gegevens beschikbaar voor deze locatie",
-      "invalid_auth": "Ongeldige API Key of JWT",
-      "no_credit": "Geen krediet of achterstallige betaling",
-      "security_restriction": "Beveiligingsbeperking (IP/Ref-filter)",
-      "invalid_host": "Ongeldige API Host",
-      "account_suspended": "Account geschorst",
-      "forbidden": "Geen toestemming voor deze gegevens",
-      "not_found": "Bron niet gevonden (404)",
-      "too_many_requests": "Te veel verzoeken (limiet bereikt)",
-      "over_monthly_limit": "Maandelijkse limiet overschreden",
-      "server_error": "Serverfout (500)",
-      "cannot_connect": "Kan geen verbinding maken"
+      "invalid_parameter": "Ongeldige aanvraagparameters, controleer het invoerformaat",
+      "location_not_found": "Locatie niet gevonden, probeer nauwkeurig “lengtegraad,breedtegraad” in te voeren",
+      "data_not_available": "Geen weersgegevens beschikbaar voor deze locatie",
+      "invalid_auth": "Authenticatie mislukt, controleer uw Key of JWT-configuratie",
+      "no_credit": "Onvoldoende tegoed of achterstallige status, controleer de facturering in de HeWeather-console",
+      "security_restriction": "De aanvraag schendt uw IP- of beveiligingsbeperkingen in de console",
+      "invalid_host": "API-hostfout, zorg ervoor dat u uw exclusieve endpoint gebruikt",
+      "account_suspended": "Uw HeWeather-account is opgeschort",
+      "forbidden": "Uw huidige pakket heeft geen toestemming om deze gegevens op te vragen",
+      "not_found": "Onjuiste API-pad of bron niet gevonden (404)",
+      "method_not_allowed": "Ongeldige aanvraagmethode (405)",
+      "too_many_requests": "Te veel aanvragen of QPM-limiet overschreden, probeer het later opnieuw",
+      "over_monthly_limit": "Maandelijkse aanvraaglimiet bereikt",
+      "server_error": "Onbekende serverfout bij HeWeather (500)",
+      "cannot_connect": "Kan geen verbinding maken met API-host, controleer netwerk of adres",
+      "api_host_deprecated": "Openbare domein is vervallen, gebruik uw persoonlijke API-host"
     },
     "abort": {
       "already_configured": "Deze locatie is al geconfigureerd",
@@ -100,7 +103,7 @@
       "aqi": {
         "name": "Luchtkwaliteit",
         "state": {
-          "Unknown": "Onbekend"
+          "unknown": "Onbekend"
         },
         "state_attributes": {
           "aqi_value": { "name": "AQI‑waarde" },
@@ -108,7 +111,7 @@
           "primary_pollutant": {
             "name": "Primaire verontreinigende stof",
             "state": {
-              "None": "Geen"
+              "none": "Geen"
             }
           },
           "pm2p5": { "name": "PM2.5" },
@@ -120,28 +123,23 @@
           "health_effect": {
             "name": "Gezondheidseffecten",
             "state": {
-              "No data available": "Geen gegevens beschikbaar",
-              "Please refer to the recommendations of the local meteorological authorities": "Raadpleeg de aanbevelingen van de lokale meteorologische autoriteiten"
+              "No data available": "Geen gegevens beschikbaar"
             }
           },
           "health_advice": { "name": "Gezondheidsadvies" },
           "stations": {
             "name": "Meetstationinformatie",
             "state": {
-              "No monitoring station information available": "Geen meetstationinformatie beschikbaar"
+              "stations_info": "Geen meetstationinformatie beschikbaar"
             }
           }
-        },
-        "unit_of_measurement": {
-          "μg/m³": "microgram/m³",
-          "mg/m³": "milligram/m³"
         }
       },
 
       "warning_info": {
         "name": "Weeralarm",
         "state": {
-          "Without warning": "Geen waarschuwing"
+          "without_warning": "Geen waarschuwing"
         },
         "state_attributes": {
           "id": { "name": "Waarschuwing-ID" },
@@ -182,7 +180,7 @@
       "today_temp_range": {
         "name": "Temperatuurbereik vandaag",
         "state": {
-          "Unknown": "Onbekend"
+          "unknown": "Onbekend"
         },
         "state_attributes": {
           "max_temp": { "name": "Maximale temperatuur" },
@@ -192,9 +190,6 @@
 
       "precipitation_summary": {
         "name": "Neerslagoverzicht",
-        "state": {
-          "No precipitation in the next two hours": "Geen neerslag in de komende twee uur"
-        },
         "state_attributes": {
           "detail": { "name": "Details" }
         }
@@ -223,15 +218,25 @@
               "cold_snap": "Sterke daling"
             }
           },
-          "aqi_status": { "name": "Luchtkwaliteitsindex status" },
-          "uv_risk": {
-            "name": "UV‑intensiteit",
+          "current_temp": { "name": "Huidige Temperatuur" },
+          "wind_status": { 
+            "name": "Windstatus",
             "state": {
-              "normal": "Gemiddeld",
-              "high": "Zeer hoog"
+              "no_wind": "Geen wind",
+              "windy": "Winderig",
+              "calm": "Lichte bries"
             }
           },
-          "tonight_text": { "name": "Weer van vanavond" }
+          "aqi_level": { 
+            "name": "Luchtkwaliteit",
+            "state": {
+              "good": "Lucht is uitstekend",
+              "moderate": "Lucht is goed",
+              "unhealthy": "Lucht is gemiddeld",
+              "very_unhealthy": "Lucht is slecht",
+              "extazardous": "Lucht is gevaarlijk"
+            }
+          }
         }
       }
     },
@@ -271,13 +276,6 @@
           "city": { "name": "Stad" },
           "warning": { "name": "Waarschuwingsinformatie" },
           "suggestion": { "name": "Levensindex‑advies" }
-        },
-        "unit_of_measurement": {
-          "°C": "Graden Celsius",
-          "mmHg": "Millimeter kwik",
-          "km/h": "Kilometer per uur",
-          "km": "Kilometer",
-          "mm": "Millimeter"
         }
       }
     }
