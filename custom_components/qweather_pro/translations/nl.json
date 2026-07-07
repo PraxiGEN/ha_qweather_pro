@@ -180,7 +180,7 @@
       "today_temp_range": {
         "name": "Temperatuurbereik vandaag",
         "state": {
-          "Unknown": "Onbekend"
+          "unknown": "Onbekend"
         },
         "state_attributes": {
           "max_temp": { "name": "Maximale temperatuur" },

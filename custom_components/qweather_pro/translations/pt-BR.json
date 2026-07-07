@@ -180,7 +180,7 @@
       "today_temp_range": {
         "name": "Faixa de temperatura de hoje",
         "state": {
-          "Unknown": "Desconhecido"
+          "unknown": "Desconhecido"
         },
         "state_attributes": {
           "max_temp": { "name": "Temperatura máxima" },

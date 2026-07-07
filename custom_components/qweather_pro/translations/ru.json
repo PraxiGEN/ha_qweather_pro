@@ -180,7 +180,7 @@
       "today_temp_range": {
         "name": "Диапазон температур сегодня",
         "state": {
-          "Unknown": "Неизвестно"
+          "unknown": "Неизвестно"
         },
         "state_attributes": {
           "max_temp": { "name": "Максимальная температура" },

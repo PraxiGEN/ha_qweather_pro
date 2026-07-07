@@ -180,7 +180,7 @@
       "today_temp_range": {
         "name": "今日溫度範圍",
         "state": {
-          "Unknown": "未知"
+          "unknown": "未知"
         },
         "state_attributes": {
           "max_temp": { "name": "最高溫度" },

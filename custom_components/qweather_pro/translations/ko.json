@@ -180,7 +180,7 @@
       "today_temp_range": {
         "name": "오늘의 기온 범위",
         "state": {
-          "Unknown": "알 수 없음"
+          "unknown": "알 수 없음"
         },
         "state_attributes": {
           "max_temp": { "name": "최고 기온" },

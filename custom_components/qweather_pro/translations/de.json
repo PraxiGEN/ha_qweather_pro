@@ -139,7 +139,7 @@
       "warning_info": {
         "name": "Wetterwarnung",
         "state": {
-          "Without warning": "Keine Warnung"
+          "without_warning": "Keine Warnung"
         },
         "state_attributes": {
           "id": { "name": "Warnungs-ID" },
@@ -180,7 +180,7 @@
       "today_temp_range": {
         "name": "Temperaturbereich heute",
         "state": {
-          "Unknown": "Unbekannt"
+          "unknown": "Unbekannt"
         },
         "state_attributes": {
           "max_temp": { "name": "Höchsttemperatur" },
