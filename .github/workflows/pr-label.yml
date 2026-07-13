@@ -5,14 +5,15 @@ on:
     types: [opened, edited, synchronize]
 
 permissions:
+  contents: read
   pull-requests: write
+  issues: write
 
 jobs:
   label:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Detect change type and add label
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
@@ -38,19 +39,19 @@ jobs:
 
           case "$PR_TYPE" in
             bugfix)
-              LABEL="bugfix"
+              LABEL="🐛 Bug Fix"
               ;;
             "new feature")
-              LABEL="feature"
+              LABEL="✨ Feature"
               ;;
             refactor)
-              LABEL="refactor"
+              LABEL="🔧 Refactor"
               ;;
             breaking)
-              LABEL="breaking"
+              LABEL="⚠️ Breaking"
               ;;
             docs)
-              LABEL="docs"
+              LABEL="📝 Docs"
               ;;
             *)
               echo "❌ Invalid type: $PR_TYPE"
@@ -58,19 +59,27 @@ jobs:
               ;;
           esac
 
-          echo "Cleaning old labels"
+          echo "Remove old labels"
 
-          for OLD_LABEL in bugfix feature refactor breaking docs; do
+          OLD_LABELS=(
+            "🐛 Bug Fix"
+            "✨ Feature"
+            "🔧 Refactor"
+            "⚠️ Breaking"
+            "📝 Docs"
+          )
+
+          for OLD_LABEL in "${OLD_LABELS[@]}"; do
             gh pr edit "$PR_NUMBER" \
               --repo "$REPO" \
-              --remove-label "$OLD_LABEL" || true
+              --remove-label "$OLD_LABEL" \
+              2>/dev/null || true
           done
 
-          echo "Adding label: $LABEL"
+          echo "Add label: $LABEL"
 
           gh pr edit "$PR_NUMBER" \
             --repo "$REPO" \
             --add-label "$LABEL"
-
 
           echo "✅ Label updated: $LABEL"
