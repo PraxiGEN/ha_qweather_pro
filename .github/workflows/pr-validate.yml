@@ -2,129 +2,119 @@ name: Validate PR
 
 on:
   pull_request:
-    types:
-      - opened
-      - edited
-      - synchronize
+    types: [opened, edited, synchronize]
 
 jobs:
   validate:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Validate PR title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        shell: bash
+        run: |
+          echo "Checking PR title"
+          TITLE_PATTERN="^(fix|feat|refactor|breaking|docs): .+"
+          if [[ ! "$PR_TITLE" =~ $TITLE_PATTERN ]]; then
+            echo "❌ Invalid PR title format."
+            exit 1
+          fi
+          echo "✅ PR title validation passed"
 
-      # Validate PR Type
-      - name: Validate PR type
-        id: check_type
+      - name: Validate PR content
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         shell: bash
         run: |
-
-          echo "================================"
-          echo "Checking PR type..."
-          echo "================================"
-
-          VALID_TYPES=(
-            "bugfix:"
-            "new feature:"
-            "refactor:"
-            "breaking:"
-            "docs:"
-          )
-
+          echo "Checking PR content"
           if [[ -z "$PR_BODY" ]]; then
-            echo ""
-            echo "❌ ERROR: PR description is empty."
-            echo "Please select a PR type."
+            echo "❌ PR body is empty."
             exit 1
           fi
 
-          MATCH_COUNT=0
-          MATCHED_TYPE=""
+          DESCRIPTION=$(echo "$PR_BODY" \
+            | sed '/<!--/,/-->/d' \
+            | awk '
+              /^## Description/ { flag=1; next }
+              /^## / { flag=0 }
+              flag
+            ' | sed '/^[[:space:]]*$/d')
 
-          for TYPE in "${VALID_TYPES[@]}"
-          do
+          if [[ -z "$DESCRIPTION" ]]; then
+            echo "❌ Description is empty."
+            exit 1
+          fi
+          echo "✅ Description exists"
 
-            if printf "%s\n" "$PR_BODY" \
-              | grep -qiE "^[[:space:]]*-[[:space:]]*\[[xX]\][[:space:]]*$TYPE"
-            then
+          ALLOWED_TYPES=("bugfix" "new feature" "refactor" "breaking" "docs")
+          PR_TYPE=$(echo "$PR_BODY" \
+            | grep -oE '<!-- PR_TYPE:[^>]+ -->' \
+            | sed -E 's/<!-- PR_TYPE:(.*) -->/\1/' \
+            | xargs)
 
-              MATCH_COUNT=$((MATCH_COUNT+1))
-              MATCHED_TYPE="$TYPE"
+          if [[ -z "$PR_TYPE" ]]; then
+            echo "❌ Missing PR_TYPE marker."
+            exit 1
+          fi
 
+          TYPE_VALID=false
+          for TYPE in "${ALLOWED_TYPES[@]}"; do
+            if [[ "$PR_TYPE" == "$TYPE" ]]; then
+              TYPE_VALID=true
+              break
             fi
-
           done
 
-          if [[ "$MATCH_COUNT" -eq 0 ]]
-          then
-            echo ""
-            echo "❌ ERROR: No PR type selected."
-            echo ""
-            echo "Available types:"
-            printf " - %s\n" "${VALID_TYPES[@]}"
+          if [[ "$TYPE_VALID" != "true" ]]; then
+            echo "❌ Invalid PR_TYPE: $PR_TYPE"
             exit 1
           fi
+          echo "✅ PR_TYPE: $PR_TYPE"
 
-          if [[ "$MATCH_COUNT" -gt 1 ]]
-          then
-            echo ""
-            echo "❌ ERROR: Multiple PR types selected."
-            echo ""
-            echo "Only one type is allowed."
-            exit 1
-          fi
+          REQUIRED_CHECKS=(
+            "Code follows project coding standards"
+            "No debug code or unrelated files included"
+          )
 
-          echo ""
-          echo "✅ PR type:"
-          echo "$MATCHED_TYPE"
-          echo ""
-          echo "PR type validation passed."
+          for CHECK in "${REQUIRED_CHECKS[@]}"; do
+            if ! echo "$PR_BODY" | grep -qiE "
+
+              \[x\]
+              
+              .*$CHECK"; then
+              echo "❌ Checklist item incomplete: $CHECK"
+              exit 1
+            fi
+          done
+
+          echo "✅ Checklist validation passed"
 
       # Validate Branch
-      - name: Validate branch name
-        id: check_branch
+      - name: Validate Branch
         env:
-          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
         shell: bash
         run: |
+          echo "Checking branch"
+          echo "Branch: $BRANCH"
 
-          echo "================================"
-          echo "Checking branch name..."
-          echo "================================"
-
-          echo "Branch:"
-          echo "$HEAD_BRANCH"
-
-
-          if [[ "$HEAD_BRANCH" == "main" ||
-                "$HEAD_BRANCH" == "master" ]]
-          then
-
-            echo ""
-            echo "❌ ERROR:"
-            echo "Direct PR from main/master is forbidden."
-
+          if [[ "$BRANCH" == "main" || "$BRANCH" == "master" ]]; then
+            echo "❌ Direct PR from main/master is forbidden."
             exit 1
-
           fi
 
-          echo ""
-          echo "✅ Branch validation passed."
+          BRANCH_PATTERN="^(feat|fix|refactor|breaking|docs): .+"
+          if [[ ! "$BRANCH" =~ $BRANCH_PATTERN ]]; then
+            echo "❌ Invalid branch name: $BRANCH"
+            exit 1
+          fi
 
-      # Final Result
-      - name: Validation result
+          echo "✅ Branch validation passed"
+
+      - name: Validation failed
         if: failure()
         shell: bash
         run: |
-
-          echo ""
-          echo "================================"
           echo "❌ PR validation failed"
-          echo "================================"
-
-          echo ""
-          echo "Please fix the above errors."
-          
           exit 1
