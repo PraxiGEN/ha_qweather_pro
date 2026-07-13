@@ -17,6 +17,8 @@ jobs:
           VALID_TYPES=("bugfix:" "new feature:" "refactor:" "breaking:" "docs:")
 
           BODY="${{ github.event.pull_request.body }}"
+
+          # 防止空 body 导致 x: command not found
           if [[ -z "$BODY" ]]; then
             echo "ERROR: PR body is empty. Please select a PR type."
             exit 1
@@ -24,7 +26,7 @@ jobs:
 
           MATCHED="false"
           for TYPE in "${VALID_TYPES[@]}"; do
-            if echo "$BODY" | grep -qi "$TYPE"; then
+            if printf "%s" "$BODY" | grep -qi "$TYPE"; then
               MATCHED="true"
               echo "Matched type: $TYPE"
               break
