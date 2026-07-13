@@ -2,7 +2,7 @@ name: 🐛 Bug Report / 报告问题
 description: Report a bug / 报告问题
 title: "bug: "
 labels:
-  - "🐛 Bug Fix"
+  - "bug"
 
 body:
 
@@ -30,22 +30,32 @@ body:
         3.
 
 
-  - type: textarea
-    id: environment
+  - type: input
+    id: ha_version
     attributes:
-      label: Environment / 环境信息
+      label: Home Assistant Version / Home Assistant 版本
       description: |
-        Home Assistant environment.
-        Home Assistant 环境信息。
-      placeholder: |
-        - HA Version / HA版本:
-        - Integration Version / 集成版本:
+        Settings → About
+        设置 → 关于 Home Assistant
+      placeholder: "2026.3.0"
+    validations:
+      required: true
 
+  - type: input
+    id: integration_version
+    attributes:
+      label: Integration Version / 集成版本
+      description: |
+        Found in Settings → Devices & services → Integration.
+        可在 设置 → 设备与服务 → 集成 页面查看。
+      placeholder: "v1.0.0"
+    validations:
+      required: true
 
   - type: textarea
-    id: logs
+    id: additional
     attributes:
-      label: Screenshots / Logs / 截图或日志
+      label: Additional Context / 其他说明
       description: |
-        Add screenshots or logs if available.
-        如有截图或日志，请提供。
+        Add screenshots, logs or other information.
+        添加截图、日志或其他补充信息。

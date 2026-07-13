@@ -33,9 +33,12 @@ Format / 格式:
 <type>: <description>
 
 Examples / 示例:
-feat: add login support
-fix: resolve timeout issue
-docs: update README
+
+feat: add weather forecast support
+fix: resolve data update issue
+refactor: optimize cache mechanism
+breaking: change configuration format
+docs: update installation guide
 
 Branch / 分支:
 Do not submit PR from main/master
