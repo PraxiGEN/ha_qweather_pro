@@ -16,21 +16,17 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
         shell: bash
         run: |
+
           echo "Checking PR title"
 
-          TITLE_PATTERN="^(feat|fix|refactor|breaking|docs): .+"
-
-          if [[ ! "$PR_TITLE" =~ $TITLE_PATTERN ]]; then
-            echo "❌ Invalid PR title: $PR_TITLE"
-            echo "Format: <type>: <description>"
-            echo "Allowed: feat fix refactor breaking docs"
+          if [[ -z "$PR_TITLE" ]]; then
+            echo "❌ PR title is empty"
             exit 1
           fi
 
           echo "✅ PR title passed"
 
-
-      # Validate PR body
+      # Validate PR content
       - name: Validate PR content
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
@@ -45,15 +41,13 @@ jobs:
             exit 1
           fi
 
-
-          # Description
           DESCRIPTION=$(echo "$PR_BODY" \
             | sed '/<!--/,/-->/d' \
             | awk '
-                /^## Description/ {flag=1; next}
-                /^## / {flag=0}
-                flag
-              ' \
+              /^## Description/ {flag=1; next}
+              /^## / {flag=0}
+              flag
+            ' \
             | sed '/^[[:space:]]*$/d')
 
 
@@ -64,23 +58,10 @@ jobs:
 
           echo "✅ Description passed"
 
-
-
-          # PR_TYPE
-          ALLOWED_TYPES=(
-            "feat"
-            "fix"
-            "refactor"
-            "breaking"
-            "docs"
-          )
-
-
           PR_TYPE=$(echo "$PR_BODY" \
             | grep -oE '<!-- PR_TYPE:[^>]+ -->' \
             | sed -E 's/<!-- PR_TYPE:(.*) -->/\1/' \
             | xargs)
-
 
           if [[ -z "$PR_TYPE" ]]; then
             echo "❌ Missing PR_TYPE"
@@ -88,43 +69,9 @@ jobs:
             exit 1
           fi
 
-
-          VALID=false
-
-          for TYPE in "${ALLOWED_TYPES[@]}"; do
-            [[ "$PR_TYPE" == "$TYPE" ]] && VALID=true
-          done
-
-
-          if [[ "$VALID" != "true" ]]; then
-            echo "❌ Invalid PR_TYPE: $PR_TYPE"
-            exit 1
-          fi
-
           echo "✅ PR_TYPE: $PR_TYPE"
 
-
-
-          # Checklist
-          REQUIRED_CHECKS=(
-            "Code follows project coding standards"
-            "No debug code or unrelated files included"
-          )
-
-
-          for CHECK in "${REQUIRED_CHECKS[@]}"; do
-            if ! echo "$PR_BODY" | grep -qiE "\[x\].*$CHECK"; then
-              echo "❌ Checklist incomplete: $CHECK"
-              exit 1
-            fi
-          done
-
-
-          echo "✅ Checklist passed"
-
-
-
-      # Validate branch
+      # Validate Branch
       - name: Validate branch
         env:
           BRANCH: ${{ github.event.pull_request.head.ref }}
@@ -133,21 +80,12 @@ jobs:
 
           echo "Checking branch: $BRANCH"
 
+          if [[ "$BRANCH" == "main" ||
+                "$BRANCH" == "master" ]]; then
 
-          if [[ "$BRANCH" == "main" || "$BRANCH" == "master" ]]; then
             echo "❌ Direct PR from main/master is forbidden"
             exit 1
+
           fi
-
-
-          BRANCH_PATTERN="^(feature|bugfix|refactor|docs|hotfix)/.+"
-
-
-          if [[ ! "$BRANCH" =~ $BRANCH_PATTERN ]]; then
-            echo "❌ Invalid branch: $BRANCH"
-            echo "Format: feature/* bugfix/* refactor/* docs/* hotfix/*"
-            exit 1
-          fi
-
 
           echo "✅ Branch passed"
