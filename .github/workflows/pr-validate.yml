@@ -2,70 +2,129 @@ name: Validate PR
 
 on:
   pull_request:
-    types: [opened, edited, synchronize]
+    types:
+      - opened
+      - edited
+      - synchronize
 
 jobs:
   validate:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check PR type
+
+      # Validate PR Type
+      - name: Validate PR type
         id: check_type
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        shell: bash
         run: |
+
+          echo "================================"
           echo "Checking PR type..."
+          echo "================================"
 
-          VALID_TYPES=("bugfix:" "new feature:" "refactor:" "breaking:" "docs:")
+          VALID_TYPES=(
+            "bugfix:"
+            "new feature:"
+            "refactor:"
+            "breaking:"
+            "docs:"
+          )
 
-          BODY="${{ github.event.pull_request.body }}"
-
-
-          BODY_CLEAN=$(printf "%s" "$BODY" | sed 's/
-
-            \[x\]
-            
-            / /g' | sed 's/
-            
-            \[\]
-            
-            / /g')
-
-          if [[ -z "$BODY_CLEAN" ]]; then
-            echo "ERROR: PR body is empty. Please select a PR type."
+          if [[ -z "$PR_BODY" ]]; then
+            echo ""
+            echo "❌ ERROR: PR description is empty."
+            echo "Please select a PR type."
             exit 1
           fi
 
-          MATCHED="false"
-          for TYPE in "${VALID_TYPES[@]}"; do
-            if printf "%s" "$BODY_CLEAN" | grep -qi "$TYPE"; then
-              MATCHED="true"
-              echo "Matched type: $TYPE"
-              break
+          MATCH_COUNT=0
+          MATCHED_TYPE=""
+
+          for TYPE in "${VALID_TYPES[@]}"
+          do
+
+            if printf "%s\n" "$PR_BODY" \
+              | grep -qiE "^[[:space:]]*-[[:space:]]*\[[xX]\][[:space:]]*$TYPE"
+            then
+
+              MATCH_COUNT=$((MATCH_COUNT+1))
+              MATCHED_TYPE="$TYPE"
+
             fi
+
           done
 
-          if [[ "$MATCHED" == "false" ]]; then
-            echo "ERROR: No valid PR type found."
-            echo "Allowed types: ${VALID_TYPES[*]}"
+          if [[ "$MATCH_COUNT" -eq 0 ]]
+          then
+            echo ""
+            echo "❌ ERROR: No PR type selected."
+            echo ""
+            echo "Available types:"
+            printf " - %s\n" "${VALID_TYPES[@]}"
             exit 1
           fi
 
+          if [[ "$MATCH_COUNT" -gt 1 ]]
+          then
+            echo ""
+            echo "❌ ERROR: Multiple PR types selected."
+            echo ""
+            echo "Only one type is allowed."
+            exit 1
+          fi
+
+          echo ""
+          echo "✅ PR type:"
+          echo "$MATCHED_TYPE"
+          echo ""
           echo "PR type validation passed."
 
-      - name: Check branch name (block PRs from main/master)
+      # Validate Branch
+      - name: Validate branch name
         id: check_branch
+        env:
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+        shell: bash
         run: |
-          BRANCH="${{ github.event.pull_request.head.ref }}"
-          echo "Checking branch name: $BRANCH"
 
-          if [[ "$BRANCH" == "main" || "$BRANCH" == "master" ]]; then
-            echo "ERROR: PRs from main/master are not allowed."
+          echo "================================"
+          echo "Checking branch name..."
+          echo "================================"
+
+          echo "Branch:"
+          echo "$HEAD_BRANCH"
+
+
+          if [[ "$HEAD_BRANCH" == "main" ||
+                "$HEAD_BRANCH" == "master" ]]
+          then
+
+            echo ""
+            echo "❌ ERROR:"
+            echo "Direct PR from main/master is forbidden."
+
             exit 1
+
           fi
 
-          echo "Branch validation passed."
+          echo ""
+          echo "✅ Branch validation passed."
 
-      - name: Fail if invalid
+      # Final Result
+      - name: Validation result
         if: failure()
+        shell: bash
         run: |
-          echo "❌ PR validation failed. Please fix the issues above."
+
+          echo ""
+          echo "================================"
+          echo "❌ PR validation failed"
+          echo "================================"
+
+          echo ""
+          echo "Please fix the above errors."
+          
           exit 1
