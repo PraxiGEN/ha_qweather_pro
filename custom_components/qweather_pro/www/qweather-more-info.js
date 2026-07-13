@@ -118,18 +118,18 @@
             ${this._renderAttr(
               "mdi:gauge",
               `${this._t("pressure")} · ${this._t("forecast_pressure")}`,
-              `${a.pressure || "--"} · ${a.forecast_pressure || "--"} hPa`
+              `${a.pressure || "0"} · ${a.forecast_pressure || "0"} hPa`
             )}
             ${this._renderAttr("mdi:thermometer", this._t("dew_point"), `${a.dew_point} °C`)}
             ${this._renderAttr(
               "mdi:cloud-outline",
               `${this._t("cloud_coverage")} · ${this._t("forecast_cloud")}`,
-              `${a.cloud_coverage || "--"} · ${a.forecast_cloud|| "--"} %`
+              `${a.cloud_coverage || "0"} · ${a.forecast_cloud|| "0"} %`
             )}
             ${this._renderAttr(
               "mdi:weather-windy",
                `${this._t("precip")} · ${this._t("precip_probability")}`, 
-               `${a.precip || "--"} mm · ${a.precip_probability || "--"} %`
+               `${a.precip || "0"} mm · ${a.precip_probability || "0"} %`
             )}
           </div>
 

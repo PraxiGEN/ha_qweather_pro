@@ -405,8 +405,8 @@ class QWeatherCardProEditor extends Lit {
     if (!this.hass || !this._config) return html``;
     
     const formData = {
-      show_daily: false,
-      show_hourly: false,
+      show_daily: true,
+      show_hourly: true,
       ...this._config,
     };
 
