@@ -78,8 +78,11 @@ SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
         icon="mdi:message-text-clock",
         value_fn=lambda data: data.get("minutely_summary"),
         attr_fn=lambda data: {
-            "detail": data.get("minutely_detail", [])
-        },
+            # 格式化时间为 HH:mm，作为属性名
+            # 结果示例： "15:40": "0.08mm", "15:45": "0.11mm" ...
+            (item.get("fxTime").split("T")[1][:5]): f"{item.get('precip')} mm"
+            for item in data.get("minutely_detail", [])
+        } if data.get("minutely_detail") else {},
     ),
     QWeatherSensorEntityDescription(
         key="weather_summary",
