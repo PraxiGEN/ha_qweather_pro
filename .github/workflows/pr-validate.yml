@@ -14,17 +14,15 @@ jobs:
         run: |
           echo "Checking PR type..."
 
-          VALID_TYPES=(
-            "bugfix:"
-            "new feature:"
-            "refactor:"
-            "breaking:"
-            "docs:"
-          )
+          VALID_TYPES=("bugfix:" "new feature:" "refactor:" "breaking:" "docs:")
 
           BODY="${{ github.event.pull_request.body }}"
-          MATCHED="false"
+          if [[ -z "$BODY" ]]; then
+            echo "ERROR: PR body is empty. Please select a PR type."
+            exit 1
+          fi
 
+          MATCHED="false"
           for TYPE in "${VALID_TYPES[@]}"; do
             if echo "$BODY" | grep -qi "$TYPE"; then
               MATCHED="true"
@@ -33,8 +31,9 @@ jobs:
             fi
           done
 
-          if [ "$MATCHED" = "false" ]; then
+          if [[ "$MATCHED" == "false" ]]; then
             echo "ERROR: No valid PR type found."
+            echo "Allowed types: ${VALID_TYPES[*]}"
             exit 1
           fi
 
@@ -44,8 +43,12 @@ jobs:
         id: check_branch
         run: |
           BRANCH="${{ github.event.pull_request.head.ref }}"
-
           echo "Checking branch name: $BRANCH"
+
+          if [[ -z "$BRANCH" ]]; then
+            echo "ERROR: Branch name is empty."
+            exit 1
+          fi
 
           if [[ "$BRANCH" == "main" || "$BRANCH" == "master" ]]; then
             echo "ERROR: PRs from main/master are not allowed."
