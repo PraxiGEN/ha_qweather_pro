@@ -101,6 +101,9 @@ CI checks:
       未包含调试代码或无关文件
 - [ ] Changes have been reviewed locally before submission  
       提交前已完成本地检查
+
+<!--
+============================================================
 PR Rules / PR 规范
 
 Title / 标题:
@@ -134,4 +137,5 @@ CI checks / CI 检查:
 ✓ Description / 变更描述
 ✓ Checklist / 自检清单
 
+============================================================
 -->
