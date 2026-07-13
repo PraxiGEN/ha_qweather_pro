@@ -31,24 +31,26 @@
 <!--
 PR Rules / PR 规范
 
-Title:
+Title / 标题:
+Format / 格式:
 <type>: <description>
 
-Examples:
+Examples / 示例:
 feat: add login support
 fix: resolve timeout issue
 docs: update README
 
+Branch / 分支:
+Do not submit PR from main/master
+禁止从 main/master 提交 PR
 
-Branch:
-Do not submit from main/master
+Change Type / 变更类型:
+Select one option below
+请选择一个类型
 
-PR_TYPE:
-Select one type below.
-
-CI checks:
-✓ Title
-✓ Branch
-✓ PR_TYPE
-✓ Description
+CI checks / CI 检查:
+✓ Title / 标题
+✓ Branch / 分支
+✓ Description / 描述
+✓ Change Type / 变更类型
 -->
