@@ -2,24 +2,24 @@ changelog:
   categories:
     - title: "✨ Features / 新功能"
       labels:
-        - "feature"
+        - "✨ Feature"
 
     - title: "🐛 Bug Fixes / 问题修复"
       labels:
-        - "bugfix"
+        - "🐛 Bug Fix"
 
     - title: "🔧 Refactor / 重构"
       labels:
-        - "refactor"
+        - "🔧 Refactor"
 
     - title: "📝 Documentation / 文档"
       labels:
-        - "docs"
+        - "📝 Docs"
 
-    - title: "⚠️ Breaking Changes"
+    - title: "⚠️ Breaking Changes / 破坏性变更"
       labels:
-        - "breaking"
+        - "⚠️ Breaking"
 
-    - title: "Other Changes"
+    - title: "Other Changes / 其他"
       labels:
         - "*"
