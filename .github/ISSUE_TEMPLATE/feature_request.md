@@ -1,17 +1,35 @@
-## Description / 功能描述
+name: ✨ Feature Request / 功能建议
+description: Suggest an idea or improvement / 提出功能建议
+title: "feat: "
+labels:
+  - "✨ Feature"
 
-<!-- Describe your idea.
-描述你的需求。 -->
+body:
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description / 功能描述
+      description: |
+        Describe your idea.
+        描述你的需求。
+    validations:
+      required: true
 
 
-## Use case / 使用场景
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use case / 使用场景
+      description: |
+        Why is this useful?
+        为什么需要这个功能？
 
-<!-- Why is this useful?
-为什么需要这个功能？ -->
 
-
-## Additional information / 补充信息
-
-<!-- Any screenshots or examples.
-截图或示例。
--->
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional information / 补充信息
+      description: |
+        Add screenshots or examples if available.
+        如有截图或示例，请提供。

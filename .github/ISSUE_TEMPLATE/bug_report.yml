@@ -1,0 +1,51 @@
+name: 🐛 Bug Report / 报告问题
+description: Report a bug / 报告问题
+title: "bug: "
+labels:
+  - "🐛 Bug Fix"
+
+body:
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description / 问题描述
+      description: |
+        What happened?
+        发生了什么问题？
+    validations:
+      required: true
+
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce / 复现步骤
+      description: |
+        How to reproduce?
+        如何复现？
+      placeholder: |
+        1.
+        2.
+        3.
+
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment / 环境信息
+      description: |
+        Home Assistant environment.
+        Home Assistant 环境信息。
+      placeholder: |
+        - HA Version / HA版本:
+        - Integration Version / 集成版本:
+
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Screenshots / Logs / 截图或日志
+      description: |
+        Add screenshots or logs if available.
+        如有截图或日志，请提供。
