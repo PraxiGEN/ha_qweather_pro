@@ -1,0 +1,47 @@
+name: Auto Label PR Type
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Detect PR Type
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        run: |
+
+          echo "Checking PR_TYPE"
+
+
+          PR_TYPE=$(echo "$PR_BODY" \
+            | grep -oE '<!-- PR_TYPE:[^>]+ -->' \
+            | sed -E 's/<!-- PR_TYPE:(.*) -->/\1/' \
+            | xargs)
+
+
+          if [[ -z "$PR_TYPE" ]]; then
+            echo "No PR_TYPE found"
+            exit 1
+          fi
+
+
+          echo "Detected type: $PR_TYPE"
+
+
+          gh pr edit "$PR_NUMBER" \
+            --repo "$REPO" \
+            --add-label "$PR_TYPE"
+
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

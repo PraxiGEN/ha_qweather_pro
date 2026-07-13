@@ -58,17 +58,6 @@ jobs:
             echo "❌ 错误：新版本 $NEW_VERSION 并不大于旧版本 $OLD_VERSION。跳过发布。"
           fi
 
-      # 安装 git-cliff
-      - name: Install git-cliff
-        if: steps.check.outputs.compare_result == 'success'
-        uses: kenji-miyake/setup-git-cliff@v1
-
-      # 生成 CHANGELOG
-      - name: Generate CHANGELOG.md
-        if: steps.check.outputs.compare_result == 'success'
-        run: |
-          git cliff --config cliff.toml --output CHANGELOG.md
-
       # 构建 ZIP
       - name: Create ZIP file
         if: steps.check.outputs.compare_result == 'success'
@@ -76,18 +65,25 @@ jobs:
           cd custom_components/${{ steps.check.outputs.comp_name }}
           zip -r ../../${{ steps.check.outputs.comp_name }}.zip .
 
-      # 创建 Release Draft（增强）
+      # 创建 Release Draft
       - name: Create GitHub Release Draft
         if: steps.check.outputs.compare_result == 'success'
         uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ steps.check.outputs.version }}
+      
           name: v${{ steps.check.outputs.version }} - ${{ steps.check.outputs.commit_title }}
-          body_path: CHANGELOG.md
+      
           files: |
             ${{ steps.check.outputs.comp_name }}.zip
+      
           draft: true
+      
           prerelease: ${{ steps.check.outputs.is_prerelease }}
+      
+          generate_release_notes: true
+      
           target_commitish: ${{ github.sha }}
+      
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
