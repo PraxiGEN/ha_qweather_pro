@@ -5,14 +5,11 @@
 
 ## Type of change / 变更类型
 
-<!-- PR_TYPE:new feature -->
-
 - [ ] bugfix: Bug fix / 问题修复
 - [ ] new feature: New feature / 新功能
 - [ ] refactor: Code refactoring / 重构
 - [ ] breaking: Breaking change / 破坏性变更
 - [ ] docs: Documentation / 文档更新
-
 
 ## Testing / 测试
 
