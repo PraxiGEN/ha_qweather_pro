@@ -189,10 +189,7 @@
       },
 
       "precipitation_summary": {
-        "name": "降水概要",
-        "state_attributes": {
-          "detail": { "name": "詳細" }
-        }
+        "name": "降水概要"
       },
 
       "weather_summary": {

@@ -189,10 +189,7 @@
       },
 
       "precipitation_summary": {
-        "name": "Сводка осадков",
-        "state_attributes": {
-          "detail": { "name": "Подробности" }
-        }
+        "name": "Сводка осадков"
       },
 
       "weather_summary": {

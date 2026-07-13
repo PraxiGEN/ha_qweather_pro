@@ -189,10 +189,7 @@
       },
 
       "precipitation_summary": {
-        "name": "Niederschlagsübersicht",
-        "state_attributes": {
-          "detail": { "name": "Details" }
-        }
+        "name": "Niederschlagsübersicht"
       },
 
       "weather_summary": {

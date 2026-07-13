@@ -189,10 +189,7 @@
       },
 
       "precipitation_summary": {
-        "name": "Precipitation Forecast",
-        "state_attributes": {
-          "detail": { "name": "Detail" }
-        }
+        "name": "Precipitation Forecast"
       },
 
       "weather_summary": {

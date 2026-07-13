@@ -189,10 +189,7 @@
       },
 
       "precipitation_summary": {
-        "name": "강수 요약",
-        "state_attributes": {
-          "detail": { "name": "세부 정보" }
-        }
+        "name": "강수 요약"
       },
 
       "weather_summary": {
