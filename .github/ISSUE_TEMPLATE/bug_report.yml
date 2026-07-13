@@ -1,8 +1,5 @@
 name: 🐛 Bug Report / 报告问题
 description: Report a bug / 报告问题
-title: "bug: "
-labels:
-  - "bug"
 
 body:
 
