@@ -22,11 +22,8 @@
 
 ## Checklist / 自检清单
 
-- [ ] Code follows project standards
-      代码符合项目规范
-
-- [ ] No debug code or unrelated files
-      无调试代码或无关文件
+- [ ] Code follows project standards / 代码符合项目规范
+- [ ] No debug code or unrelated files / 无调试代码或无关文件
 
 <!--
 PR Rules / PR 规范
