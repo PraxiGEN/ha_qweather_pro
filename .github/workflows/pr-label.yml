@@ -58,10 +58,19 @@ jobs:
               ;;
           esac
 
+          echo "Cleaning old labels"
+
+          for OLD_LABEL in bugfix feature refactor breaking docs; do
+            gh pr edit "$PR_NUMBER" \
+              --repo "$REPO" \
+              --remove-label "$OLD_LABEL" || true
+          done
+
           echo "Adding label: $LABEL"
 
           gh pr edit "$PR_NUMBER" \
             --repo "$REPO" \
             --add-label "$LABEL"
 
-          echo "✅ Label added"
+
+          echo "✅ Label updated: $LABEL"
