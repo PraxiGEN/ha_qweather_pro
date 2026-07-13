@@ -32,7 +32,7 @@
 <!--- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->
 <!--- 本次变更属于哪种类型？请在对应项打 `x` -->
 
-<!-- PR_TYPE:feat -->
+<!-- PR_TYPE:new feature -->
 
 - [ ] bugfix: Bug fix / 问题修复
 - [ ] new feature: New feature / 新功能
