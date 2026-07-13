@@ -2,33 +2,32 @@
 <!--- 在标题中提供本次变更的简要概述 -->
 
 ## Description / 变更描述
-
 <!--- Describe your changes in detail -->
 <!--- 详细描述你的变更内容 -->
 
 
 ## Motivation and Context / 动机与背景
-
 <!--- Why is this change required? What problem does it solve? -->
 <!--- If it fixes an open issue, please link to the issue here. -->
 <!--- 为什么需要这个变更？它解决了什么问题？如修复 Issue，请在此处链接 -->
 
 
-## How has this been tested? / 测试说明
 
+## How has this been tested? / 测试说明
 <!--- Please describe in detail how you tested your changes. -->
 <!--- Include details of your testing environment, tests ran to see how -->
 <!--- your change affects other areas of the code, etc. -->
 <!--- 请详细描述你如何测试本次变更，包括测试环境、测试内容、对其他功能的影响等 -->
 
 
-## Screenshots (if appropriate) / 截图（如适用）
 
+## Screenshots (if appropriate) / 截图（如适用）
 <!-- A picture tells a thousand words -->
 <!-- 一图胜千言 -->
 
-## Types of changes / 变更类型
 
+
+## Types of changes / 变更类型
 <!--- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->
 <!--- 本次变更属于哪种类型？请在对应项打 `x` -->
 
