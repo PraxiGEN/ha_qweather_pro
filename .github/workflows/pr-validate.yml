@@ -16,31 +16,30 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
         shell: bash
         run: |
-
           echo "Checking PR title"
 
-          if [[ -z "$PR_TITLE" ]]; then
-            echo "❌ PR title is empty"
+          if [[ ! "$PR_TITLE" =~ ^.+:.+ ]]; then
+            echo "❌ Invalid PR title"
+            echo "Format: <type>: <description>"
             exit 1
           fi
 
           echo "✅ PR title passed"
 
-      # Validate PR content
+      # Validate PR body
       - name: Validate PR content
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         shell: bash
         run: |
-
           echo "Checking PR content"
-
 
           if [[ -z "$PR_BODY" ]]; then
             echo "❌ PR body is empty"
             exit 1
           fi
 
+          # Description check
           DESCRIPTION=$(echo "$PR_BODY" \
             | sed '/<!--/,/-->/d' \
             | awk '
@@ -50,7 +49,6 @@ jobs:
             ' \
             | sed '/^[[:space:]]*$/d')
 
-
           if [[ -z "$DESCRIPTION" ]]; then
             echo "❌ Description is empty"
             exit 1
@@ -58,34 +56,34 @@ jobs:
 
           echo "✅ Description passed"
 
-          PR_TYPE=$(echo "$PR_BODY" \
-            | grep -oE '<!-- PR_TYPE:[^>]+ -->' \
-            | sed -E 's/<!-- PR_TYPE:(.*) -->/\1/' \
-            | xargs)
+          # Change type check
+          TYPE_COUNT=$(echo "$PR_BODY" \
+            | grep -Ec '\[x\].*(bugfix|new feature|refactor|breaking|docs):')
 
-          if [[ -z "$PR_TYPE" ]]; then
-            echo "❌ Missing PR_TYPE"
-            echo "Example: <!-- PR_TYPE:feat -->"
+
+          if [[ "$TYPE_COUNT" -ne 1 ]]; then
+            echo "❌ Select exactly one change type"
             exit 1
           fi
 
-          echo "✅ PR_TYPE: $PR_TYPE"
+          PR_TYPE=$(echo "$PR_BODY" \
+            | grep -E '\[x\].*(bugfix|new feature|refactor|breaking|docs):' \
+            | sed -E 's/.*\] ([^:]+):.*/\1/')
 
-      # Validate Branch
+          echo "✅ Change type: $PR_TYPE"
+
+      # Validate branch
       - name: Validate branch
         env:
           BRANCH: ${{ github.event.pull_request.head.ref }}
         shell: bash
         run: |
-
           echo "Checking branch: $BRANCH"
 
           if [[ "$BRANCH" == "main" ||
                 "$BRANCH" == "master" ]]; then
-
             echo "❌ Direct PR from main/master is forbidden"
             exit 1
-
           fi
 
           echo "✅ Branch passed"
