@@ -1,0 +1,25 @@
+changelog:
+  categories:
+    - title: "✨ Features / 新功能"
+      labels:
+        - "feature"
+
+    - title: "🐛 Bug Fixes / 问题修复"
+      labels:
+        - "bugfix"
+
+    - title: "🔧 Refactor / 重构"
+      labels:
+        - "refactor"
+
+    - title: "📝 Documentation / 文档"
+      labels:
+        - "docs"
+
+    - title: "⚠️ Breaking Changes"
+      labels:
+        - "breaking"
+
+    - title: "Other Changes"
+      labels:
+        - "*"
