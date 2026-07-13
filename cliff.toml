@@ -1,10 +1,9 @@
 [git]
-# 只根据 commit message 的 type 分类
 conventional_commits = true
 
 [commit_types]
 bugfix = { title = "🐛 Bug Fixes / 问题修复" }
-new feature = { title = "✨ New Features / 新功能" }
+"new feature" = { title = "✨ New Features / 新功能" }
 refactor = { title = "🔧 Refactor / 重构" }
 breaking = { title = "⚠️ Breaking Changes / 破坏性变更" }
 docs = { title = "📝 Documentation / 文档更新" }
