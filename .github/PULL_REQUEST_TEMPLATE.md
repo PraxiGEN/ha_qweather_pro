@@ -1,41 +1,90 @@
+<!--
+============================================================
+PR Rules / PR 规范
+Before submitting / 提交前确认:
+
+1. Title:
+   <type>: <description>
+   Allowed:
+   feat     New feature / 新功能
+   fix      Bug fix / 问题修复
+   refactor Code refactor / 重构
+   breaking Breaking change / 破坏性变更
+   docs     Documentation / 文档
+
+2. Branch:
+   <type>/<description>
+   Allowed:
+   feature/*  bugfix/*  refactor/*
+   docs/*     hotfix/*
+   
+3. PR_TYPE:
+   Add one marker:
+
+   <!-- PR_TYPE:feat -->
+
+CI checks / CI 检查:
+
+✓ PR Title
+✓ Branch name
+✓ PR_TYPE
+✓ Description
+✓ Checklist
+
+Examples / 示例:
+
+Title:
+feat: add user authentication
+
+Branch:
+feature/add-login
+
+PR_TYPE:
+<!-- PR_TYPE:feat -->
+============================================================
+-->
+
 <!--- Provide a general summary of your changes in the Title above -->
 <!--- 在标题中提供本次变更的简要概述 -->
 
 ## Description / 变更描述
+
 <!--- Describe your changes in detail -->
 <!--- 详细描述你的变更内容 -->
 
 
 ## Motivation and Context / 动机与背景
+
 <!--- Why is this change required? What problem does it solve? -->
 <!--- If it fixes an open issue, please link to the issue here. -->
 <!--- 为什么需要这个变更？它解决了什么问题？如修复 Issue，请在此处链接 -->
 
 
-
 ## How has this been tested? / 测试说明
+
 <!--- Please describe in detail how you tested your changes. -->
 <!--- Include details of your testing environment, tests ran to see how -->
 <!--- your change affects other areas of the code, etc. -->
 <!--- 请详细描述你如何测试本次变更，包括测试环境、测试内容、对其他功能的影响等 -->
 
 
-
 ## Screenshots (if appropriate) / 截图（如适用）
+
 <!-- A picture tells a thousand words -->
 <!-- 一图胜千言 -->
 
-
-
 ## Types of changes / 变更类型
+
 <!--- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->
 <!--- 本次变更属于哪种类型？请在对应项打 `x` -->
 
-- [ ] bugfix: Bug fix (non-breaking change which fixes an issue) / 问题修复（不影响现有功能的问题修复）
-- [ ] new feature: New feature (non-breaking change which adds functionality or updates content) / 新功能（不影响现有功能的新功能或内容更新）
-- [ ] refactor: Code refactor (no behavior change) / 重构（不改变行为）
-- [ ] breaking: Breaking change (existing functionality may be affected) / 破坏性变更（可能影响现有功能）
-- [ ] docs: Documentation update (documentation update) / 文档更新（文档更新）
+<!-- PR_TYPE:feat -->
+
+- [ ] bugfix: Bug fix / 问题修复
+- [ ] new feature: New feature / 新功能
+- [ ] refactor: Code refactoring without behavior change / 重构（不改变行为）
+- [ ] breaking: Breaking change / 破坏性变更
+- [ ] docs: Documentation update / 文档更新
 
 ---
 
@@ -45,15 +94,17 @@
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
 <!--- 请确认以下内容是否已完成 -->
 
-- [ ] My code follows the code style of this project.  
-      我的代码符合本项目的代码风格  
-- [ ] My change requires a change to the documentation.  
-      本次变更需要更新文档  
-- [ ] I have updated the documentation accordingly.  
-      我已更新相关文档  
-- [ ] Branch naming follows the convention.  
-      分支命名符合规范  
-- [ ] PR contains only a single type of change.  
-      PR 仅包含单一类型的变更  
-- [ ] No unrelated files or debug code included.  
-      未包含无关文件或调试代码
+- [ ] Code follows project coding standards  
+      代码符合项目编码规范
+- [ ] Tests have been added or updated if required  
+      必要时已添加或更新测试
+- [ ] Documentation has been updated if required  
+      必要时已更新相关文档
+- [ ] Branch naming follows project convention  
+      分支命名符合项目规范
+- [ ] PR contains only one type of change  
+      PR 只包含一种类型的变更
+- [ ] No debug code or unrelated files included  
+      未包含调试代码或无关文件
+- [ ] Changes have been reviewed locally before submission  
+      提交前已完成本地检查
