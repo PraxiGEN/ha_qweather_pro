@@ -1,6 +1,11 @@
 ## Description / 变更描述
 
-<!-- What changed? / 描述本次修改内容 -->
+<!--
+Describe what changed and why. / 描述本次修改内容以及原因。
+Related Issue / 关联 Issue: #123
+Breaking Changes / 破坏性变更: None / 无
+Impact / 影响范围: Describe affected features or users. / 描述影响的功能或用户。
+-->
 
 
 ## Type of change / 变更类型
