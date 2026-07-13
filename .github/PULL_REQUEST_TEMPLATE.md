@@ -1,3 +1,42 @@
+<!--
+============================================================
+PR Rules / PR 规范
+
+Before submitting / 提交前确认:
+
+1. Title:
+   <type>: <description>
+
+   Allowed:
+   feat     New feature / 新功能
+   fix      Bug fix / 问题修复
+   refactor Code refactor / 重构
+   breaking Breaking change / 破坏性变更
+   docs     Documentation / 文档
+
+2. Branch:
+   <type>/<description>
+
+   Allowed:
+   feature/*
+   bugfix/*
+   refactor/*
+   docs/*
+   hotfix/*
+
+3. PR_TYPE:
+   Add marker below / 添加下面标识
+
+CI checks:
+✓ PR Title
+✓ Branch name
+✓ PR_TYPE
+✓ Description
+✓ Checklist
+
+============================================================
+-->
+
 <!--- Provide a general summary of your changes in the Title above -->
 <!--- 在标题中提供本次变更的简要概述 -->
 
@@ -62,9 +101,6 @@
       未包含调试代码或无关文件
 - [ ] Changes have been reviewed locally before submission  
       提交前已完成本地检查
-
-<!--
-============================================================
 PR Rules / PR 规范
 
 Title / 标题:
@@ -98,5 +134,4 @@ CI checks / CI 检查:
 ✓ Description / 变更描述
 ✓ Checklist / 自检清单
 
-============================================================
 -->
