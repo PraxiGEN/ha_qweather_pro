@@ -1,41 +1,3 @@
-<!--
-============================================================
-PR Rules / PR 规范
-
-Before submitting / 提交前确认:
-
-1. Title:
-   <type>: <description>
-
-   Allowed:
-   feat     New feature / 新功能
-   fix      Bug fix / 问题修复
-   refactor Code refactor / 重构
-   breaking Breaking change / 破坏性变更
-   docs     Documentation / 文档
-
-2. Branch:
-   <type>/<description>
-
-   Allowed:
-   feature/*
-   bugfix/*
-   refactor/*
-   docs/*
-   hotfix/*
-
-3. PR_TYPE:
-   Add marker below / 添加下面标识
-
-CI checks:
-✓ PR Title
-✓ Branch name
-✓ PR_TYPE
-✓ Description
-✓ Checklist
-
-============================================================
--->
 
 <!--- Provide a general summary of your changes in the Title above -->
 <!--- 在标题中提供本次变更的简要概述 -->
@@ -101,3 +63,31 @@ CI checks:
       未包含调试代码或无关文件
 - [ ] Changes have been reviewed locally before submission  
       提交前已完成本地检查
+
+<!--
+============================================================
+PR Examples / PR 示例
+
+Title / 标题:
+
+Format: <type>: <description>
+Examples / 示例: refactor: optimize cache service / refactor: 优化缓存服务
+
+Branch / 分支:
+
+Format: <type>/<description>
+Examples / 示例: docs/update-readme
+
+PR_TYPE:
+Add one marker / 添加一个标识:
+
+CI checks / CI 检查:
+
+✓ PR Title / PR 标题
+✓ Branch name / 分支名称
+✓ PR_TYPE / PR 类型
+✓ Description / 变更描述
+✓ Checklist / 自检清单
+
+============================================================
+-->
