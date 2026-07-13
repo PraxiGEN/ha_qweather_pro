@@ -13,31 +13,30 @@ permissions:
 jobs:
   build-and-draft:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # 必须获取所有历史和标签
+          fetch-depth: 0
 
+      # 版本号严格比较
       - name: Version Increment Check
         id: check
         run: |
-          # 1. 自动定位集成目录和 manifest 文件
           MANIFEST_FILE=$(ls custom_components/*/manifest.json | head -n 1)
           COMPONENT_NAME=$(basename $(dirname $MANIFEST_FILE))
           NEW_VERSION=$(python3 -c "import json; print(json.load(open('$MANIFEST_FILE'))['version'])")
-          
-          # 2. 获取当前仓库中最新的 Tag (如果没有则默认为 v0.0.0)
-          # 注意：这里会过滤掉非 v 开头的标签
+
           LATEST_TAG=$(git tag -l "v*" --sort=-v:refname | head -n 1)
-          if [ -z "$LATEST_TAG" ]; then LATEST_TAG="v0.0.0"; fi
-          OLD_VERSION=${LATEST_TAG#v} # 去掉 v 前缀
+          if [ -z "$LATEST_TAG" ]; then
+            LATEST_TAG="v0.0.0"
+          fi
+          OLD_VERSION=${LATEST_TAG#v}
 
           echo "检测到新版本: $NEW_VERSION"
           echo "检测到旧版本: $OLD_VERSION"
 
-          # 3. 使用 Python 进行语义化版本比较 (严格检查 NEW > OLD)
-          # packaging.version 是最稳妥的比较方式
           python3 -m pip install packaging
           IS_INCREASED=$(python3 -c "from packaging import version; print(version.parse('$NEW_VERSION') > version.parse('$OLD_VERSION'))")
 
@@ -45,12 +44,10 @@ jobs:
             echo "compare_result=success" >> $GITHUB_OUTPUT
             echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
             echo "comp_name=$COMPONENT_NAME" >> $GITHUB_OUTPUT
-            
-            # 获取最新 Commit 标题作为 Release 标题的一部分
+
             COMMIT_TITLE=$(git log -1 --pretty=format:"%s")
             echo "commit_title=$COMMIT_TITLE" >> $GITHUB_OUTPUT
 
-            # 判断是否为预览版
             if [[ $NEW_VERSION == *"beta"* ]] || [[ $NEW_VERSION == *"rc"* ]] || [[ $NEW_VERSION == *"alpha"* ]]; then
               echo "is_prerelease=true" >> $GITHUB_OUTPUT
             else
@@ -61,24 +58,36 @@ jobs:
             echo "❌ 错误：新版本 $NEW_VERSION 并不大于旧版本 $OLD_VERSION。跳过发布。"
           fi
 
+      # 安装 git-cliff
+      - name: Install git-cliff
+        if: steps.check.outputs.compare_result == 'success'
+        uses: kenji-miyake/setup-git-cliff@v1
+
+      # 生成 CHANGELOG
+      - name: Generate CHANGELOG.md
+        if: steps.check.outputs.compare_result == 'success'
+        run: |
+          git cliff --config cliff.toml --output CHANGELOG.md
+
+      # 构建 ZIP
       - name: Create ZIP file
         if: steps.check.outputs.compare_result == 'success'
         run: |
           cd custom_components/${{ steps.check.outputs.comp_name }}
           zip -r ../../${{ steps.check.outputs.comp_name }}.zip .
 
+      # 创建 Release Draft（增强）
       - name: Create GitHub Release Draft
         if: steps.check.outputs.compare_result == 'success'
         uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ steps.check.outputs.version }}
-          # 按照你的习惯：v1.0.0 - 标题内容
           name: v${{ steps.check.outputs.version }} - ${{ steps.check.outputs.commit_title }}
+          body_path: CHANGELOG.md
           files: |
             ${{ steps.check.outputs.comp_name }}.zip
           draft: true
           prerelease: ${{ steps.check.outputs.is_prerelease }}
-          generate_release_notes: true
           target_commitish: ${{ github.sha }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,91 @@
+name: Validate PR
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Validate PR title
+      - name: Validate PR title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        shell: bash
+        run: |
+
+          echo "Checking PR title"
+
+          if [[ -z "$PR_TITLE" ]]; then
+            echo "❌ PR title is empty"
+            exit 1
+          fi
+
+          echo "✅ PR title passed"
+
+      # Validate PR content
+      - name: Validate PR content
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        shell: bash
+        run: |
+
+          echo "Checking PR content"
+
+
+          if [[ -z "$PR_BODY" ]]; then
+            echo "❌ PR body is empty"
+            exit 1
+          fi
+
+          DESCRIPTION=$(echo "$PR_BODY" \
+            | sed '/<!--/,/-->/d' \
+            | awk '
+              /^## Description/ {flag=1; next}
+              /^## / {flag=0}
+              flag
+            ' \
+            | sed '/^[[:space:]]*$/d')
+
+
+          if [[ -z "$DESCRIPTION" ]]; then
+            echo "❌ Description is empty"
+            exit 1
+          fi
+
+          echo "✅ Description passed"
+
+          PR_TYPE=$(echo "$PR_BODY" \
+            | grep -oE '<!-- PR_TYPE:[^>]+ -->' \
+            | sed -E 's/<!-- PR_TYPE:(.*) -->/\1/' \
+            | xargs)
+
+          if [[ -z "$PR_TYPE" ]]; then
+            echo "❌ Missing PR_TYPE"
+            echo "Example: <!-- PR_TYPE:feat -->"
+            exit 1
+          fi
+
+          echo "✅ PR_TYPE: $PR_TYPE"
+
+      # Validate Branch
+      - name: Validate branch
+        env:
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+        shell: bash
+        run: |
+
+          echo "Checking branch: $BRANCH"
+
+          if [[ "$BRANCH" == "main" ||
+                "$BRANCH" == "master" ]]; then
+
+            echo "❌ Direct PR from main/master is forbidden"
+            exit 1
+
+          fi
+
+          echo "✅ Branch passed"

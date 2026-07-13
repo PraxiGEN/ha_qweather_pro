@@ -66,8 +66,8 @@ CI checks:
 <!-- A picture tells a thousand words -->
 <!-- 一图胜千言 -->
 
-## Types of changes / 变更类型
 
+## Types of changes / 变更类型
 <!--- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->
 <!--- 本次变更属于哪种类型？请在对应项打 `x` -->
 
@@ -101,3 +101,41 @@ CI checks:
       未包含调试代码或无关文件
 - [ ] Changes have been reviewed locally before submission  
       提交前已完成本地检查
+
+<!--
+============================================================
+PR Rules / PR 规范
+
+Title / 标题:
+
+Format / 格式:
+<type>: <description>
+
+Examples / 示例:
+refactor: optimize cache service
+refactor: 优化缓存服务
+
+Requirements / 要求:
+- Title cannot be empty
+- 标题不能为空
+
+Branch / 分支:
+
+Requirements / 要求:
+- PR cannot be submitted from main/master
+- 禁止从 main/master 分支提交 PR
+
+PR_TYPE:
+
+Add marker below / 添加下面标识
+
+CI checks / CI 检查:
+
+✓ PR Title / PR 标题
+✓ Branch name / 分支名称
+✓ PR_TYPE / PR 类型
+✓ Description / 变更描述
+✓ Checklist / 自检清单
+
+============================================================
+-->
