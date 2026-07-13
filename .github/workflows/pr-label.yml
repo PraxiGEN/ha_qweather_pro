@@ -13,7 +13,7 @@ jobs:
 
     steps:
 
-      - name: Detect PR Type and Add Label
+      - name: Detect change type and add label
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -23,23 +23,18 @@ jobs:
         shell: bash
         run: |
 
-          echo "Checking PR_TYPE"
-
+          echo "Checking change type"
 
           PR_TYPE=$(echo "$PR_BODY" \
-            | grep -oE '<!-- PR_TYPE:[^>]+ -->' \
-            | sed -E 's/<!-- PR_TYPE:(.*) -->/\1/' \
-            | xargs)
-
+            | grep -E '\[x\].*(bugfix|new feature|refactor|breaking|docs):' \
+            | sed -E 's/.*\] ([^:]+):.*/\1/')
 
           if [[ -z "$PR_TYPE" ]]; then
-            echo "❌ Missing PR_TYPE"
+            echo "❌ No change type selected"
             exit 1
           fi
 
-
-          echo "Detected PR_TYPE: $PR_TYPE"
-
+          echo "Detected type: $PR_TYPE"
 
           case "$PR_TYPE" in
             bugfix)
@@ -58,18 +53,15 @@ jobs:
               LABEL="docs"
               ;;
             *)
-              echo "❌ Invalid PR_TYPE: $PR_TYPE"
+              echo "❌ Invalid type: $PR_TYPE"
               exit 1
               ;;
           esac
 
-
           echo "Adding label: $LABEL"
-
 
           gh pr edit "$PR_NUMBER" \
             --repo "$REPO" \
             --add-label "$LABEL"
-
 
           echo "✅ Label added"
