@@ -1,0 +1,61 @@
+name: Validate PR
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check PR type
+        id: check_type
+        run: |
+          echo "Checking PR type..."
+
+          VALID_TYPES=(
+            "bugfix:"
+            "new feature:"
+            "refactor:"
+            "breaking:"
+            "docs:"
+          )
+
+          BODY="${{ github.event.pull_request.body }}"
+          MATCHED="false"
+
+          for TYPE in "${VALID_TYPES[@]}"; do
+            if echo "$BODY" | grep -qi "$TYPE"; then
+              MATCHED="true"
+              echo "Matched type: $TYPE"
+              break
+            fi
+          done
+
+          if [ "$MATCHED" = "false" ]; then
+            echo "ERROR: No valid PR type found."
+            exit 1
+          fi
+
+          echo "PR type validation passed."
+
+      - name: Check branch name (block PRs from main/master)
+        id: check_branch
+        run: |
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+
+          echo "Checking branch name: $BRANCH"
+
+          if [[ "$BRANCH" == "main" || "$BRANCH" == "master" ]]; then
+            echo "ERROR: PRs from main/master are not allowed."
+            exit 1
+          fi
+
+          echo "Branch validation passed."
+
+      - name: Fail if invalid
+        if: failure()
+        run: |
+          echo "❌ PR validation failed. Please fix the issues above."
+          exit 1
