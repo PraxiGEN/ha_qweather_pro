@@ -18,15 +18,25 @@ jobs:
 
           BODY="${{ github.event.pull_request.body }}"
 
-          # 防止空 body 导致 x: command not found
-          if [[ -z "$BODY" ]]; then
+
+          BODY_CLEAN=$(printf "%s" "$BODY" | sed 's/
+
+            \[x\]
+            
+            / /g' | sed 's/
+            
+            \[\]
+            
+            / /g')
+
+          if [[ -z "$BODY_CLEAN" ]]; then
             echo "ERROR: PR body is empty. Please select a PR type."
             exit 1
           fi
 
           MATCHED="false"
           for TYPE in "${VALID_TYPES[@]}"; do
-            if printf "%s" "$BODY" | grep -qi "$TYPE"; then
+            if printf "%s" "$BODY_CLEAN" | grep -qi "$TYPE"; then
               MATCHED="true"
               echo "Matched type: $TYPE"
               break
@@ -46,11 +56,6 @@ jobs:
         run: |
           BRANCH="${{ github.event.pull_request.head.ref }}"
           echo "Checking branch name: $BRANCH"
-
-          if [[ -z "$BRANCH" ]]; then
-            echo "ERROR: Branch name is empty."
-            exit 1
-          fi
 
           if [[ "$BRANCH" == "main" || "$BRANCH" == "master" ]]; then
             echo "ERROR: PRs from main/master are not allowed."
