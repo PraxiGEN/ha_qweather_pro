@@ -1,0 +1,29 @@
+style: "github"
+template: "CHANGELOG.tpl.md"
+
+info:
+  title: "Changelog"
+  repository_url: "https://github.com/<YOUR_REPO>"
+
+options:
+  commits:
+    filters:
+      Type:
+        - bugfix
+        - new feature
+        - refactor
+        - breaking
+        - docs
+
+  commit_groups:
+    title_maps:
+      bugfix: "🐛 Bug Fixes / 问题修复"
+      new feature: "✨ New Features / 新功能"
+      refactor: "🔧 Refactor / 重构"
+      breaking: "⚠️ Breaking Changes / 破坏性变更"
+      docs: "📝 Documentation / 文档更新"
+
+  header:
+    pattern: "^(.*)$"
+    pattern_maps:
+      - Subject
