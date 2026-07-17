@@ -3,8 +3,6 @@
 <!--
 Describe what changed and why. / 描述本次修改内容以及原因。
 Related Issue / 关联 Issue: #123
-Breaking Changes / 破坏性变更: None / 无
-Impact / 影响范围: Describe affected features or users. / 描述影响的功能或用户。
 -->
 
 
@@ -21,9 +19,9 @@ Impact / 影响范围: Describe affected features or users. / 描述影响的功
 <!-- Please provide test environment. / 请填写测试环境。
  -->
 
-- HA Version / HA版本:
-- Integration Version / 集成版本:
-- Test Result / 测试结果:
+- HA Version / HA版本: 
+- Integration Version / 集成版本: 
+- Test Result / 测试结果: 
 
 ## Checklist / 自检清单
 
