@@ -18,10 +18,18 @@ jobs:
         run: |
           echo "Checking PR title"
 
-          if [[ ! "$PR_TITLE" =~ ^.+:.+ ]]; then
-            echo "❌ Invalid PR title"
-            echo "Format: <type>: <description>"
-            exit 1
+          if [[ -z "$PR_TITLE" ]]; then
+              echo "❌ PR title is empty"
+              exit 1
+          fi
+
+          # 如果包含冒号，则要求格式为 <something>: <something>
+          if [[ "$PR_TITLE" == *:* ]]; then
+              if [[ ! "$PR_TITLE" =~ ^[^:]+:[[:space:]]*.+ ]]; then
+                  echo "❌ Invalid PR title format"
+                  echo "Format: <type>: <description>"
+                  exit 1
+              fi
           fi
 
           echo "✅ PR title passed"
