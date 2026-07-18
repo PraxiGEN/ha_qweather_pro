@@ -28,7 +28,7 @@
 本集成会自动注册前端资源，您只需在 Lovelace 仪表盘添加卡片：
 ```yaml
 type: custom:qweather-card
-entity: weather.tian_qi  # 默认实体 ID
+entity: weather.qweather_pro_地_区_weather # 默认实体 ID
 ```
 
 ### 可选配置 (UI 选项)

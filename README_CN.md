@@ -89,4 +89,14 @@ https://github.com/hzonz/ha_qweather_pro
 如果这个项目对您有帮助，请给项目点个Star ⭐！
 
 ---
-**兼容版本**: Home Assistant 2026.3+
+
+## 兼容版本: 
+
+- **Home Assistant 2026.1+**
+  
+  本集成最低兼容 HA 2026.1 及以上版本。
+
+- **为确保集成品牌图片正确显示，请选择 Home Assistant 2026.3+**
+  
+  为确保品牌图标能够正确显示，建议使用 HA 2026.3 或更高版本。
+  从 2026.3 起，Home Assistant 引入了 custom_integrations 目录与 Brands Proxy API，自定义集成可以在自身目录中直接包含品牌图片。

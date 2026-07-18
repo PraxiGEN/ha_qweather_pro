@@ -30,7 +30,7 @@ You only need to add the card in your Lovelace dashboard:
 
 ```yaml
 type: custom:qweather-card
-entity: weather.tian_qi  # Default entity ID
+entity: weather.qweather_pro_area_weather  # Default entity ID
 
 ```
 

@@ -103,4 +103,13 @@ If this project helps you, please consider giving it a ⭐!
 
 ---
 
-**Compatible Version:** Home Assistant 2026.3+
+## Compatible Version: 
+
+- **Home Assistant 2026.1+**
+
+  The minimum supported version of this integration is Home Assistant 2026.1 or later.
+
+- **To ensure the integration’s brand images display correctly, please use Home Assistant 2026.3 or later.**
+
+  To ensure brand icons display correctly, it is recommended to use Home Assistant 2026.3 or later.
+  Starting from 2026.3, Home Assistant introduced the custom_integrations directory and the Brands Proxy API, allowing custom integrations to include brand images directly within their own component folders.
