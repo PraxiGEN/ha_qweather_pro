@@ -168,7 +168,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
             "minutely_summary": data.get("minutely_summary"),
         }
 
-        # 2. 动态补全最新 API 字段 (从预报中提取今日瞬时值)
+        # 动态补全最新 API 字段 (从预报中提取今日瞬时值)
         if daily:
             today = daily[0]
             # --- 天文数据 ---
@@ -195,7 +195,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
         if hourly:
             attrs["precip_probability"] = hourly[0].get("precipitation_probability")
 
-        # 3. 复杂对象并入
+        # 复杂对象并入
         # --- 空气质量 (AQI) 属性优化 ---
         if aqi_data := data.get("aqi"):
             # 将污染物字典重新打包
@@ -219,6 +219,9 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
                 "pollutants": pollutants,
                 "stations": aqi_data.get("stations",[])
             }
+        # --- 天气摘要 (Weather Abstract) 属性优化 ---
+        if abstract := data.get("weather_abstract"):
+            attrs["weather_abstract"] = abstract        
         # --- 预警信息 (Warnings) 属性优化 ---
         if warnings := data.get("warning"):
             attrs["warning"] = warnings
