@@ -270,6 +270,7 @@
           "forecast_vis": { "name": "예상 가시거리" },
           "forecast_cloud": { "name": "예상 구름량" },
           "aqi": { "name": "대기질 지수" },
+          "weather_abstract": { "name": "날씨 요약 추상" },
           "city": { "name": "도시" },
           "warning": { "name": "경보 정보" },
           "suggestion": { "name": "생활 지수 제안" }

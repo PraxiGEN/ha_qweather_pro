@@ -270,6 +270,7 @@
           "forecast_vis": { "name": "予想視程" },
           "forecast_cloud": { "name": "予想雲量" },
           "aqi": { "name": "空気質指数" },
+          "weather_abstract": { "name": "天気概要抽象" },
           "city": { "name": "都市" },
           "warning": { "name": "警報情報" },
           "suggestion": { "name": "生活指数の提案" }
