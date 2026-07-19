@@ -1,5 +1,12 @@
 /** QWeather Dashboard Card - Pro*/
 (async () => {
+  const CARD_VERSION = "v1.0.0-lit";
+
+  console.log(
+    `%cQWeather Pro Card ${CARD_VERSION} Fixed`,
+    "color: #1976d2; font-weight: bold; background: #e3f2fd; border: 1px solid #1976d2; border-radius: 4px; padding: 2px 6px;"
+  );
+  
   const whenDefined = (t) => customElements.whenDefined(t);
   await Promise.race([whenDefined("ha-card"), whenDefined("ha-panel-lovelace")]);
 
@@ -10,7 +17,7 @@
 
   class QWeatherCard extends Lit {
     static get properties() {
-      return { hass:{}, config:{}, _forecastDaily:{}, _forecastHourly:{}, _weather:{}, _briefing:{}, _selectedTab:{}, _lang:{} };
+      return { hass:{}, config:{}, _forecastDaily:{}, _forecastHourly:{}, _weather:{}, _selectedTab:{}, _lang:{} };
     }
 
     constructor() {
@@ -21,7 +28,6 @@
       this._selectedTab = "daily"; 
       this._unsubs = [];
       this._lang = "en";
-      this._briefing = null;
     }
 
     _detectLang(hass) {
@@ -39,60 +45,38 @@
       return obj;
     }
 
-    setConfig(config) {
-      this.config = {
-        show_daily: false,
-        show_hourly: false,
-        ...config,
+    static getGridOptions() { return { rows: "auto", columns: 12 }; }
+
+    static getStubConfig(hass) {
+      const auto = Object.keys(hass.states).find((e) => e.startsWith("weather.qweather_pro_"));
+      return { 
+        type: "custom:qweather-card",
+        entity: auto || "", 
+        show_daily: true, 
+        show_hourly: true 
       };
+    }
+
+    setConfig(config) {
+      if (!config) throw new Error("Invalid configuration");
+      this.config = { show_daily: true, show_hourly: true, ...config };
 
       // --- 同步逻辑：确保选中的标签与开关状态匹配 ---
-      if (this.config.show_daily && !this.config.show_hourly) {
-        this._selectedTab = "daily";
-      } else if (!this.config.show_daily && this.config.show_hourly) {
-        this._selectedTab = "hourly";
-      } else if (!this.config.show_daily && !this.config.show_hourly) {
-        this._selectedTab = "none";
-      } else if (this._selectedTab === "none") {
-        this._selectedTab = this.config.show_daily ? "daily" : "hourly";
-      }
-
-      this.requestUpdate();
+      if (this.config.show_daily && !this.config.show_hourly) this._selectedTab = "daily";
+      else if (!this.config.show_daily && this.config.show_hourly) this._selectedTab = "hourly";
     }
 
     set hass(hass) {
       this._hass = hass;
       this._detectLang(hass);
-
-      /* 自动识别天气实体 */
-      let eid = this.config.entity;
-      if (!eid || !hass.states[eid]) {
-        const auto = Object.keys(hass.states).find((e) => e.startsWith("weather.qweather_pro_"));
-        if (auto) { eid = auto; this.config.entity = auto; }
-      }
-
-      /* 核心优化：防闪烁订阅逻辑。仅在实体 ID 变化时重新订阅 */
-      const st = hass.states[eid];
+      // 直接从配置读取实体
+      const st = hass.states[this.config.entity];
       if (st && (!this._weather || this._weather.entity_id !== st.entity_id)) {
         this._weather = st;
         this._subscribeForecasts();
       } else if (st) {
-        this._weather = st; 
+        this._weather = st;
       }
-
-      /* 识别天气简报实体 */
-      let bid = this.config.weather_briefing_entity;
-      if (!bid || !hass.states[bid]) {
-        const predictedBid = eid ? eid.replace("weather.", "sensor.") + "_weather_briefing" : null;
-        if (predictedBid && hass.states[predictedBid]) {
-          bid = predictedBid;
-        } else {
-          bid = Object.keys(hass.states).find(
-            (e) => e.startsWith("sensor.qweather_pro_") && e.endsWith("_weather_briefing")
-          );
-        }
-      }
-      this._briefing = bid ? hass.states[bid] : null;
     }
 
     async _subscribeForecasts() {
@@ -160,8 +144,8 @@
       this.requestUpdate();
     }
 
-    _renderBriefing() {
-      const d = this._briefing.attributes;
+    _renderBriefing(a) {
+      const d = a.weather_abstract;
       const zh = this._lang.startsWith("zh");
       const period = this._t(`period.${d.period}`);
       const tempTrend = `${this._t("temp_change_prefix")}${this._t(`temp_change_type.${d.temp_change_type}`)}`;
@@ -198,6 +182,7 @@
 
     render(){
       if(!this._weather) return html`<ha-card class="loading">${this._t("loading")}</ha-card>`;
+      
       const a=this._weather.attributes;
       const isDaily=this._selectedTab==="daily";
       const fc=isDaily?this._forecastDaily:this._forecastHourly;
@@ -251,7 +236,7 @@
               <div class="brief-content">
                 <span class="brief-label">${this._t("weather_brief")}</span>
                 <span class="brief-value">
-                  ${this._briefing ? this._renderBriefing() : (a.hourly_summary||this._t("stable_weather"))}
+                  ${this._renderBriefing(a)}
                 </span>
               </div>
             </div>
@@ -314,6 +299,7 @@
         :host{display:block;--primary-color:#03a9f4;}
         ha-card{padding:18px;cursor:pointer;border-radius:12px;transition:.3s;overflow:hidden;display: flex;flex-direction: column;}
         ha-card:hover{box-shadow:var(--ha-card-box-shadow,0 4px 10px rgba(0,0,0,.12));}
+        .loading { padding: 30px; color: var(--secondary-text-color); text-align: center; }
         .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
         .header-left{display:flex;align-items:center;}
         .weather-icon-circle{width:56px;height:56px;margin-right:16px;border-radius:50%;background:var(--secondary-background-color);display:flex;align-items:center;justify-content:center;}
@@ -358,7 +344,6 @@
         .f-temp{width:80px;text-align:right;font-size:13px;font-weight:500;}
         .f-low{color:var(--secondary-text-color);margin-left:6px;}
         .data-loading{padding:30px;text-align:center;font-size:13px;color:var(--secondary-text-color);min-height: 100px;display: flex;align-items: center;justify-content: center;}
-        .loading{padding:40px;text-align:center;}
         .footer {text-align: center;font-size: 10px;color: var(--secondary-text-color);opacity: .6;margin-top: 12px;}
         ha-card > *:last-child { margin-bottom: 0 !important; }
         .attributes-grid-3x2:last-of-type { margin-bottom: 12px; }
@@ -366,103 +351,84 @@
     }
 
     static getConfigElement() { return document.createElement("qweather-card-pro-editor"); }
-    static getStubConfig() { return { entity: "", show_daily: false, show_hourly: false }; }
   }
 
-  customElements.define("qweather-card",QWeatherCard);
-  
-class QWeatherCardProEditor extends Lit {
-  static get properties() { return { hass: {}, _config: {} }; }
-  setConfig(config) { this._config = config; }
-
-  constructor() {
-    super();
-    this._lang = "en";
-  }
-
-  _detectLang(hass) {
-    const lang = hass?.selectedLanguage || hass?.language || "en";
-    this._lang = I18N[lang] ? lang : "en";
-  }
-
-  _t(k) {
-    const parts = k.split(".");
-    let obj = I18N[this._lang] || I18N.en;
-    for (const p of parts) {
-      obj = obj?.[p];
-      if (!obj) return k;
-    }
-    return obj;
-  }
-
-  updated(changedProps) {
-    if (changedProps.has("hass")) {
-      this._detectLang(this.hass);
-    }
-  }
-
-  render() {
-    if (!this.hass || !this._config) return html``;
-    
-    const formData = {
-      show_daily: true,
-      show_hourly: true,
-      ...this._config,
-    };
-
-    if (!formData.entity) {
-      const autoEntity = Object.keys(this.hass.states).find(
-        (e) => e.startsWith("weather.qweather_pro_")
-      );
-      if (autoEntity) formData.entity = autoEntity;
-    }
-
-    if (formData.entity && !formData.weather_briefing_entity) {
-      const predictedBid = formData.entity.replace("weather.", "sensor.") + "_weather_briefing";
-      if (this.hass.states[predictedBid]) {
-        formData.weather_briefing_entity = predictedBid;
-      } else {
-        const globalBrief = Object.keys(this.hass.states).find(
-          (e) => e.startsWith("sensor.qweather_pro_") && e.endsWith("_weather_briefing")
-        );
-        if (globalBrief) formData.weather_briefing_entity = globalBrief;
+  class QWeatherCardProEditor extends Lit {
+    static get properties() { return { hass: { type: Object }, config: { type: Object } }; }
+    setConfig(c) { this.config = c; }
+    set hass(h) {
+      this._hass = h;
+      if (h) this._detectLang(h);
+      if (h && this.config && !Object.prototype.hasOwnProperty.call(this.config, 'entity')) {
+        const auto = Object.keys(h.states).find(e => e.startsWith("weather.qweather_pro_") && e.includes("_weather"));
+        if (auto) {
+          this._valueChanged({ 
+            entity: auto,
+            show_daily: true,
+            show_hourly: true 
+          });
+        }
       }
     }
 
-    return html`
-      <ha-form
-        .hass=${this.hass}
-        .data=${formData}
-        .schema=${this._schema()}
-        .computeLabel=${this._computeLabel}
-        @value-changed=${this._valueChanged}
-      ></ha-form>
-    `;
+    constructor() {
+      super();
+      this._lang = "en";
+    }
+
+    _detectLang(hass) {
+      const lang = hass?.selectedLanguage || hass?.language || "en";
+      this._lang = I18N[lang] ? lang : "en";
+    }
+
+    _t(k) {
+      const parts = k.split(".");
+      let obj = I18N[this._lang] || I18N.en;
+      for (const p of parts) {
+        obj = obj?.[p];
+        if (!obj) return k;
+      }
+      return obj;
+    }
+
+    _valueChanged(ev) {
+      const config = ev?.detail?.value || ev;
+      this.dispatchEvent(new CustomEvent("config-changed", {
+        detail: { config: { ...this.config, ...config } },
+        bubbles: true,
+        composed: true,
+      }));
+    }
+
+    _schema() {
+      return [
+        { name: "entity", selector: { entity: { domain: "weather", integration: "qweather_pro" } } },
+        { name: "show_daily", selector: { boolean: {} } },
+        { name: "show_hourly", selector: { boolean: {} } }
+      ];
+    }
+
+    _computeLabel = (schema) => {
+      return this._t(`editor.${schema.name}`);
+    };
+
+    render() {
+      if (!this._hass || !this.config) return html``;
+
+      return html`
+        <ha-form
+          .hass=${this._hass}
+          .data=${this.config}
+          .schema=${this._schema()}
+          .computeLabel=${this._computeLabel}
+          @value-changed=${this._valueChanged}
+        ></ha-form>
+      `;
+    }
   }
 
-  _schema() {
-    return [
-      { name: "entity", selector: { entity: { domain: "weather" } } },
-      { name: "weather_briefing_entity", selector: { entity: { domain: "sensor" } } },
-      { name: "show_daily", selector: { boolean: {} } },
-      { name: "show_hourly", selector: { boolean: {} } }
-    ];
-  }
-
-  _computeLabel = (schema) => {
-    return this._t(`editor.${schema.name}`);
-  };
-
-  _valueChanged(ev) {
-    this.dispatchEvent(new CustomEvent("config-changed", {
-      detail: { config: ev.detail.value },
-      bubbles: true,
-      composed: true,
-    }));
-  }
-}
-
-customElements.define("qweather-card-pro-editor", QWeatherCardProEditor);
+  customElements.define("qweather-card",QWeatherCard);
+  customElements.define("qweather-card-pro-editor", QWeatherCardProEditor);
 
   window.customCards=window.customCards||[];
   window.customCards.push({
