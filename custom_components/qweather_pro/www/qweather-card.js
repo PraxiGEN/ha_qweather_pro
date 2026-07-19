@@ -434,7 +434,7 @@
   window.customCards.push({
     type:"qweather-card",
     name:"QWeather Pro Card",
-    preview:true,
+    preview:false,
     description:"A professional weather card with vertical symmetry and briefing entity selector."
   });
 })();
