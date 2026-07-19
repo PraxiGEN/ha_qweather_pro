@@ -270,6 +270,7 @@
           "forecast_vis": { "name": "Verwachte zichtbaarheid" },
           "forecast_cloud": { "name": "Verwachte bewolking" },
           "aqi": { "name": "Luchtkwaliteitsindex" },
+          "weather_abstract": { "name": "Weeroverzicht abstract" },
           "city": { "name": "Stad" },
           "warning": { "name": "Waarschuwingsinformatie" },
           "suggestion": { "name": "Levensindex‑advies" }

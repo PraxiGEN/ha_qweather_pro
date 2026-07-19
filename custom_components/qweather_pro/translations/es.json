@@ -270,6 +270,7 @@
           "forecast_vis": { "name": "Visibilidad futura" },
           "forecast_cloud": { "name": "Nubosidad futura" },
           "aqi": { "name": "Índice de calidad del aire" },
+          "weather_abstract": { "name": "Resumen del clima abstract" },
           "city": { "name": "Ciudad" },
           "warning": { "name": "Información de alerta" },
           "suggestion": { "name": "Sugerencias del índice de vida" }

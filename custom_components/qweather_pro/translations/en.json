@@ -270,6 +270,7 @@
           "forecast_vis": { "name": "Forecast Visibility Distance" },
           "forecast_cloud": { "name": "Forecast Cloud Cover" },
           "aqi": { "name": "Air Quality Index" },
+          "weather_abstract": { "name": "Weather Abstract" },
           "city": { "name": "City" },
           "warning": { "name": "Warnings and Advisories" },
           "suggestion": { "name": "Life Index Suggestions" }

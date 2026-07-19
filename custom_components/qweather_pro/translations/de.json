@@ -270,6 +270,7 @@
           "forecast_vis": { "name": "Prognostizierte Sichtweite" },
           "forecast_cloud": { "name": "Prognostizierte Bewölkung" },
           "aqi": { "name": "Luftqualitätsindex" },
+          "weather_abstract": { "name": "Wetterzusammenfassung" },
           "city": { "name": "Stadt" },
           "warning": { "name": "Warninformationen" },
           "suggestion": { "name": "Lebensindextipps" }

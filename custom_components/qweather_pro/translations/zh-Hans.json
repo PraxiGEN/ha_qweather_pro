@@ -270,6 +270,7 @@
           "forecast_vis": { "name": "未来能见度" },
           "forecast_cloud": { "name": "未来云量" },
           "aqi": { "name": "空气质量指数" },
+          "weather_abstract": { "name": "天气概括" },
           "city": { "name": "城市" },
           "warning": { "name": "预警信息" },
           "suggestion": { "name": "生活指数建议" }
