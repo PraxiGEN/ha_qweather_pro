@@ -4,10 +4,10 @@
 
 # <img src="custom_components/qweather_pro/brand/icon.png" width="64"> QWeather Pro for Home Assistant
 
-[![Release](https://img.shields.io/github/v/release/hzonz/ha_qweather_pro)](https://github.com/hzonz/ha_qweather_pro/releases)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/hzonz/ha_qweather_pro/blob/main/LICENSE)
+[![Release](https://img.shields.io/github/v/release/PraxiGEN/ha_qweather_pro)](https://github.com/PraxiGEN/ha_qweather_pro/releases)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/PraxiGEN/ha_qweather_pro/blob/main/LICENSE)
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
-![](https://komarev.com/ghpvc/?username=hzonz&color=ff69b4)
+![](https://komarev.com/ghpvc/?username=PraxiGEN&color=ff69b4)
 
 ## A deeply customized advanced QWeather (HeWeather) integration for Home Assistant.  
 Rebuilt using the latest 2026 development standards, delivering not only highly accurate meteorological data but also ultra-fast native SVG weather cards and professional-grade detail popups.
@@ -52,7 +52,7 @@ QWeather Pro  internationalized, providing a seamless localized experience for 
 2. Select **“Custom repositories”**.
 3. Enter:
 ```yaml
-https://github.com/hzonz/ha_qweather_pro
+https://github.com/PraxiGEN/ha_qweather_pro
 ```
 4. Choose category **Integration**.
 5. Click **Add**.
@@ -63,7 +63,7 @@ https://github.com/hzonz/ha_qweather_pro
 
 1. Download the latest release:  
 ```yaml
-https://github.com/hzonz/ha_qweather_pro
+https://github.com/PraxiGEN/ha_qweather_pro
 ```
 2. Extract and place `custom_components/qweather_pro` into your Home Assistant `custom_components` directory.
 3. Restart Home Assistant.
