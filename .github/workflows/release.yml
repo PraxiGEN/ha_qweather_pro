@@ -1,4 +1,4 @@
-name: Auto Release Draft (Strict Version Check)
+name: Auto Release Draft
 
 on:
   push:
