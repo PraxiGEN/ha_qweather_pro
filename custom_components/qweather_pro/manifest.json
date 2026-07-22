@@ -1,17 +1,17 @@
 {
   "domain": "qweather_pro",
   "name": "QWeather Pro",
-  "codeowners": ["@hzonz"],
+  "codeowners": ["@PraxiGEN"],
   "config_flow": true,
   "dependencies": ["http"],
-  "documentation": "https://github.com/hzonz/ha_qweather_pro",
+  "documentation": "https://github.com/PraxiGEN/ha_qweather_pro",
   "integration_type": "service",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/hzonz/ha_qweather_pro/issues",
+  "issue_tracker": "https://github.com/PraxiGEN/ha_qweather_pro/issues",
   "requirements": [
     "PyJWT>=2.10.1",
     "cryptography>=46.0.2",
     "tenacity>=9.1.2"
   ],
-  "version": "1.1.9"
+  "version": "1.1.10"
 }
