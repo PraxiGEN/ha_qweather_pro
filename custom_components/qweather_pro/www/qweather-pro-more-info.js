@@ -249,7 +249,7 @@
     }
   }
 
-  if (!customElements.get("qweather-more-info"))
-    customElements.define("qweather-more-info", QWeatherMoreInfo);
+  if (!customElements.get("qweather-pro-more-info"))
+    customElements.define("qweather-pro-more-info", QWeatherMoreInfo);
 
 })();
