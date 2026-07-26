@@ -63,7 +63,6 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
         )
 
     # --- 当前天气核心数据 (映射自 coordinator.py now 字典) ---
-
     @property
     def condition(self) -> str | None:
         return self.coordinator.data.get("now", {}).get("condition")
@@ -101,7 +100,6 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
         return self.coordinator.data.get("now", {}).get("cloud")
 
     # --- 预报数据同步 ---
-
     async def async_forecast_daily(self) -> list[Forecast] | None:
         return self.coordinator.data.get("daily")
 
@@ -116,7 +114,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
 
         twice_daily_forecast = []
         for d in daily_data:
-            # 1. 白天预报 (建议设为早上 8 点)
+            # 白天预报 (建议设为早上 8 点)
             twice_daily_forecast.append({
                 "datetime": d.get("datetime").replace("T00:00:00", "T08:00:00"),
                 "native_temperature": d.get("native_temperature"), # 最高温
@@ -125,7 +123,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
                 "is_daytime": True,
             })
             
-            # 2. 夜间预报 (建议设为晚上 20 点)
+            # 夜间预报 (建议设为晚上 20 点)
             # 晚上没有 templow，主温 native_temperature 取最低温
             twice_daily_forecast.append({
                 "datetime": d.get("datetime").replace("T00:00:00", "T20:00:00"),
@@ -136,8 +134,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
         
         return twice_daily_forecast
 
-    # --- 扩展属性：保留所有原属性并加入新字段 ---
-
+    # --- 扩展属性
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         data = self.coordinator.data
@@ -148,7 +145,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
         daily = data.get("daily", [])
         hourly = data.get("hourly", [])
 
-        # 1. 严格保留原所有核心属性 (0 丢失)
+        # 严格保留原所有核心属性 (0 丢失)
         attrs = {
             "attribution": ATTRIBUTION,
             "city": data.get("city"),
@@ -229,8 +226,8 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
         if indices := data.get("indices"):
             attrs["suggestion"] = indices
 
-        # 4. 自定义 UI 触发标志 (保持对 Lovelace 卡片的兼容)
+        # 自定义 UI 触发标志 (保持对 Lovelace 卡片的兼容)
         if self.coordinator.entry.options.get(CONF_CUSTOM_UI):
-            attrs["custom_ui_more_info"] = "qweather-more-info"
+            attrs["custom_ui_more_info"] = "qweather-pro-more-info"
 
         return attrs
