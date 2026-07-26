@@ -67,7 +67,7 @@
 
     setConfig(config) {
       if (!config) throw new Error("Invalid configuration");
-      this.config = { show_daily: true, show_hourly: true, ...config };
+      this.config = { show_daily: true, show_hourly: true, show_warnings: true, ...config };
       if (this.config.show_daily && !this.config.show_hourly) this._selectedTab = "daily";
       else if (!this.config.show_daily && this.config.show_hourly) this._selectedTab = "hourly";
     }
