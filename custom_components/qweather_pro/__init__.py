@@ -30,14 +30,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: QWeatherConfigEntry) -> 
         if os.path.exists(local_path):
             # 注册静态路径映射
             await hass.http.async_register_static_paths([
-                StaticPathConfig("/qweather-local", local_path, False)
+                StaticPathConfig("/qweather_pro-local", local_path, False)
             ])
             
             # 注入资源：主卡片与详情页 JS
             assets = [
-                f"/qweather-local/qweather-card.js?v={version}",
-                f"/qweather-local/qweather-more-info.js?v={version}",
-                f"/qweather-local/qweather-i18n.js?v={version}"
+                f"/qweather_pro-local/qweather-pro-card.js?v={version}",
+                f"/qweather_pro-local/qweather-pro-more-info.js?v={version}",
+                f"/qweather_pro-local/qweather-pro-i18n.js?v={version}"
             ]
             
             for url in assets:
