@@ -56,4 +56,8 @@ CI checks / CI 检查:
 ✓ Branch / 分支
 ✓ Description / 描述
 ✓ Change Type / 变更类型
+
+IMPORTANT / 重要提示:
+Please fill in the template as-is. Do not modify the template structure.
+请严格按照模板填写，不要修改模板结构。
 -->
