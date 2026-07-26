@@ -10,6 +10,22 @@ jobs:
 
     steps:
 
+      # Validate branch
+      - name: Validate branch
+        env:
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+        shell: bash
+        run: |
+          echo "Checking branch: $BRANCH"
+
+          if [[ "$BRANCH" == "main" ||
+                "$BRANCH" == "master" ]]; then
+            echo "❌ Direct PR from main/master is forbidden"
+            exit 1
+          fi
+
+          echo "✅ Branch passed"
+
       # Validate PR title
       - name: Validate PR title
         env:
@@ -79,19 +95,3 @@ jobs:
             | sed -E 's/.*\] ([^:]+):.*/\1/')
 
           echo "✅ Change type: $PR_TYPE"
-
-      # Validate branch
-      - name: Validate branch
-        env:
-          BRANCH: ${{ github.event.pull_request.head.ref }}
-        shell: bash
-        run: |
-          echo "Checking branch: $BRANCH"
-
-          if [[ "$BRANCH" == "main" ||
-                "$BRANCH" == "master" ]]; then
-            echo "❌ Direct PR from main/master is forbidden"
-            exit 1
-          fi
-
-          echo "✅ Branch passed"

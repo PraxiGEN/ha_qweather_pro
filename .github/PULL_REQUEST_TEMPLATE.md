@@ -10,7 +10,7 @@ Related Issue / 关联 Issue: #123
 
 - [ ] bugfix: Bug fix / 问题修复
 - [ ] new feature: New feature / 新功能
-- [ ] refactor: Code refactoring / 重构
+- [ ] refactor: Code refactoring and optimization / 重构与优化
 - [ ] breaking: Breaking change / 破坏性变更
 - [ ] docs: Documentation / 文档更新
 
