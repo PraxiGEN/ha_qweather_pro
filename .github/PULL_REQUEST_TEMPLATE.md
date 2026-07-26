@@ -10,7 +10,7 @@ Related Issue / 关联 Issue: #123
 
 - [ ] bugfix: Bug fix / 问题修复
 - [ ] new feature: New feature / 新功能
-- [ ] refactor: Code refactoring / 重构
+- [ ] refactor: Code refactoring and optimization / 重构与优化
 - [ ] breaking: Breaking change / 破坏性变更
 - [ ] docs: Documentation / 文档更新
 
@@ -56,4 +56,8 @@ CI checks / CI 检查:
 ✓ Branch / 分支
 ✓ Description / 描述
 ✓ Change Type / 变更类型
+
+IMPORTANT / 重要提示:
+Please fill in the template as-is. Do not modify the template structure.
+请严格按照模板填写，不要修改模板结构。
 -->

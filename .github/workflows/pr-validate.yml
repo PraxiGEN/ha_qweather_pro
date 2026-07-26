@@ -10,6 +10,31 @@ jobs:
 
     steps:
 
+      # Validate branch
+      - name: Validate branch
+        env:
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          echo "Checking branch: $BRANCH"
+
+          if [[ "$BRANCH" == "main" || "$BRANCH" == "master" ]]; then
+            echo "❌ Direct PR from main/master is forbidden"
+            echo "Closing PR #$PR_NUMBER"
+
+            curl -s -X PATCH \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER} \
+              -d '{"state":"closed"}'
+
+            exit 1
+          fi
+
+          echo "✅ Branch passed"
+
       # Validate PR title
       - name: Validate PR title
         env:
@@ -79,19 +104,3 @@ jobs:
             | sed -E 's/.*\] ([^:]+):.*/\1/')
 
           echo "✅ Change type: $PR_TYPE"
-
-      # Validate branch
-      - name: Validate branch
-        env:
-          BRANCH: ${{ github.event.pull_request.head.ref }}
-        shell: bash
-        run: |
-          echo "Checking branch: $BRANCH"
-
-          if [[ "$BRANCH" == "main" ||
-                "$BRANCH" == "master" ]]; then
-            echo "❌ Direct PR from main/master is forbidden"
-            exit 1
-          fi
-
-          echo "✅ Branch passed"
