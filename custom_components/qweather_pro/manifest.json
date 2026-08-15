@@ -4,14 +4,10 @@
   "codeowners": ["@PraxiGEN"],
   "config_flow": true,
   "dependencies": ["http"],
+  "after_dependencies": ["frontend"],
   "documentation": "https://github.com/PraxiGEN/ha_qweather_pro",
   "integration_type": "service",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/PraxiGEN/ha_qweather_pro/issues",
-  "requirements": [
-    "PyJWT>=2.10.1",
-    "cryptography>=46.0.2",
-    "tenacity>=9.1.2"
-  ],
-  "version": "1.1.13"
+  "version": "1.2.0-beta.1"
 }
