@@ -86,18 +86,16 @@
     "step": {
       "init": {
         "title": "整合選項",
-        "description": "### 使用說明\r\n每日天氣預報可設定為 **3/7/15/30** 天，而格點每日預報僅支援 **3/7** 天。\r\n- 每小時預報可設定為 **24/72/168** 小時，而格點每小時預報僅支援 **24/72** 小時。\r\n- **格點天氣**：啟用高精度格點 API 後，部分觀測資料（如 **能見度**）將不再提供，並會在卡片中顯示為 `--`。",
+        "description": "### 使用說明\r\n每日天氣預報可設定為 **3/7/10** 天（V1 API 最長支援 10 天）。\r\n- 每小時預報可設定為 **24/72/168** 小時。",
         "data": {
           "update_interval": "更新間隔（分鐘）",
-          "dailysteps": "每日預報天數（3–30）",
+          "dailysteps": "每日預報天數（3-10）",
           "hourlysteps": "每小時預報時數（24–168）",
-          "gird": "使用格點 API（高精度）",
           "custom_ui": "啟用自訂 UI 支援"
         }
       }
     }
   },
-
   "entity": {
     "sensor": {
       "aqi": {
@@ -106,27 +104,45 @@
           "unknown": "未知"
         },
         "state_attributes": {
-          "aqi_value": { "name": "AQI 數值" },
-          "aqi_level": { "name": "空氣品質等級" },
+          "aqi_value": {
+            "name": "AQI 數值"
+          },
+          "aqi_level": {
+            "name": "空氣品質等級"
+          },
           "primary_pollutant": {
             "name": "主要污染物",
             "state": {
               "none": "無"
             }
           },
-          "pm2p5": { "name": "PM2.5" },
-          "pm10": { "name": "PM10" },
-          "no2": { "name": "二氧化氮 (NO₂)" },
-          "so2": { "name": "二氧化硫 (SO₂)" },
-          "o3": { "name": "臭氧 (O₃)" },
-          "co": { "name": "一氧化碳 (CO)" },
+          "pm2p5": {
+            "name": "PM2.5"
+          },
+          "pm10": {
+            "name": "PM10"
+          },
+          "no2": {
+            "name": "二氧化氮 (NO₂)"
+          },
+          "so2": {
+            "name": "二氧化硫 (SO₂)"
+          },
+          "o3": {
+            "name": "臭氧 (O₃)"
+          },
+          "co": {
+            "name": "一氧化碳 (CO)"
+          },
           "health_effect": {
             "name": "健康影響",
             "state": {
               "No data available": "暫無資料"
             }
           },
-          "health_advice": { "name": "健康建議" },
+          "health_advice": {
+            "name": "健康建議"
+          },
           "stations": {
             "name": "監測站資訊",
             "state": {
@@ -135,19 +151,30 @@
           }
         }
       },
-
       "warning_info": {
         "name": "氣象預警",
         "state": {
           "without_warning": "無預警"
         },
         "state_attributes": {
-          "id": { "name": "預警 ID" },
-          "sender": { "name": "預警發布者" },
-          "issued": { "name": "預警發布時間" },
-          "title": { "name": "預警標題" },
-          "text": { "name": "預警內容" },
-          "instruction": { "name": "預警處置建議" },
+          "id": {
+            "name": "預警 ID"
+          },
+          "sender": {
+            "name": "預警發布者"
+          },
+          "issued": {
+            "name": "預警發布時間"
+          },
+          "title": {
+            "name": "預警標題"
+          },
+          "text": {
+            "name": "預警內容"
+          },
+          "instruction": {
+            "name": "預警處置建議"
+          },
           "level": {
             "name": "預警級別",
             "state": {
@@ -173,29 +200,34 @@
               "black": "黑色"
             }
           },
-          "type_name": { "name": "預警類型名稱" }
+          "type_name": {
+            "name": "預警類型名稱"
+          }
         }
       },
-
       "today_temp_range": {
         "name": "今日溫度範圍",
         "state": {
           "unknown": "未知"
         },
         "state_attributes": {
-          "max_temp": { "name": "最高溫度" },
-          "min_temp": { "name": "最低溫度" }
+          "max_temp": {
+            "name": "最高溫度"
+          },
+          "min_temp": {
+            "name": "最低溫度"
+          }
         }
       },
-
       "precipitation_summary": {
         "name": "降水簡報"
       },
-
       "weather_summary": {
         "name": "天氣概況",
         "state_attributes": {
-          "display_state": { "name": "顯示狀態" },
+          "display_state": {
+            "name": "顯示狀態"
+          },
           "period": {
             "name": "當前時段",
             "state": {
@@ -215,8 +247,10 @@
               "cold_snap": "氣溫驟降"
             }
           },
-          "current_temp": { "name": "當前溫度" },
-          "wind_status": { 
+          "current_temp": {
+            "name": "當前溫度"
+          },
+          "wind_status": {
             "name": "風力狀態",
             "state": {
               "no_wind": "無風",
@@ -224,7 +258,7 @@
               "calm": "微風"
             }
           },
-          "aqi_level": { 
+          "aqi_level": {
             "name": "空氣品質等級",
             "state": {
               "good": "空氣品質很好",
@@ -237,43 +271,176 @@
         }
       }
     },
-
     "weather": {
       "weather": {
         "name": "天氣",
         "state_attributes": {
-          "qweather_icon": { "name": "天氣圖示" },
-          "update_time": { "name": "資料更新時間" },
-          "obs_time": { "name": "觀測時間" },
-          "condition_cn": { "name": "天氣狀況（中文）" },
-          "wind_dir": { "name": "風向" },
-          "cloud": { "name": "雲量" },
-          "dew": { "name": "露點溫度" },
-          "precip": { "name": "降水量" },
-          "precip_probability": { "name": "降水機率" },
-          "feels_like": { "name": "體感溫度" },
-          "wind_scale": { "name": "風力等級" },
-          "sunrise": { "name": "日出時間" },
-          "sunset": { "name": "日落時間" },
-          "moon_phase": { "name": "月相" },
-          "moonrise": { "name": "月出時間" },
-          "moonset": { "name": "月落時間" },
-          "minutely_summary": { "name": "分鐘級天氣摘要" },
-          "moon_phase_icon": { "name": "月相圖示" },
-          "text_night": { "name": "夜間天氣狀況" },
-          "icon_night": { "name": "夜間圖示" },
-          "wind_scale_day": { "name": "白天風力等級" },
-          "wind_scale_night": { "name": "夜間風力等級" },
-          "wind_dir_day": { "name": "白天風向" },
-          "wind_dir_night": { "name": "夜間風向" },
-          "forecast_pressure": { "name": "未來氣壓" },
-          "forecast_vis": { "name": "未來能見度" },
-          "forecast_cloud": { "name": "未來雲量" },
-          "aqi": { "name": "空氣品質指數" },
-          "weather_abstract": { "name": "天氣概況" },
-          "city": { "name": "城市" },
-          "warning": { "name": "預警資訊" },
-          "suggestion": { "name": "生活指數建議" }
+          "qweather_icon": {
+            "name": "天氣圖示"
+          },
+          "update_time": {
+            "name": "資料更新時間"
+          },
+          "obs_time": {
+            "name": "觀測時間"
+          },
+          "condition_cn": {
+            "name": "天氣狀況（中文）"
+          },
+          "wind_dir": {
+            "name": "風向",
+            "state": {
+              "n": "北風",
+              "nne": "東北偏北",
+              "ne": "東北風",
+              "ene": "東北偏東",
+              "e": "東風",
+              "ese": "東南偏東",
+              "se": "東南風",
+              "sse": "東南偏南",
+              "s": "南風",
+              "ssw": "西南偏南",
+              "sw": "西南風",
+              "wsw": "西南偏西",
+              "w": "西風",
+              "wnw": "西北偏西",
+              "nw": "西北風",
+              "nnw": "西北偏北",
+              "none": "無持續風向",
+              "vrb": "風向多變"
+            }
+          },
+          "cloud": {
+            "name": "雲量"
+          },
+          "dew": {
+            "name": "露點溫度"
+          },
+          "precip": {
+            "name": "降水量"
+          },
+          "precip_probability": {
+            "name": "降水機率"
+          },
+          "feels_like": {
+            "name": "體感溫度"
+          },
+          "wind_scale": {
+            "name": "風力等級"
+          },
+          "sunrise": {
+            "name": "日出時間"
+          },
+          "sunset": {
+            "name": "日落時間"
+          },
+          "moon_phase": {
+            "name": "月相",
+            "state": {
+              "new-moon": "新月",
+              "waxing-crescent": "娥眉月",
+              "first-quarter": "上弦月",
+              "waxing-gibbous": "盈凸月",
+              "full-moon": "滿月",
+              "waning-gibbous": "虧凸月",
+              "last-quarter": "下弦月",
+              "waning-crescent": "殘月"
+            }
+          },
+          "moonrise": {
+            "name": "月出時間"
+          },
+          "moonset": {
+            "name": "月落時間"
+          },
+          "minutely_summary": {
+            "name": "分鐘級天氣摘要"
+          },
+          "moon_phase_icon": {
+            "name": "月相圖示"
+          },
+          "text_night": {
+            "name": "夜間天氣狀況"
+          },
+          "icon_night": {
+            "name": "夜間圖示"
+          },
+          "wind_scale_day": {
+            "name": "白天風力等級"
+          },
+          "wind_scale_night": {
+            "name": "夜間風力等級"
+          },
+          "wind_dir_day": {
+            "name": "白天風向",
+            "state": {
+              "n": "北風",
+              "nne": "東北偏北",
+              "ne": "東北風",
+              "ene": "東北偏東",
+              "e": "東風",
+              "ese": "東南偏東",
+              "se": "東南風",
+              "sse": "東南偏南",
+              "s": "南風",
+              "ssw": "西南偏南",
+              "sw": "西南風",
+              "wsw": "西南偏西",
+              "w": "西風",
+              "wnw": "西北偏西",
+              "nw": "西北風",
+              "nnw": "西北偏北",
+              "none": "無持續風向",
+              "vrb": "風向多變"
+            }
+          },
+          "wind_dir_night": {
+            "name": "夜間風向",
+            "state": {
+              "n": "北風",
+              "nne": "東北偏北",
+              "ne": "東北風",
+              "ene": "東北偏東",
+              "e": "東風",
+              "ese": "東南偏東",
+              "se": "東南風",
+              "sse": "東南偏南",
+              "s": "南風",
+              "ssw": "西南偏南",
+              "sw": "西南風",
+              "wsw": "西南偏西",
+              "w": "西風",
+              "wnw": "西北偏西",
+              "nw": "西北風",
+              "nnw": "西北偏北",
+              "none": "無持續風向",
+              "vrb": "風向多變"
+            }
+          },
+          "forecast_pressure": {
+            "name": "未來氣壓"
+          },
+          "forecast_vis": {
+            "name": "未來能見度"
+          },
+          "forecast_cloud": {
+            "name": "未來雲量"
+          },
+          "aqi": {
+            "name": "空氣品質指數"
+          },
+          "weather_abstract": {
+            "name": "天氣概況"
+          },
+          "city": {
+            "name": "城市"
+          },
+          "warning": {
+            "name": "預警資訊"
+          },
+          "suggestion": {
+            "name": "生活指數建議"
+          }
         }
       }
     }
