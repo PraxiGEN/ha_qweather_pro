@@ -49,12 +49,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: QWeatherConfigEntry) -> 
     # 初始化协调器
     # 此时 entry.title 已经在 config_flow 阶段被锁定为城市名
     coordinator = QWeatherUpdateCoordinator(hass, entry, version)
-    
+
+    # 先挂载 runtime_data 再执行首刷：即使首次刷新失败（如临时网络异常），
+    # 协调器实例也始终可被 reauth/diagnostics 等链路访问。
+    entry.runtime_data = coordinator
+
     # 执行初次刷新获取数据
     await coordinator.async_config_entry_first_refresh()
 
-    # 存储 runtime_data 并加载平台
-    entry.runtime_data = coordinator
+    # 加载平台
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     # 注册选项更新监听器
