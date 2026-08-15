@@ -86,18 +86,16 @@
     "step": {
       "init": {
         "title": "統合オプション",
-        "description": "### 使用説明\r\n日次予報は **3/7/15/30** 日から選択できますが、グリッド日次予報は **3/7** 日のみ対応しています。\r\n- 時間予報は **24/72/168** 時間から選択できますが、グリッド時間予報は **24/72** 時間のみ対応しています。\r\n- **グリッド天気**: 高精度グリッド API を有効にすると、一部の観測データ（例：**視程**）が利用できなくなり、カード上では `--` と表示されます。",
+        "description": "### 使用説明\r\n日次予報は **3/7/10** 日から選択できます（V1 API は最大 10 日に対応）。\r\n- 時間予報は **24/72/168** 時間から選択できます。",
         "data": {
           "update_interval": "更新間隔（分）",
-          "dailysteps": "日次予報（日数 3–30）",
+          "dailysteps": "日次予報（日数 3-10）",
           "hourlysteps": "時間予報（24–168 時間）",
-          "gird": "グリッド API を使用（高精度）",
           "custom_ui": "カスタム UI サポートを有効化"
         }
       }
     }
   },
-
   "entity": {
     "sensor": {
       "aqi": {
@@ -106,27 +104,45 @@
           "unknown": "不明"
         },
         "state_attributes": {
-          "aqi_value": { "name": "AQI 値" },
-          "aqi_level": { "name": "空気質レベル" },
+          "aqi_value": {
+            "name": "AQI 値"
+          },
+          "aqi_level": {
+            "name": "空気質レベル"
+          },
           "primary_pollutant": {
             "name": "主要汚染物質",
             "state": {
               "none": "なし"
             }
           },
-          "pm2p5": { "name": "PM2.5" },
-          "pm10": { "name": "PM10" },
-          "no2": { "name": "二酸化窒素 (NO₂)" },
-          "so2": { "name": "二酸化硫黄 (SO₂)" },
-          "o3": { "name": "オゾン (O₃)" },
-          "co": { "name": "一酸化炭素 (CO)" },
+          "pm2p5": {
+            "name": "PM2.5"
+          },
+          "pm10": {
+            "name": "PM10"
+          },
+          "no2": {
+            "name": "二酸化窒素 (NO₂)"
+          },
+          "so2": {
+            "name": "二酸化硫黄 (SO₂)"
+          },
+          "o3": {
+            "name": "オゾン (O₃)"
+          },
+          "co": {
+            "name": "一酸化炭素 (CO)"
+          },
           "health_effect": {
             "name": "健康への影響",
             "state": {
               "no_data_available": "データなし"
             }
           },
-          "health_advice": { "name": "健康アドバイス" },
+          "health_advice": {
+            "name": "健康アドバイス"
+          },
           "stations": {
             "name": "観測所情報",
             "state": {
@@ -135,19 +151,30 @@
           }
         }
       },
-
       "warning_info": {
         "name": "気象警報",
         "state": {
           "without_warning": "警報なし"
         },
         "state_attributes": {
-          "id": { "name": "警報 ID" },
-          "sender": { "name": "発信者" },
-          "issued": { "name": "発表時間" },
-          "title": { "name": "警報タイトル" },
-          "text": { "name": "警報内容" },
-          "instruction": { "name": "対応指示" },
+          "id": {
+            "name": "警報 ID"
+          },
+          "sender": {
+            "name": "発信者"
+          },
+          "issued": {
+            "name": "発表時間"
+          },
+          "title": {
+            "name": "警報タイトル"
+          },
+          "text": {
+            "name": "警報内容"
+          },
+          "instruction": {
+            "name": "対応指示"
+          },
           "level": {
             "name": "警報レベル",
             "state": {
@@ -173,29 +200,34 @@
               "black": "黒"
             }
           },
-          "type_name": { "name": "警報タイプ名" }
+          "type_name": {
+            "name": "警報タイプ名"
+          }
         }
       },
-
       "today_temp_range": {
         "name": "今日の気温範囲",
         "state": {
           "unknown": "不明"
         },
         "state_attributes": {
-          "max_temp": { "name": "最高気温" },
-          "min_temp": { "name": "最低気温" }
+          "max_temp": {
+            "name": "最高気温"
+          },
+          "min_temp": {
+            "name": "最低気温"
+          }
         }
       },
-
       "precipitation_summary": {
         "name": "降水概要"
       },
-
       "weather_summary": {
         "name": "天気概要",
         "state_attributes": {
-          "display_state": { "name": "表示状態" },
+          "display_state": {
+            "name": "表示状態"
+          },
           "period": {
             "name": "現在の時間帯",
             "state": {
@@ -215,8 +247,10 @@
               "cold_snap": "急降下"
             }
           },
-          "current_temp": { "name": "現在の気温" },
-          "wind_status": { 
+          "current_temp": {
+            "name": "現在の気温"
+          },
+          "wind_status": {
             "name": "風の状態",
             "state": {
               "no_wind": "無風",
@@ -224,7 +258,7 @@
               "calm": "そよ風"
             }
           },
-          "aqi_level": { 
+          "aqi_level": {
             "name": "空気質",
             "state": {
               "good": "空気はとても良い",
@@ -237,43 +271,176 @@
         }
       }
     },
-
     "weather": {
       "weather": {
         "name": "天気",
         "state_attributes": {
-          "qweather_icon": { "name": "天気アイコン" },
-          "update_time": { "name": "データ更新時間" },
-          "obs_time": { "name": "観測時間" },
-          "condition_cn": { "name": "天気状況（中国語）" },
-          "wind_dir": { "name": "風向" },
-          "cloud": { "name": "雲量" },
-          "dew": { "name": "露点温度" },
-          "precip": { "name": "降水量" },
-          "precip_probability": { "name": "降水確率" },
-          "feels_like": { "name": "体感温度" },
-          "wind_scale": { "name": "風力階級" },
-          "sunrise": { "name": "日の出時刻" },
-          "sunset": { "name": "日の入り時刻" },
-          "moon_phase": { "name": "月相" },
-          "moonrise": { "name": "月の出時刻" },
-          "moonset": { "name": "月の入り時刻" },
-          "minutely_summary": { "name": "1分ごとの天気概要" },
-          "moon_phase_icon": { "name": "月相アイコン" },
-          "text_night": { "name": "夜間の天気状況" },
-          "icon_night": { "name": "夜間アイコン" },
-          "wind_scale_day": { "name": "昼間の風力階級" },
-          "wind_scale_night": { "name": "夜間の風力階級" },
-          "wind_dir_day": { "name": "昼間の風向" },
-          "wind_dir_night": { "name": "夜間の風向" },
-          "forecast_pressure": { "name": "予想気圧" },
-          "forecast_vis": { "name": "予想視程" },
-          "forecast_cloud": { "name": "予想雲量" },
-          "aqi": { "name": "空気質指数" },
-          "weather_abstract": { "name": "天気概要抽象" },
-          "city": { "name": "都市" },
-          "warning": { "name": "警報情報" },
-          "suggestion": { "name": "生活指数の提案" }
+          "qweather_icon": {
+            "name": "天気アイコン"
+          },
+          "update_time": {
+            "name": "データ更新時間"
+          },
+          "obs_time": {
+            "name": "観測時間"
+          },
+          "condition_cn": {
+            "name": "天気状況（中国語）"
+          },
+          "wind_dir": {
+            "name": "風向",
+            "state": {
+              "n": "北風",
+              "nne": "北北東",
+              "ne": "北東",
+              "ene": "東北東",
+              "e": "東風",
+              "ese": "東南東",
+              "se": "南東",
+              "sse": "南南東",
+              "s": "南風",
+              "ssw": "南南西",
+              "sw": "南西",
+              "wsw": "西南西",
+              "w": "西風",
+              "wnw": "西北西",
+              "nw": "北西",
+              "nnw": "北北西",
+              "none": "風なし",
+              "vrb": "風向変化"
+            }
+          },
+          "cloud": {
+            "name": "雲量"
+          },
+          "dew": {
+            "name": "露点温度"
+          },
+          "precip": {
+            "name": "降水量"
+          },
+          "precip_probability": {
+            "name": "降水確率"
+          },
+          "feels_like": {
+            "name": "体感温度"
+          },
+          "wind_scale": {
+            "name": "風力階級"
+          },
+          "sunrise": {
+            "name": "日の出時刻"
+          },
+          "sunset": {
+            "name": "日の入り時刻"
+          },
+          "moon_phase": {
+            "name": "月相",
+            "state": {
+              "new-moon": "新月",
+              "waxing-crescent": "三日月",
+              "first-quarter": "上弦",
+              "waxing-gibbous": "盈凸月",
+              "full-moon": "満月",
+              "waning-gibbous": "亏凸月",
+              "last-quarter": "下弦",
+              "waning-crescent": "残月"
+            }
+          },
+          "moonrise": {
+            "name": "月の出時刻"
+          },
+          "moonset": {
+            "name": "月の入り時刻"
+          },
+          "minutely_summary": {
+            "name": "1分ごとの天気概要"
+          },
+          "moon_phase_icon": {
+            "name": "月相アイコン"
+          },
+          "text_night": {
+            "name": "夜間の天気状況"
+          },
+          "icon_night": {
+            "name": "夜間アイコン"
+          },
+          "wind_scale_day": {
+            "name": "昼間の風力階級"
+          },
+          "wind_scale_night": {
+            "name": "夜間の風力階級"
+          },
+          "wind_dir_day": {
+            "name": "昼間の風向",
+            "state": {
+              "n": "北風",
+              "nne": "北北東",
+              "ne": "北東",
+              "ene": "東北東",
+              "e": "東風",
+              "ese": "東南東",
+              "se": "南東",
+              "sse": "南南東",
+              "s": "南風",
+              "ssw": "南南西",
+              "sw": "南西",
+              "wsw": "西南西",
+              "w": "西風",
+              "wnw": "西北西",
+              "nw": "北西",
+              "nnw": "北北西",
+              "none": "風なし",
+              "vrb": "風向変化"
+            }
+          },
+          "wind_dir_night": {
+            "name": "夜間の風向",
+            "state": {
+              "n": "北風",
+              "nne": "北北東",
+              "ne": "北東",
+              "ene": "東北東",
+              "e": "東風",
+              "ese": "東南東",
+              "se": "南東",
+              "sse": "南南東",
+              "s": "南風",
+              "ssw": "南南西",
+              "sw": "南西",
+              "wsw": "西南西",
+              "w": "西風",
+              "wnw": "西北西",
+              "nw": "北西",
+              "nnw": "北北西",
+              "none": "風なし",
+              "vrb": "風向変化"
+            }
+          },
+          "forecast_pressure": {
+            "name": "予想気圧"
+          },
+          "forecast_vis": {
+            "name": "予想視程"
+          },
+          "forecast_cloud": {
+            "name": "予想雲量"
+          },
+          "aqi": {
+            "name": "空気質指数"
+          },
+          "weather_abstract": {
+            "name": "天気概要抽象"
+          },
+          "city": {
+            "name": "都市"
+          },
+          "warning": {
+            "name": "警報情報"
+          },
+          "suggestion": {
+            "name": "生活指数の提案"
+          }
         }
       }
     }
