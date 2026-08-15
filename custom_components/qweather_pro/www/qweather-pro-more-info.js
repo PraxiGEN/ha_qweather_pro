@@ -24,7 +24,27 @@
     }
 
     _t(k) {
-      return I18N[this._lang][k] || I18N.en[k] || k;
+      // 支持点分键路径 (如 "wd.sw")，同时保持扁平键向后兼容
+      const parts = String(k).split(".");
+      let s = I18N[this._lang] || {};
+      for (const p of parts) s = s && s[p];
+      if (s != null && typeof s !== "object") return s;
+      s = I18N.en || {};
+      for (const p of parts) s = s && s[p];
+      return s != null && typeof s !== "object" ? s : k;
+    }
+
+    // 风向 compass 代码 → 按当前语言翻译 (fallback 大写代码)
+    _windDir(code) {
+      if (!code) return "--";
+      const t = this._t(`wd.${code}`);
+      return t === `wd.${code}` ? String(code).toUpperCase() : t;
+    }
+
+    // 月相枚举 → 按当前语言翻译 (fallback 原枚举)
+    _moonPhase(code) {
+      if (!code) return "--";
+      return this._t(`mp.${code}`);
     }
 
     set hass(hass) {
@@ -103,9 +123,9 @@
                   <span class="label">${this._t("night_weather_info")}：</span>
                   <span>${a.text_night || "--"}</span>
                   <span>·</span>
-                  <span>${a.wind_dir_night || "--"}</span>
+                  <span>${this._windDir(a.wind_dir_night)}</span>
                   <span>·</span>
-                  <span>${a.moon_phase || "--"}</span>
+                  <span>${this._moonPhase(a.moon_phase)}</span>
                 </div>
               </div>
             </div>
@@ -162,7 +182,8 @@
           <!-- 页脚 -->
           <div class="footer">
             ${this._t("data_source")}: QWeather |
-            ${this._t("observed")}: ${a.obs_time.slice(5, 16).replace("T", " ")}
+            ${this._t("observed")}: ${(a.obs_time || "").slice(5, 16).replace("T", " ") || "--"}
+            ${a.degraded ? html`<span class="degraded-tag">${this._t("degraded")}</span>` : ""}
           </div>
         </div>
       `;
@@ -213,6 +234,7 @@
 
         .no-data { text-align:center; opacity:.6; padding:10px; font-size:13px; }
         .footer { text-align:center; font-size:11px; opacity:.6; margin-top:20px; }
+        .degraded-tag { display:inline-block; margin-left:8px; padding:1px 8px; border-radius:10px; font-size:10px; opacity:1; color:var(--warning-color, #ffab40); border:1px solid var(--warning-color, #ffab40); }
         
         @media (max-width: 600px) {
 
