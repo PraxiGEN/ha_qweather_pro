@@ -27,7 +27,6 @@ from .const import (
     CONF_ACCOUNT_SELECT,
     CONF_KEY_ID,
     CONF_PRIVATE_KEY,
-    CONF_GIRD,
     CONF_CUSTOM_UI,
     DEFAULT_UPDATE_INTERVAL,
     LANGUAGE_MAP,
@@ -45,6 +44,7 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._discovered_locations: list[dict[str, Any]] = []
         self._generated_private_key: str | None = None
         self._generated_public_key: str | None = None
+        self._reauth_entry: config_entries.ConfigEntry | None = None
 
     @staticmethod
     @callback
@@ -322,7 +322,6 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 CONF_UPDATE_INTERVAL: DEFAULT_UPDATE_INTERVAL,
                 CONF_DAILYSTEPS: "7",
                 CONF_HOURLYSTEPS: "24",
-                CONF_GIRD: False,
                 CONF_CUSTOM_UI: False,
             }
         )
@@ -380,6 +379,126 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             })
         )
 
+    # --- 重认证 (SOURCE_REAUTH) ---
+    # 触发条件：coordinator 刷新时 API 返回 401/403，DataUpdateCoordinator
+    # 捕获 ConfigEntryAuthFailed 后自动调用本流程，无需用户手动操作。
+
+    async def async_step_reauth(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        """认证失效后的入口步骤：载入原条目并引导重新输入凭据."""
+        entry_id = self.context.get("entry_id")
+        self._reauth_entry = (
+            self.hass.config_entries.async_get_entry(entry_id) if entry_id else None
+        )
+        if self._reauth_entry is None:
+            return self.async_abort(reason="reauth_failed_entry_not_found")
+
+        # 预填原凭据，仅覆盖认证相关字段，不改变城市/位置
+        self._temp_data = dict(self._reauth_entry.data)
+        return await self.async_step_reauth_confirm()
+
+    async def async_step_reauth_confirm(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        """重认证：更新 API Host / 认证方式 / API Key."""
+        if user_input is not None:
+            self._temp_data.update(user_input)
+            if user_input.get(CONF_USE_TOKEN):
+                return await self.async_step_reauth_jwt()
+            return await self._async_finish_reauth()
+
+        return self.async_show_form(
+            step_id="reauth_confirm",
+            data_schema=self._reauth_schema(),
+            description_placeholders={
+                "qweather_console": "https://console.qweather.com"
+            },
+        )
+
+    async def async_step_reauth_jwt(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        """重认证：JWT 凭据 (Project ID / Key ID)."""
+        if user_input is not None:
+            self._temp_data.update(user_input)
+            return await self._async_finish_reauth()
+
+        return self.async_show_form(
+            step_id="reauth_jwt",
+            data_schema=self._reauth_schema(),
+            description_placeholders={
+                "qweather_console": "https://console.qweather.com"
+            },
+        )
+
+    def _reauth_schema(self) -> vol.Schema:
+        """重认证表单：按认证方式动态构造 (不包含地理位置字段)."""
+        if self._temp_data.get(CONF_USE_TOKEN):
+            return vol.Schema({
+                vol.Required(CONF_PROJECT_ID, default=self._temp_data.get(CONF_PROJECT_ID, "")): selector.TextSelector(),
+                vol.Required(CONF_KEY_ID, default=self._temp_data.get(CONF_KEY_ID, "")): selector.TextSelector(),
+            })
+        return vol.Schema({
+            vol.Required(CONF_HOST, default=self._temp_data.get(CONF_HOST, "")): selector.TextSelector(),
+            vol.Required(CONF_USE_TOKEN, default=self._temp_data.get(CONF_USE_TOKEN, False)): selector.BooleanSelector(),
+            vol.Optional(CONF_API_KEY, default=self._temp_data.get(CONF_API_KEY, "")): selector.TextSelector(
+                selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
+            ),
+        })
+
+    @staticmethod
+    def _reauth_error_key(api_code: str | None, error_detail: str = "") -> str:
+        """将 API 错误码映射为翻译错误 key (与设置流程分类保持一致)."""
+        if api_code == "401":
+            return "invalid_auth"
+        if api_code == "403":
+            if "Host" in error_detail:
+                return "invalid_host"
+            if "Credit" in error_detail or "Overdue" in error_detail:
+                return "no_credit"
+            return "forbidden"
+        if api_code == "400":
+            return "invalid_parameter"
+        if api_code == "404":
+            return "not_found"
+        if api_code == "429":
+            return "too_many_requests"
+        if api_code == "500":
+            return "server_error"
+        return "cannot_connect"
+
+    async def _async_finish_reauth(self) -> FlowResult:
+        """校验新凭据 (使用原位置做一次城市搜索) 并更新配置条目."""
+        assert self._reauth_entry is not None
+        entry = self._reauth_entry
+        errors: dict[str, str] = {}
+
+        api = QWeatherAPI(
+            session=async_get_clientsession(self.hass),
+            api_key=self._temp_data.get(CONF_API_KEY),
+            use_token=self._temp_data.get(CONF_USE_TOKEN),
+            project_id=self._temp_data.get(CONF_PROJECT_ID),
+            key_id=self._temp_data.get(CONF_KEY_ID),
+            private_key=self._temp_data.get(CONF_PRIVATE_KEY),
+            host=self._temp_data.get(CONF_HOST),
+        )
+
+        try:
+            ha_lang = self.hass.config.language
+            qweather_lang = LANGUAGE_MAP.get(ha_lang, "en")
+            res = await api.city_lookup(entry.data.get(CONF_LOCATION_ID), lang=qweather_lang)
+            api_code = res.get("code")
+            if api_code == "200":
+                self.hass.config_entries.async_update_entry(entry, data=self._temp_data)
+                await self.hass.config_entries.async_reload(entry.entry_id)
+                return self.async_abort(reason="reauth_successful")
+            errors["base"] = self._reauth_error_key(api_code, res.get("error_detail", ""))
+        except Exception as err:
+            LOGGER.error("QWeather 重认证凭据校验失败: %s", err)
+            errors["base"] = "cannot_connect"
+
+        step_id = "reauth_jwt" if self._temp_data.get(CONF_USE_TOKEN) else "reauth_confirm"
+        return self.async_show_form(
+            step_id=step_id,
+            data_schema=self._reauth_schema(),
+            errors=errors,
+        )
+
 class QWeatherOptionsFlow(config_entries.OptionsFlow):
     """处理已安装集成的 UI 选项配置."""
 
@@ -404,7 +523,8 @@ class QWeatherOptionsFlow(config_entries.OptionsFlow):
                     default=str(options.get(CONF_DAILYSTEPS, 7))
                 ): selector.SelectSelector(
                     selector.SelectSelectorConfig(
-                        options=["3", "7", "10", "15", "30"],
+                        # V1 每日预报仅支持 1-10 天 (v7 的 15/30 在 V1 不存在)
+                        options=["3", "7", "10"],
                         mode=selector.SelectSelectorMode.DROPDOWN
                     )
                 ),
@@ -417,7 +537,6 @@ class QWeatherOptionsFlow(config_entries.OptionsFlow):
                         mode=selector.SelectSelectorMode.DROPDOWN
                     )
                 ),
-                vol.Required(CONF_GIRD, default=options.get(CONF_GIRD, False)): selector.BooleanSelector(),
                 vol.Required(CONF_CUSTOM_UI, default=options.get(CONF_CUSTOM_UI, False)): selector.BooleanSelector(),
             }),
         )

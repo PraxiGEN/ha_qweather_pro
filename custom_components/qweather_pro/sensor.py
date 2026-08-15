@@ -8,10 +8,12 @@ from homeassistant.components.sensor import (
     SensorEntity,
     SensorEntityDescription,
 )
-
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, ATTRIBUTION, LOGGER
+from . import QWeatherConfigEntry
+from .const import ATTRIBUTION
 from .coordinator import QWeatherUpdateCoordinator
 
 @dataclass(frozen=True, kw_only=True)
@@ -54,13 +56,13 @@ SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
         translation_key="today_temp_range",
         icon="mdi:thermometer-lines",
         value_fn=lambda data: (
-            f"{int(daily[0].get('native_templow'))}°C/"
-            f"{int(daily[0].get('native_temperature'))}°C"
+            f"{int(daily[0].get('temp_min'))}°C/"
+            f"{int(daily[0].get('temp_max'))}°C"
             if (daily := data.get("daily")) else "unknown"
         ),
         attr_fn=lambda data: {
-            "max_temp": f"{daily[0].get('native_temperature')}°C" if (daily := data.get("daily")) and len(daily) > 0 else None,
-            "min_temp": f"{daily[0].get('native_templow')}°C" if (daily := data.get("daily")) and len(daily) > 0 else None,
+            "max_temp": f"{daily[0].get('temp_max')}°C" if (daily := data.get("daily")) and len(daily) > 0 else None,
+            "min_temp": f"{daily[0].get('temp_min')}°C" if (daily := data.get("daily")) and len(daily) > 0 else None,
         },
     ),
     QWeatherSensorEntityDescription(
@@ -94,9 +96,9 @@ SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
 )
 
 async def async_setup_entry(
-    hass: HomeAssistant, 
+    hass: HomeAssistant,
     entry: QWeatherConfigEntry,
-    async_add_entities: AddEntitiesCallback
+    async_add_entities: AddEntitiesCallback,
 ) -> None:
     """设置平台实体."""
     coordinator = entry.runtime_data
@@ -111,7 +113,12 @@ class QWeatherSensor(CoordinatorEntity[QWeatherUpdateCoordinator], SensorEntity)
 
     _attr_has_entity_name = True
 
-    def __init__(self, coordinator, entry, description):
+    def __init__(
+        self,
+        coordinator: QWeatherUpdateCoordinator,
+        entry: QWeatherConfigEntry,
+        description: QWeatherSensorEntityDescription,
+    ) -> None:
         super().__init__(coordinator)
 
         self.entity_description = description
