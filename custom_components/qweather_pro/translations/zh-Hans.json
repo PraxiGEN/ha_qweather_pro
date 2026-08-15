@@ -8,7 +8,7 @@
         "data": {
           "account_selection": "账号/凭据复用"
         }
-      },      
+      },
       "setup": {
         "title": "配置和风天气Pro",
         "description": "### 添加步骤\r\n**前往[和风天气控制台]({qweather_console}):**\r\n1. 在设置中复制 **API Host** 填写下方的 **API Host**。\r\n2. 项目管理 → 创建项目, 在项目中添加凭据: 可选 **JSON Web Token** 和 **API KEY**。\r\n3. 地理位置建议输入 经纬度(高德坐标) 或者 城市名称，可选：城市ID。\n4. 地理位置默认为HA经纬度。\n#### 注意: API KEY 认证方式无法提供足够的安全性, 使用 API KEY 认证方式都将受请求量的限制, 推荐使用 JSON Web Token(JWT) 的认证方式！",
@@ -50,8 +50,25 @@
           "use_token": "使用 JWT 认证",
           "api_key": "API 密钥 (Key)"
         }
+      },
+      "reauth_confirm": {
+        "title": "需要重新认证",
+        "description": "您的和风天气凭据已失效。请更新下方的 **API Host** 与凭据，您的位置设置将保持不变。\r\n**前往[和风天气控制台]({qweather_console})** 检查您的项目与凭据。",
+        "data": {
+          "host": "API Host",
+          "use_token": "使用 JWT 认证",
+          "api_key": "API 密钥 (Key)"
+        }
+      },
+      "reauth_jwt": {
+        "title": "更新 JWT 凭据",
+        "description": "请填写 JWT 认证新的 **项目 ID** 与 **凭据 ID**，您的位置设置将保持不变。\r\n**前往[和风天气控制台]({qweather_console})** 检查您的项目与凭据。",
+        "data": {
+          "project_id": "项目 ID (Project ID)",
+          "key_id": "凭据 ID (Key ID)"
+        }
       }
-    },  
+    },
     "error": {
       "invalid_parameter": "请求参数错误，请检查输入格式",
       "location_not_found": "未找到该位置，请尝试输入精准的“经度,纬度”",
@@ -72,7 +89,9 @@
     },
     "abort": {
       "already_configured": "该地理位置已被配置",
-      "reconfigure_successful": "配置已成功更新！"
+      "reconfigure_successful": "配置已成功更新！",
+      "reauth_successful": "认证信息已成功更新！",
+      "reauth_failed_entry_not_found": "未找到配置条目，请重新添加集成。"
     }
   },
   "selector": {
@@ -81,23 +100,21 @@
         "new_account": "使用新账号/凭据"
       }
     }
-  },  
+  },
   "options": {
     "step": {
       "init": {
         "title": "配置选项",
-        "description": "### 使用说明\r\n- 每日天气预报可选择 **3d/7d/15d/30d** 天，格点逐日预报只能选择 **3d/7d** 天。 \r\n- 逐小时预报可选择 **24h/72h/168h** 小时，格点逐小时预报只能选择 **24h/72h** 小时。\r\n- **格点天气**：开启高精度格点 API 后,部分实测数据（如**能见度**）将无法提供,卡片中将显示为 `--`。",
+        "description": "### 使用说明\r\n- 每日天气预报可选择 **3/7/10** 天（V1 API 最长支持 10 天）。\r\n- 逐小时预报可选择 **24/72/168** 小时。",
         "data": {
           "update_interval": "数据更新频率 (分钟)",
-          "dailysteps": "逐日预报天数 (3-30)",
+          "dailysteps": "逐日预报天数 (3-10)",
           "hourlysteps": "逐小时预报小时数 (24-168)",
-          "gird": "使用高精度格点天气 (V7 Gird API)",
           "custom_ui": "启用自定义前端 UI 支持"
         }
       }
     }
   },
-
   "entity": {
     "sensor": {
       "aqi": {
@@ -106,27 +123,45 @@
           "unknown": "未知"
         },
         "state_attributes": {
-          "aqi_value": { "name": "AQI 数值" },
-          "aqi_level": { "name": "空气质量等级" },
+          "aqi_value": {
+            "name": "AQI 数值"
+          },
+          "aqi_level": {
+            "name": "空气质量等级"
+          },
           "primary_pollutant": {
             "name": "主要污染物",
             "state": {
               "none": "无"
             }
           },
-          "pm2p5": { "name": "PM2.5" },
-          "pm10": { "name": "PM10" },
-          "no2": { "name": "二氧化氮(NO₂)" },
-          "so2": { "name": "二氧化硫(SO₂)" },
-          "o3": { "name": "臭氧(O₃)" },
-          "co": { "name": "一氧化碳(CO)" },
+          "pm2p5": {
+            "name": "PM2.5"
+          },
+          "pm10": {
+            "name": "PM10"
+          },
+          "no2": {
+            "name": "二氧化氮(NO₂)"
+          },
+          "so2": {
+            "name": "二氧化硫(SO₂)"
+          },
+          "o3": {
+            "name": "臭氧(O₃)"
+          },
+          "co": {
+            "name": "一氧化碳(CO)"
+          },
           "health_effect": {
             "name": "健康影响",
             "state": {
               "no_data_available": "暂无数据"
             }
           },
-          "health_advice": { "name": "健康建议" },
+          "health_advice": {
+            "name": "健康建议"
+          },
           "stations": {
             "name": "监测站信息",
             "state": {
@@ -135,19 +170,30 @@
           }
         }
       },
-
       "warning_info": {
         "name": "气象预警",
         "state": {
           "without_warning": "无预警"
         },
         "state_attributes": {
-          "id": { "name": "预警 ID" },
-          "sender": { "name": "预警发布者" },
-          "issued": { "name": "预警发布时间" },
-          "title": { "name": "预警标题" },
-          "text": { "name": "预警内容" },
-          "instruction": { "name": "预警处置建议" },
+          "id": {
+            "name": "预警 ID"
+          },
+          "sender": {
+            "name": "预警发布者"
+          },
+          "issued": {
+            "name": "预警发布时间"
+          },
+          "title": {
+            "name": "预警标题"
+          },
+          "text": {
+            "name": "预警内容"
+          },
+          "instruction": {
+            "name": "预警处置建议"
+          },
           "level": {
             "name": "预警级别",
             "state": {
@@ -173,25 +219,28 @@
               "black": "黑色"
             }
           },
-          "type_name": { "name": "预警类型名称" }
+          "type_name": {
+            "name": "预警类型名称"
+          }
         }
       },
-
       "today_temp_range": {
         "name": "今日温度范围",
         "state": {
           "unknown": "未知"
         },
         "state_attributes": {
-          "max_temp": { "name": "最高温度" },
-          "min_temp": { "name": "最低温度" }
+          "max_temp": {
+            "name": "最高温度"
+          },
+          "min_temp": {
+            "name": "最低温度"
+          }
         }
       },
-
       "precipitation_summary": {
         "name": "降水简报"
       },
-
       "weather_summary": {
         "name": "天气概况",
         "state_attributes": {
@@ -204,7 +253,9 @@
               "night": "明天"
             }
           },
-          "tonight_text": { "name": "未来天气状况" },
+          "tonight_text": {
+            "name": "未来天气状况"
+          },
           "temp_change_type": {
             "name": "气温趋势",
             "state": {
@@ -215,8 +266,10 @@
               "cold_snap": "气温骤降"
             }
           },
-          "current_temp": { "name": "当前温度" },
-          "wind_status": { 
+          "current_temp": {
+            "name": "当前温度"
+          },
+          "wind_status": {
             "name": "风力",
             "state": {
               "no_wind": "无风",
@@ -224,7 +277,7 @@
               "calm": "微风"
             }
           },
-          "aqi_level": { 
+          "aqi_level": {
             "name": "空气质量",
             "state": {
               "good": "空气很好",
@@ -237,43 +290,176 @@
         }
       }
     },
-
     "weather": {
       "weather": {
         "name": "天气",
         "state_attributes": {
-          "qweather_icon": { "name": "天气图标" },
-          "update_time": { "name": "数据更新时间" },
-          "obs_time": { "name": "实况观测时间" },
-          "condition_cn": { "name": "天气状况（中文）" },
-          "wind_dir": { "name": "风向" },
-          "cloud": { "name": "云量" },
-          "dew": { "name": "露点温度" },
-          "precip": { "name": "降水量" },
-          "precip_probability": { "name": "降水概率" },
-          "feels_like": { "name": "体感温度" },
-          "wind_scale": { "name": "风力等级" },
-          "sunrise": { "name": "日出时间" },
-          "sunset": { "name": "日落时间" },
-          "moon_phase": { "name": "月相" },
-          "moonrise": { "name": "月出时间" },
-          "moonset": { "name": "月落时间" },
-          "minutely_summary": { "name": "分钟级天气总结" },
-          "moon_phase_icon": { "name": "月相图标" },
-          "text_night": { "name": "夜晚天气状况" },
-          "icon_night": { "name": "夜晚图标" },
-          "wind_scale_day": { "name": "白天风力等级" },
-          "wind_scale_night": { "name": "夜晚风力等级" },
-          "wind_dir_day": { "name": "白天风向" },
-          "wind_dir_night": { "name": "夜晚风向" },
-          "forecast_pressure": { "name": "未来气压" },
-          "forecast_vis": { "name": "未来能见度" },
-          "forecast_cloud": { "name": "未来云量" },
-          "aqi": { "name": "空气质量指数" },
-          "weather_abstract": { "name": "天气概括" },
-          "city": { "name": "城市" },
-          "warning": { "name": "预警信息" },
-          "suggestion": { "name": "生活指数建议" }
+          "qweather_icon": {
+            "name": "天气图标"
+          },
+          "update_time": {
+            "name": "数据更新时间"
+          },
+          "obs_time": {
+            "name": "实况观测时间"
+          },
+          "condition_cn": {
+            "name": "天气状况（中文）"
+          },
+          "wind_dir": {
+            "name": "风向",
+            "state": {
+              "n": "北风",
+              "nne": "东北偏北",
+              "ne": "东北风",
+              "ene": "东北偏东",
+              "e": "东风",
+              "ese": "东南偏东",
+              "se": "东南风",
+              "sse": "东南偏南",
+              "s": "南风",
+              "ssw": "西南偏南",
+              "sw": "西南风",
+              "wsw": "西南偏西",
+              "w": "西风",
+              "wnw": "西北偏西",
+              "nw": "西北风",
+              "nnw": "西北偏北",
+              "none": "无持续风向",
+              "vrb": "风向多变"
+            }
+          },
+          "cloud": {
+            "name": "云量"
+          },
+          "dew": {
+            "name": "露点温度"
+          },
+          "precip": {
+            "name": "降水量"
+          },
+          "precip_probability": {
+            "name": "降水概率"
+          },
+          "feels_like": {
+            "name": "体感温度"
+          },
+          "wind_scale": {
+            "name": "风力等级"
+          },
+          "sunrise": {
+            "name": "日出时间"
+          },
+          "sunset": {
+            "name": "日落时间"
+          },
+          "moon_phase": {
+            "name": "月相",
+            "state": {
+              "new-moon": "新月",
+              "waxing-crescent": "娥眉月",
+              "first-quarter": "上弦月",
+              "waxing-gibbous": "盈凸月",
+              "full-moon": "满月",
+              "waning-gibbous": "亏凸月",
+              "last-quarter": "下弦月",
+              "waning-crescent": "残月"
+            }
+          },
+          "moonrise": {
+            "name": "月出时间"
+          },
+          "moonset": {
+            "name": "月落时间"
+          },
+          "minutely_summary": {
+            "name": "分钟级天气总结"
+          },
+          "moon_phase_icon": {
+            "name": "月相图标"
+          },
+          "text_night": {
+            "name": "夜晚天气状况"
+          },
+          "icon_night": {
+            "name": "夜晚图标"
+          },
+          "wind_scale_day": {
+            "name": "白天风力等级"
+          },
+          "wind_scale_night": {
+            "name": "夜晚风力等级"
+          },
+          "wind_dir_day": {
+            "name": "白天风向",
+            "state": {
+              "n": "北风",
+              "nne": "东北偏北",
+              "ne": "东北风",
+              "ene": "东北偏东",
+              "e": "东风",
+              "ese": "东南偏东",
+              "se": "东南风",
+              "sse": "东南偏南",
+              "s": "南风",
+              "ssw": "西南偏南",
+              "sw": "西南风",
+              "wsw": "西南偏西",
+              "w": "西风",
+              "wnw": "西北偏西",
+              "nw": "西北风",
+              "nnw": "西北偏北",
+              "none": "无持续风向",
+              "vrb": "风向多变"
+            }
+          },
+          "wind_dir_night": {
+            "name": "夜晚风向",
+            "state": {
+              "n": "北风",
+              "nne": "东北偏北",
+              "ne": "东北风",
+              "ene": "东北偏东",
+              "e": "东风",
+              "ese": "东南偏东",
+              "se": "东南风",
+              "sse": "东南偏南",
+              "s": "南风",
+              "ssw": "西南偏南",
+              "sw": "西南风",
+              "wsw": "西南偏西",
+              "w": "西风",
+              "wnw": "西北偏西",
+              "nw": "西北风",
+              "nnw": "西北偏北",
+              "none": "无持续风向",
+              "vrb": "风向多变"
+            }
+          },
+          "forecast_pressure": {
+            "name": "未来气压"
+          },
+          "forecast_vis": {
+            "name": "未来能见度"
+          },
+          "forecast_cloud": {
+            "name": "未来云量"
+          },
+          "aqi": {
+            "name": "空气质量指数"
+          },
+          "weather_abstract": {
+            "name": "天气概括"
+          },
+          "city": {
+            "name": "城市"
+          },
+          "warning": {
+            "name": "预警信息"
+          },
+          "suggestion": {
+            "name": "生活指数建议"
+          }
         }
       }
     }
