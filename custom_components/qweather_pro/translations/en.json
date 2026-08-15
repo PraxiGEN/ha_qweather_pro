@@ -8,7 +8,7 @@
         "data": {
           "account_selection": "Account/Credential Reuse"
         }
-      },      
+      },
       "setup": {
         "title": "Configure QWeather Pro",
         "description": "### Setup Steps\r\n**Go to the [QWeather Console]({qweather_console}):**\r\n1. In Settings, copy the **API Host** and fill it into the **API Host** field below.\r\n2. Project Management → Create a project, then add credentials to the project: optional **JSON Web Token** and **API KEY**.\r\n3. The location only supports latitude and longitude (WGS-84), for example: 116.40,39.90.\r\nThe default location is the HA latitude and longitude.\r\n#### Note: API KEY authentication does not provide sufficient security. All requests using API KEY authentication are subject to rate limits. It is recommended to use JSON Web Token (JWT) authentication!",
@@ -50,8 +50,25 @@
           "use_token": "Use JWT Authentication",
           "api_key": "API Key"
         }
+      },
+      "reauth_confirm": {
+        "title": "Re-authentication Required",
+        "description": "Your QWeather credentials are no longer valid. Please update your **API Host** and credential below. Your location settings will be preserved.\r\n**Go to the [QWeather Console]({qweather_console})** to check your project and credentials.",
+        "data": {
+          "host": "API Host",
+          "use_token": "Use JWT Authentication",
+          "api_key": "API Key"
+        }
+      },
+      "reauth_jwt": {
+        "title": "Update JWT Credentials",
+        "description": "Please fill in the new **Project ID** and **Key ID** for JWT authentication. Your location settings will be preserved.\r\n**Go to the [QWeather Console]({qweather_console})** to check your project and credentials.",
+        "data": {
+          "project_id": "Project ID",
+          "key_id": "Key ID"
+        }
       }
-    },  
+    },
     "error": {
       "invalid_parameter": "Invalid request parameters, please check the input format",
       "location_not_found": "Location not found, please try entering precise “longitude,latitude”",
@@ -72,32 +89,32 @@
     },
     "abort": {
       "already_configured": "This location has already been configured",
-      "reconfigure_successful": "Configuration updated successfully!"
+      "reconfigure_successful": "Configuration updated successfully!",
+      "reauth_successful": "Authentication updated successfully!",
+      "reauth_failed_entry_not_found": "Configuration entry not found. Please add the integration again."
     }
-  }, 
+  },
   "selector": {
     "account_selection": {
       "options": {
         "new_account": "New Account/Credentials"
       }
     }
-  },  
+  },
   "options": {
     "step": {
       "init": {
         "title": "Integration Options",
-        "description": "### Instructions for Use\r\nThe daily weather forecast can be set to **3d/7d/15d/30d** days, while the grid-based daily forecast only supports **3d/7d** days.\r\n- The hourly forecast can be set to **24h/72h/168h** hours, while the grid-based hourly forecast only supports **24h/72h** hours.\r\n- **Grid Weather**: After enabling the high-precision grid API, some observed data (such as **visibility**) will no longer be available and will appear as `--` in the card.",
+        "description": "### Instructions for Use\r\n- The daily forecast can be set to **3/7/10** days (V1 API supports up to 10 days).\r\n- The hourly forecast can be set to **24/72/168** hours.",
         "data": {
           "update_interval": "Update Interval (minutes)",
-          "dailysteps": "Daily Forecast Days (3-30)",
+          "dailysteps": "Daily Forecast Days (3-10)",
           "hourlysteps": "Hourly Forecast Hours (24-168)",
-          "gird": "Use Grid API (High Precision)",
           "custom_ui": "Enable Custom UI Support"
         }
       }
     }
   },
-
   "entity": {
     "sensor": {
       "aqi": {
@@ -106,27 +123,45 @@
           "unknown": "Unknown"
         },
         "state_attributes": {
-          "aqi_value": { "name": "AQI Value" },
-          "aqi_level": { "name": "Level" },
+          "aqi_value": {
+            "name": "AQI Value"
+          },
+          "aqi_level": {
+            "name": "Level"
+          },
           "primary_pollutant": {
             "name": "Primary Pollutant",
             "state": {
               "none": "None"
             }
           },
-          "pm2p5": { "name": "PM2.5" },
-          "pm10": { "name": "PM10" },
-          "no2": { "name": "NO2" },
-          "so2": { "name": "SO2" },
-          "o3": { "name": "O3" },
-          "co": { "name": "CO" },
+          "pm2p5": {
+            "name": "PM2.5"
+          },
+          "pm10": {
+            "name": "PM10"
+          },
+          "no2": {
+            "name": "NO2"
+          },
+          "so2": {
+            "name": "SO2"
+          },
+          "o3": {
+            "name": "O3"
+          },
+          "co": {
+            "name": "CO"
+          },
           "health_effect": {
             "name": "Health Effect",
             "state": {
               "no_data_available": "No data available"
             }
           },
-          "health_advice": { "name": "Health Advice" },
+          "health_advice": {
+            "name": "Health Advice"
+          },
           "stations": {
             "name": "Monitoring Station Information",
             "state": {
@@ -135,19 +170,30 @@
           }
         }
       },
-
       "warning_info": {
         "name": "Weather Warnings",
         "state": {
           "without_warning": "Without warning"
         },
         "state_attributes": {
-          "id": { "name": "Warning ID" },
-          "sender": { "name": "Sender" },
-          "issued": { "name": "Issued" },
-          "title": { "name": "Title" },
-          "text": { "name": "Text" },
-          "instruction": { "name": "Instruction" },
+          "id": {
+            "name": "Warning ID"
+          },
+          "sender": {
+            "name": "Sender"
+          },
+          "issued": {
+            "name": "Issued"
+          },
+          "title": {
+            "name": "Title"
+          },
+          "text": {
+            "name": "Text"
+          },
+          "instruction": {
+            "name": "Instruction"
+          },
           "level": {
             "name": "Level",
             "state": {
@@ -173,25 +219,28 @@
               "black": "Black"
             }
           },
-          "type_name": { "name": "Type Name" }
+          "type_name": {
+            "name": "Type Name"
+          }
         }
       },
-
       "today_temp_range": {
         "name": "Today Temperature Range",
         "state": {
           "unknown": "Unknown"
         },
         "state_attributes": {
-          "max_temp": { "name": "Maximum Temperature" },
-          "min_temp": { "name": "Minimum Temperature" }
+          "max_temp": {
+            "name": "Maximum Temperature"
+          },
+          "min_temp": {
+            "name": "Minimum Temperature"
+          }
         }
       },
-
       "precipitation_summary": {
         "name": "Precipitation Forecast"
       },
-
       "weather_summary": {
         "name": "Weather Briefing",
         "state_attributes": {
@@ -204,7 +253,9 @@
               "night": "Tomorrow Night"
             }
           },
-          "tonight_text": { "name": "Tomorrow Night Weather" },
+          "tonight_text": {
+            "name": "Tomorrow Night Weather"
+          },
           "temp_change_type": {
             "name": "Temperature Change Trend",
             "state": {
@@ -215,8 +266,10 @@
               "cold_snap": "Cold Snap Temperature"
             }
           },
-          "current_temp": { "name": "Current Temperature" },
-          "wind_status": { 
+          "current_temp": {
+            "name": "Current Temperature"
+          },
+          "wind_status": {
             "name": "Wind Status",
             "state": {
               "no_wind": "No Wind",
@@ -224,7 +277,7 @@
               "calm": "Calm Wind"
             }
           },
-          "aqi_level": { 
+          "aqi_level": {
             "name": "Air Quality Level",
             "state": {
               "good": "Air is excellent",
@@ -237,43 +290,176 @@
         }
       }
     },
-
     "weather": {
       "weather": {
         "name": "Weather",
         "state_attributes": {
-          "qweather_icon": { "name": "Weather Icon" },
-          "update_time": { "name": "Update Time" },
-          "obs_time": { "name": "Observation Time" },
-          "condition_cn": { "name": "Weather Condition (English)" },
-          "wind_dir": { "name": "Wind Direction" },
-          "cloud": { "name": "Cloud Cover" },
-          "dew": { "name": "Dew Point Temperature" },
-          "precip": { "name": "Precipitation" },
-          "precip_probability": { "name": "Precipitation Probability" },
-          "feels_like": { "name": "Feels Temperature" },
-          "wind_scale": { "name": "Wind Scale" },
-          "sunrise": { "name": "Sunrise Time" },
-          "sunset": { "name": "Sunset Time" },
-          "moon_phase": { "name": "Moon Phase" },
-          "moonrise": { "name": "Moonrise Time" },
-          "moonset": { "name": "Moonset Time" },
-          "minutely_summary": { "name": "Minute Summary" },
-          "moon_phase_icon": { "name": "Moon Phase Icon" },
-          "text_night": { "name": "Night Weather Condition" },
-          "icon_night": { "name": "Night Icon" },
-          "wind_scale_day": { "name": "Day Wind Scale" },
-          "wind_scale_night": { "name": "Night Wind Scale" },
-          "wind_dir_day": { "name": "Day Wind Direction" },
-          "wind_dir_night": { "name": "Night Wind Direction" },
-          "forecast_pressure": { "name": "Forecast Pressure" },
-          "forecast_vis": { "name": "Forecast Visibility Distance" },
-          "forecast_cloud": { "name": "Forecast Cloud Cover" },
-          "aqi": { "name": "Air Quality Index" },
-          "weather_abstract": { "name": "Weather Abstract" },
-          "city": { "name": "City" },
-          "warning": { "name": "Warnings and Advisories" },
-          "suggestion": { "name": "Life Index Suggestions" }
+          "qweather_icon": {
+            "name": "Weather Icon"
+          },
+          "update_time": {
+            "name": "Update Time"
+          },
+          "obs_time": {
+            "name": "Observation Time"
+          },
+          "condition_cn": {
+            "name": "Weather Condition (English)"
+          },
+          "wind_dir": {
+            "name": "Wind Direction",
+            "state": {
+              "n": "North",
+              "nne": "North-northeast",
+              "ne": "Northeast",
+              "ene": "East-northeast",
+              "e": "East",
+              "ese": "East-southeast",
+              "se": "Southeast",
+              "sse": "South-southeast",
+              "s": "South",
+              "ssw": "South-southwest",
+              "sw": "Southwest",
+              "wsw": "West-southwest",
+              "w": "West",
+              "wnw": "West-northwest",
+              "nw": "Northwest",
+              "nnw": "North-northwest",
+              "none": "No wind",
+              "vrb": "Variable"
+            }
+          },
+          "cloud": {
+            "name": "Cloud Cover"
+          },
+          "dew": {
+            "name": "Dew Point Temperature"
+          },
+          "precip": {
+            "name": "Precipitation"
+          },
+          "precip_probability": {
+            "name": "Precipitation Probability"
+          },
+          "feels_like": {
+            "name": "Feels Temperature"
+          },
+          "wind_scale": {
+            "name": "Wind Scale"
+          },
+          "sunrise": {
+            "name": "Sunrise Time"
+          },
+          "sunset": {
+            "name": "Sunset Time"
+          },
+          "moon_phase": {
+            "name": "Moon Phase",
+            "state": {
+              "new-moon": "New Moon",
+              "waxing-crescent": "Waxing Crescent",
+              "first-quarter": "First Quarter",
+              "waxing-gibbous": "Waxing Gibbous",
+              "full-moon": "Full Moon",
+              "waning-gibbous": "Waning Gibbous",
+              "last-quarter": "Last Quarter",
+              "waning-crescent": "Waning Crescent"
+            }
+          },
+          "moonrise": {
+            "name": "Moonrise Time"
+          },
+          "moonset": {
+            "name": "Moonset Time"
+          },
+          "minutely_summary": {
+            "name": "Minute Summary"
+          },
+          "moon_phase_icon": {
+            "name": "Moon Phase Icon"
+          },
+          "text_night": {
+            "name": "Night Weather Condition"
+          },
+          "icon_night": {
+            "name": "Night Icon"
+          },
+          "wind_scale_day": {
+            "name": "Day Wind Scale"
+          },
+          "wind_scale_night": {
+            "name": "Night Wind Scale"
+          },
+          "wind_dir_day": {
+            "name": "Day Wind Direction",
+            "state": {
+              "n": "North",
+              "nne": "North-northeast",
+              "ne": "Northeast",
+              "ene": "East-northeast",
+              "e": "East",
+              "ese": "East-southeast",
+              "se": "Southeast",
+              "sse": "South-southeast",
+              "s": "South",
+              "ssw": "South-southwest",
+              "sw": "Southwest",
+              "wsw": "West-southwest",
+              "w": "West",
+              "wnw": "West-northwest",
+              "nw": "Northwest",
+              "nnw": "North-northwest",
+              "none": "No wind",
+              "vrb": "Variable"
+            }
+          },
+          "wind_dir_night": {
+            "name": "Night Wind Direction",
+            "state": {
+              "n": "North",
+              "nne": "North-northeast",
+              "ne": "Northeast",
+              "ene": "East-northeast",
+              "e": "East",
+              "ese": "East-southeast",
+              "se": "Southeast",
+              "sse": "South-southeast",
+              "s": "South",
+              "ssw": "South-southwest",
+              "sw": "Southwest",
+              "wsw": "West-southwest",
+              "w": "West",
+              "wnw": "West-northwest",
+              "nw": "Northwest",
+              "nnw": "North-northwest",
+              "none": "No wind",
+              "vrb": "Variable"
+            }
+          },
+          "forecast_pressure": {
+            "name": "Forecast Pressure"
+          },
+          "forecast_vis": {
+            "name": "Forecast Visibility Distance"
+          },
+          "forecast_cloud": {
+            "name": "Forecast Cloud Cover"
+          },
+          "aqi": {
+            "name": "Air Quality Index"
+          },
+          "weather_abstract": {
+            "name": "Weather Abstract"
+          },
+          "city": {
+            "name": "City"
+          },
+          "warning": {
+            "name": "Warnings and Advisories"
+          },
+          "suggestion": {
+            "name": "Life Index Suggestions"
+          }
         }
       }
     }
