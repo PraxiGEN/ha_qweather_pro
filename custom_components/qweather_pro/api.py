@@ -31,7 +31,18 @@ class QWeatherAPI:
         self.project_id = project_id
         self.key_id = key_id
         self.private_key = private_key
-        self.host = host
+        # 规范化 Host：容忍用户输入带 https:// 前缀或尾斜杠
+        self.host = self._normalize_host(host)
+
+    @staticmethod
+    def _normalize_host(host: str | None) -> str:
+        """清理 Host：去空白、去协议前缀、去尾斜杠，避免拼出 https://https://..."""
+        if not host:
+            return ""
+        host = host.strip().rstrip("/")
+        if "://" in host:
+            host = host.split("://", 1)[1]
+        return host
 
     def _generate_jwt(self) -> str | None:
         """生成符合 EdDSA 算法的 JWT 签名."""
@@ -68,14 +79,9 @@ class QWeatherAPI:
     @retry(
         wait=wait_exponential(multiplier=2, min=2, max=10),
         stop=stop_after_attempt(3),
-        retry_error_callback=lambda retry_state: LOGGER.error(
-            "和风天气 API 请求在 %s 次尝试后彻底失败: %s",
-            retry_state.attempt_number, retry_state.outcome.exception()
-        )
     )
-
     async def request(self, version_path: str, endpoint: str, params: dict[str, Any]) -> dict[str, Any]:
-        """统一底层异步请求方法."""
+        """统一底层异步请求方法 (3 次重试后异常正常抛出，由调用方处理)."""
 
         params = {k: v for k, v in params.items() if v is not None}
         
@@ -127,36 +133,32 @@ class QWeatherAPI:
             LOGGER.error("QWeather API 连接失败: %s", err)
             raise # 触发重试
 
-    # --- 城市搜索 ---
+    # --- 城市搜索 (全球) ---
     async def city_lookup(self, location: str, lang: str):
-        """城市搜索: 支持名称、ID 或 坐标."""
-        return await self.request("v2", "city/lookup", {"location": location, "range": "cn", "lang": lang})
+        """城市搜索: 全球范围，支持名称、ID 或 坐标 (语言跟随 HA 设置)."""
+        return await self.request("v2", "city/lookup", {"location": location, "lang": lang})
 
-    # --- 标准天气 API (基于观测站) ---
+    # --- 天气 API V1 (RESTful 风格，1km 分辨率，全球覆盖；v7 将于 2027-08-01 停服) ---
     async def get_weather_now(self, lat: str, lon: str, lang: str):
-        """获取实况天气."""
-        return await self.request("v7", "weather/now", {"location": f"{lon},{lat}", "lang": lang})
+        """实时天气 V1: /weather/v1/current/{lat}/{lon}."""
+        return await self.request(
+            "weather/v1", "current/{lat}/{lon}",
+            {"lat": lat, "lon": lon, "lang": lang}
+        )
 
-    async def get_forecast(self, lat: str, lon: str, days: str, lang: str):
-        """获取逐日预报 (days 支持 3d/7d/10d/15d/30d)."""
-        return await self.request("v7", f"weather/{days}", {"location": f"{lon},{lat}", "lang": lang})
+    async def get_forecast(self, lat: str, lon: str, days: int, lang: str):
+        """每日预报 V1: /weather/v1/daily/{lat}/{lon} (days 支持 1-10，默认 7)."""
+        return await self.request(
+            "weather/v1", "daily/{lat}/{lon}",
+            {"lat": lat, "lon": lon, "days": days, "lang": lang}
+        )
 
-    async def get_hourly(self, lat: str, lon: str, hours: str, lang: str):
-        """获取逐小时预报 (hours 支持 24h/72h/168h)."""
-        return await self.request("v7", f"weather/{hours}", {"location": f"{lon},{lat}", "lang": lang})
-
-    # --- 格点天气 API (基于数值模式，高精度坐标) ---
-    async def get_grid_weather_now(self, lat: str, lon: str, lang: str):
-        """格点实况天气."""
-        return await self.request("v7", "grid-weather/now", {"location": f"{lon},{lat}", "lang": lang})
-
-    async def get_grid_forecast(self, lat: str, lon: str, days: str, lang: str):
-        """格点每日预报 (支持 3d/7d)."""
-        return await self.request("v7", f"grid-weather/{days}", {"location": f"{lon},{lat}", "lang": lang})
-
-    async def get_grid_hourly(self, lat: str, lon: str, hours: str, lang: str):
-        """格点逐小时预报 (支持 24h/72h)."""
-        return await self.request("v7", f"grid-weather/{hours}", {"location": f"{lon},{lat}", "lang": lang})
+    async def get_hourly(self, lat: str, lon: str, hours: int, lang: str):
+        """逐小时预报 V1: /weather/v1/hourly/{lat}/{lon} (hours 支持 1-240，默认 24)."""
+        return await self.request(
+            "weather/v1", "hourly/{lat}/{lon}",
+            {"lat": lat, "lon": lon, "hours": hours, "lang": lang}
+        )
 
     # --- 空气质量与预警 (V1 强制坐标路径) ---
     async def get_air_v1(self, lat: str, lon: str, lang: str):

@@ -33,7 +33,6 @@ CONF_ACCOUNT_SELECT: Final = "account_selection"
 CONF_UPDATE_INTERVAL: Final = "update_interval"
 CONF_HOURLYSTEPS: Final = "hourlysteps"
 CONF_DAILYSTEPS: Final = "dailysteps"
-CONF_GIRD: Final = "gird"
 CONF_CUSTOM_UI: Final = "custom_ui"
 
 # --- 属性扩展键名 ---
