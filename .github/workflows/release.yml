@@ -2,7 +2,7 @@ name: Auto Release Draft
 
 on:
   push:
-    branches: [main]
+    branches: [beta]
     paths:
       - 'custom_components/**/manifest.json'
   workflow_dispatch:
