@@ -86,18 +86,16 @@
     "step": {
       "init": {
         "title": "Opciones de integración",
-        "description": "### Instrucciones de uso\r\nLa previsión diaria puede configurarse en **3/7/15/30** días, mientras que la previsión diaria por cuadrícula solo admite **3/7** días.\r\n- La previsión por horas puede configurarse en **24/72/168** horas, mientras que la previsión por cuadrícula solo admite **24/72** horas.\r\n- **Clima por cuadrícula**: Después de habilitar la API de cuadrícula de alta precisión, algunos datos observados (como la **visibilidad**) ya no estarán disponibles y aparecerán como `--` en la tarjeta.",
+        "description": "### Instrucciones de uso\r\nLa previsión diaria puede configurarse en **3/7/10** días (la API V1 admite hasta 10 días).\r\n- La previsión por horas puede configurarse en **24/72/168** horas.",
         "data": {
           "update_interval": "Intervalo de actualización (minutos)",
-          "dailysteps": "Días de previsión diaria (3–30)",
+          "dailysteps": "Días de previsión diaria (3-10)",
           "hourlysteps": "Horas de previsión por hora (24–168)",
-          "gird": "Usar API de cuadrícula (alta precisión)",
           "custom_ui": "Habilitar soporte para UI personalizada"
         }
       }
     }
   },
-
   "entity": {
     "sensor": {
       "aqi": {
@@ -106,27 +104,45 @@
           "unknown": "Desconocido"
         },
         "state_attributes": {
-          "aqi_value": { "name": "Valor AQI" },
-          "aqi_level": { "name": "Nivel de calidad del aire" },
+          "aqi_value": {
+            "name": "Valor AQI"
+          },
+          "aqi_level": {
+            "name": "Nivel de calidad del aire"
+          },
           "primary_pollutant": {
             "name": "Contaminante principal",
             "state": {
               "none": "Ninguno"
             }
           },
-          "pm2p5": { "name": "PM2.5" },
-          "pm10": { "name": "PM10" },
-          "no2": { "name": "Dióxido de nitrógeno (NO₂)" },
-          "so2": { "name": "Dióxido de azufre (SO₂)" },
-          "o3": { "name": "Ozono (O₃)" },
-          "co": { "name": "Monóxido de carbono (CO)" },
+          "pm2p5": {
+            "name": "PM2.5"
+          },
+          "pm10": {
+            "name": "PM10"
+          },
+          "no2": {
+            "name": "Dióxido de nitrógeno (NO₂)"
+          },
+          "so2": {
+            "name": "Dióxido de azufre (SO₂)"
+          },
+          "o3": {
+            "name": "Ozono (O₃)"
+          },
+          "co": {
+            "name": "Monóxido de carbono (CO)"
+          },
           "health_effect": {
             "name": "Impacto en la salud",
             "state": {
               "no_data_available": "Sin datos disponibles"
             }
           },
-          "health_advice": { "name": "Consejos de salud" },
+          "health_advice": {
+            "name": "Consejos de salud"
+          },
           "stations": {
             "name": "Información de estaciones",
             "state": {
@@ -135,19 +151,30 @@
           }
         }
       },
-
       "warning_info": {
         "name": "Alerta meteorológica",
         "state": {
           "without_warning": "Sin alerta"
         },
         "state_attributes": {
-          "id": { "name": "ID de la alerta" },
-          "sender": { "name": "Emisor de la alerta" },
-          "issued": { "name": "Hora de emisión" },
-          "title": { "name": "Título de la alerta" },
-          "text": { "name": "Contenido de la alerta" },
-          "instruction": { "name": "Instrucciones de seguridad" },
+          "id": {
+            "name": "ID de la alerta"
+          },
+          "sender": {
+            "name": "Emisor de la alerta"
+          },
+          "issued": {
+            "name": "Hora de emisión"
+          },
+          "title": {
+            "name": "Título de la alerta"
+          },
+          "text": {
+            "name": "Contenido de la alerta"
+          },
+          "instruction": {
+            "name": "Instrucciones de seguridad"
+          },
           "level": {
             "name": "Nivel de alerta",
             "state": {
@@ -173,29 +200,34 @@
               "black": "Negro"
             }
           },
-          "type_name": { "name": "Tipo de alerta" }
+          "type_name": {
+            "name": "Tipo de alerta"
+          }
         }
       },
-
       "today_temp_range": {
         "name": "Rango de temperatura de hoy",
         "state": {
           "unknown": "Desconocido"
         },
         "state_attributes": {
-          "max_temp": { "name": "Temperatura máxima" },
-          "min_temp": { "name": "Temperatura mínima" }
+          "max_temp": {
+            "name": "Temperatura máxima"
+          },
+          "min_temp": {
+            "name": "Temperatura mínima"
+          }
         }
       },
-
       "precipitation_summary": {
         "name": "Resumen de precipitaciones"
       },
-
       "weather_summary": {
         "name": "Resumen del clima",
         "state_attributes": {
-          "display_state": { "name": "Estado de visualización" },
+          "display_state": {
+            "name": "Estado de visualización"
+          },
           "period": {
             "name": "Periodo actual",
             "state": {
@@ -215,8 +247,10 @@
               "cold_snap": "Descenso brusco"
             }
           },
-          "current_temp": { "name": "Temperatura Actual" },
-          "wind_status": { 
+          "current_temp": {
+            "name": "Temperatura Actual"
+          },
+          "wind_status": {
             "name": "Estado del Viento",
             "state": {
               "no_wind": "Sin viento",
@@ -224,7 +258,7 @@
               "calm": "Brisa ligera"
             }
           },
-          "aqi_level": { 
+          "aqi_level": {
             "name": "Calidad del Aire",
             "state": {
               "good": "El aire es excelente",
@@ -237,43 +271,176 @@
         }
       }
     },
-
     "weather": {
       "weather": {
         "name": "Clima",
         "state_attributes": {
-          "qweather_icon": { "name": "Ícono del clima" },
-          "update_time": { "name": "Hora de actualización de datos" },
-          "obs_time": { "name": "Hora de observación" },
-          "condition_cn": { "name": "Condición meteorológica (chino)" },
-          "wind_dir": { "name": "Dirección del viento" },
-          "cloud": { "name": "Nubosidad" },
-          "dew": { "name": "Punto de rocío" },
-          "precip": { "name": "Precipitación" },
-          "precip_probability": { "name": "Probabilidad de precipitación" },
-          "feels_like": { "name": "Sensación térmica" },
-          "wind_scale": { "name": "Escala del viento" },
-          "sunrise": { "name": "Amanecer" },
-          "sunset": { "name": "Atardecer" },
-          "moon_phase": { "name": "Fase lunar" },
-          "moonrise": { "name": "Salida de la luna" },
-          "moonset": { "name": "Puesta de la luna" },
-          "minutely_summary": { "name": "Resumen meteorológico por minuto" },
-          "moon_phase_icon": { "name": "Ícono de fase lunar" },
-          "text_night": { "name": "Condición nocturna" },
-          "icon_night": { "name": "Ícono nocturno" },
-          "wind_scale_day": { "name": "Escala del viento (día)" },
-          "wind_scale_night": { "name": "Escala del viento (noche)" },
-          "wind_dir_day": { "name": "Dirección del viento (día)" },
-          "wind_dir_night": { "name": "Dirección del viento (noche)" },
-          "forecast_pressure": { "name": "Presión atmosférica futura" },
-          "forecast_vis": { "name": "Visibilidad futura" },
-          "forecast_cloud": { "name": "Nubosidad futura" },
-          "aqi": { "name": "Índice de calidad del aire" },
-          "weather_abstract": { "name": "Resumen del clima abstract" },
-          "city": { "name": "Ciudad" },
-          "warning": { "name": "Información de alerta" },
-          "suggestion": { "name": "Sugerencias del índice de vida" }
+          "qweather_icon": {
+            "name": "Ícono del clima"
+          },
+          "update_time": {
+            "name": "Hora de actualización de datos"
+          },
+          "obs_time": {
+            "name": "Hora de observación"
+          },
+          "condition_cn": {
+            "name": "Condición meteorológica (chino)"
+          },
+          "wind_dir": {
+            "name": "Dirección del viento",
+            "state": {
+              "n": "Norte",
+              "nne": "Nornordeste",
+              "ne": "Noreste",
+              "ene": "Estenordeste",
+              "e": "Este",
+              "ese": "Estesudeste",
+              "se": "Sudeste",
+              "sse": "Sursudeste",
+              "s": "Sur",
+              "ssw": "Sursudoeste",
+              "sw": "Sudoeste",
+              "wsw": "Oestesudoeste",
+              "w": "Oeste",
+              "wnw": "Oestenoroeste",
+              "nw": "Noroeste",
+              "nnw": "Nornoroeste",
+              "none": "Sin viento",
+              "vrb": "Variable"
+            }
+          },
+          "cloud": {
+            "name": "Nubosidad"
+          },
+          "dew": {
+            "name": "Punto de rocío"
+          },
+          "precip": {
+            "name": "Precipitación"
+          },
+          "precip_probability": {
+            "name": "Probabilidad de precipitación"
+          },
+          "feels_like": {
+            "name": "Sensación térmica"
+          },
+          "wind_scale": {
+            "name": "Escala del viento"
+          },
+          "sunrise": {
+            "name": "Amanecer"
+          },
+          "sunset": {
+            "name": "Atardecer"
+          },
+          "moon_phase": {
+            "name": "Fase lunar",
+            "state": {
+              "new-moon": "Luna nueva",
+              "waxing-crescent": "Luna creciente",
+              "first-quarter": "Cuarto creciente",
+              "waxing-gibbous": "Gibosa creciente",
+              "full-moon": "Luna llena",
+              "waning-gibbous": "Gibosa menguante",
+              "last-quarter": "Cuarto menguante",
+              "waning-crescent": "Luna menguante"
+            }
+          },
+          "moonrise": {
+            "name": "Salida de la luna"
+          },
+          "moonset": {
+            "name": "Puesta de la luna"
+          },
+          "minutely_summary": {
+            "name": "Resumen meteorológico por minuto"
+          },
+          "moon_phase_icon": {
+            "name": "Ícono de fase lunar"
+          },
+          "text_night": {
+            "name": "Condición nocturna"
+          },
+          "icon_night": {
+            "name": "Ícono nocturno"
+          },
+          "wind_scale_day": {
+            "name": "Escala del viento (día)"
+          },
+          "wind_scale_night": {
+            "name": "Escala del viento (noche)"
+          },
+          "wind_dir_day": {
+            "name": "Dirección del viento (día)",
+            "state": {
+              "n": "Norte",
+              "nne": "Nornordeste",
+              "ne": "Noreste",
+              "ene": "Estenordeste",
+              "e": "Este",
+              "ese": "Estesudeste",
+              "se": "Sudeste",
+              "sse": "Sursudeste",
+              "s": "Sur",
+              "ssw": "Sursudoeste",
+              "sw": "Sudoeste",
+              "wsw": "Oestesudoeste",
+              "w": "Oeste",
+              "wnw": "Oestenoroeste",
+              "nw": "Noroeste",
+              "nnw": "Nornoroeste",
+              "none": "Sin viento",
+              "vrb": "Variable"
+            }
+          },
+          "wind_dir_night": {
+            "name": "Dirección del viento (noche)",
+            "state": {
+              "n": "Norte",
+              "nne": "Nornordeste",
+              "ne": "Noreste",
+              "ene": "Estenordeste",
+              "e": "Este",
+              "ese": "Estesudeste",
+              "se": "Sudeste",
+              "sse": "Sursudeste",
+              "s": "Sur",
+              "ssw": "Sursudoeste",
+              "sw": "Sudoeste",
+              "wsw": "Oestesudoeste",
+              "w": "Oeste",
+              "wnw": "Oestenoroeste",
+              "nw": "Noroeste",
+              "nnw": "Nornoroeste",
+              "none": "Sin viento",
+              "vrb": "Variable"
+            }
+          },
+          "forecast_pressure": {
+            "name": "Presión atmosférica futura"
+          },
+          "forecast_vis": {
+            "name": "Visibilidad futura"
+          },
+          "forecast_cloud": {
+            "name": "Nubosidad futura"
+          },
+          "aqi": {
+            "name": "Índice de calidad del aire"
+          },
+          "weather_abstract": {
+            "name": "Resumen del clima abstract"
+          },
+          "city": {
+            "name": "Ciudad"
+          },
+          "warning": {
+            "name": "Información de alerta"
+          },
+          "suggestion": {
+            "name": "Sugerencias del índice de vida"
+          }
         }
       }
     }
