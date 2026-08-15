@@ -86,18 +86,16 @@
     "step": {
       "init": {
         "title": "통합 옵션",
-        "description": "### 사용 안내\r\n일일 예보는 **3/7/15/30**일로 설정할 수 있으며, 그리드 기반 일일 예보는 **3/7**일만 지원합니다.\r\n- 시간별 예보는 **24/72/168**시간으로 설정할 수 있으며, 그리드 기반 시간별 예보는 **24/72**시간만 지원합니다.\r\n- **그리드 날씨**: 고정밀 그리드 API를 활성화하면 일부 관측 데이터(예: **가시거리**)가 더 이상 제공되지 않으며 카드에는 `--`로 표시됩니다.",
+        "description": "### 사용 안내\r\n일일 예보는 **3/7/10**일로 설정할 수 있습니다(V1 API는 최대 10일 지원).\r\n- 시간별 예보는 **24/72/168**시간으로 설정할 수 있습니다.",
         "data": {
           "update_interval": "업데이트 간격(분)",
-          "dailysteps": "일일 예보 일수(3–30)",
+          "dailysteps": "일일 예보 일수(3-10)",
           "hourlysteps": "시간별 예보 시간(24–168)",
-          "gird": "그리드 API 사용(고정밀)",
           "custom_ui": "사용자 정의 UI 지원 활성화"
         }
       }
     }
   },
-
   "entity": {
     "sensor": {
       "aqi": {
@@ -106,27 +104,45 @@
           "unknown": "알 수 없음"
         },
         "state_attributes": {
-          "aqi_value": { "name": "AQI 값" },
-          "aqi_level": { "name": "대기질 등급" },
+          "aqi_value": {
+            "name": "AQI 값"
+          },
+          "aqi_level": {
+            "name": "대기질 등급"
+          },
           "primary_pollutant": {
             "name": "주요 오염물질",
             "state": {
               "none": "없음"
             }
           },
-          "pm2p5": { "name": "PM2.5" },
-          "pm10": { "name": "PM10" },
-          "no2": { "name": "이산화질소 (NO₂)" },
-          "so2": { "name": "이산화황 (SO₂)" },
-          "o3": { "name": "오존 (O₃)" },
-          "co": { "name": "일산화탄소 (CO)" },
+          "pm2p5": {
+            "name": "PM2.5"
+          },
+          "pm10": {
+            "name": "PM10"
+          },
+          "no2": {
+            "name": "이산화질소 (NO₂)"
+          },
+          "so2": {
+            "name": "이산화황 (SO₂)"
+          },
+          "o3": {
+            "name": "오존 (O₃)"
+          },
+          "co": {
+            "name": "일산화탄소 (CO)"
+          },
           "health_effect": {
             "name": "건강 영향",
             "state": {
               "no_data_available": "데이터 없음"
             }
           },
-          "health_advice": { "name": "건강 조언" },
+          "health_advice": {
+            "name": "건강 조언"
+          },
           "stations": {
             "name": "관측소 정보",
             "state": {
@@ -135,19 +151,30 @@
           }
         }
       },
-
       "warning_info": {
         "name": "기상 경보",
         "state": {
           "without_warning": "경보 없음"
         },
         "state_attributes": {
-          "id": { "name": "경보 ID" },
-          "sender": { "name": "발령 기관" },
-          "issued": { "name": "발령 시각" },
-          "title": { "name": "경보 제목" },
-          "text": { "name": "경보 내용" },
-          "instruction": { "name": "대응 지침" },
+          "id": {
+            "name": "경보 ID"
+          },
+          "sender": {
+            "name": "발령 기관"
+          },
+          "issued": {
+            "name": "발령 시각"
+          },
+          "title": {
+            "name": "경보 제목"
+          },
+          "text": {
+            "name": "경보 내용"
+          },
+          "instruction": {
+            "name": "대응 지침"
+          },
           "level": {
             "name": "경보 수준",
             "state": {
@@ -173,29 +200,34 @@
               "black": "검은색"
             }
           },
-          "type_name": { "name": "경보 유형 이름" }
+          "type_name": {
+            "name": "경보 유형 이름"
+          }
         }
       },
-
       "today_temp_range": {
         "name": "오늘의 기온 범위",
         "state": {
           "unknown": "알 수 없음"
         },
         "state_attributes": {
-          "max_temp": { "name": "최고 기온" },
-          "min_temp": { "name": "최저 기온" }
+          "max_temp": {
+            "name": "최고 기온"
+          },
+          "min_temp": {
+            "name": "최저 기온"
+          }
         }
       },
-
       "precipitation_summary": {
         "name": "강수 요약"
       },
-
       "weather_summary": {
         "name": "날씨 개요",
         "state_attributes": {
-          "display_state": { "name": "표시 상태" },
+          "display_state": {
+            "name": "표시 상태"
+          },
           "period": {
             "name": "현재 시간대",
             "state": {
@@ -215,8 +247,10 @@
               "cold_snap": "급강하"
             }
           },
-          "current_temp": { "name": "현재 온도" },
-          "wind_status": { 
+          "current_temp": {
+            "name": "현재 온도"
+          },
+          "wind_status": {
             "name": "풍속",
             "state": {
               "no_wind": "바람 없음",
@@ -224,7 +258,7 @@
               "calm": "산들바람"
             }
           },
-          "aqi_level": { 
+          "aqi_level": {
             "name": "공기질",
             "state": {
               "good": "공기가 매우 좋음",
@@ -237,43 +271,176 @@
         }
       }
     },
-
     "weather": {
       "weather": {
         "name": "날씨",
         "state_attributes": {
-          "qweather_icon": { "name": "날씨 아이콘" },
-          "update_time": { "name": "데이터 업데이트 시간" },
-          "obs_time": { "name": "관측 시간" },
-          "condition_cn": { "name": "날씨 상태(중국어)" },
-          "wind_dir": { "name": "풍향" },
-          "cloud": { "name": "구름량" },
-          "dew": { "name": "이슬점" },
-          "precip": { "name": "강수량" },
-          "precip_probability": { "name": "강수 확률" },
-          "feels_like": { "name": "체감 온도" },
-          "wind_scale": { "name": "풍력 등급" },
-          "sunrise": { "name": "일출 시간" },
-          "sunset": { "name": "일몰 시간" },
-          "moon_phase": { "name": "달의 위상" },
-          "moonrise": { "name": "월출 시간" },
-          "moonset": { "name": "월몰 시간" },
-          "minutely_summary": { "name": "분 단위 날씨 요약" },
-          "moon_phase_icon": { "name": "달 위상 아이콘" },
-          "text_night": { "name": "야간 날씨 상태" },
-          "icon_night": { "name": "야간 아이콘" },
-          "wind_scale_day": { "name": "주간 풍력 등급" },
-          "wind_scale_night": { "name": "야간 풍력 등급" },
-          "wind_dir_day": { "name": "주간 풍향" },
-          "wind_dir_night": { "name": "야간 풍향" },
-          "forecast_pressure": { "name": "예상 기압" },
-          "forecast_vis": { "name": "예상 가시거리" },
-          "forecast_cloud": { "name": "예상 구름량" },
-          "aqi": { "name": "대기질 지수" },
-          "weather_abstract": { "name": "날씨 요약 추상" },
-          "city": { "name": "도시" },
-          "warning": { "name": "경보 정보" },
-          "suggestion": { "name": "생활 지수 제안" }
+          "qweather_icon": {
+            "name": "날씨 아이콘"
+          },
+          "update_time": {
+            "name": "데이터 업데이트 시간"
+          },
+          "obs_time": {
+            "name": "관측 시간"
+          },
+          "condition_cn": {
+            "name": "날씨 상태(중국어)"
+          },
+          "wind_dir": {
+            "name": "풍향",
+            "state": {
+              "n": "북풍",
+              "nne": "북북동",
+              "ne": "북동풍",
+              "ene": "동북동",
+              "e": "동풍",
+              "ese": "동남동",
+              "se": "남동풍",
+              "sse": "남남동",
+              "s": "남풍",
+              "ssw": "남남서",
+              "sw": "남서풍",
+              "wsw": "서남서",
+              "w": "서풍",
+              "wnw": "서북서",
+              "nw": "북서풍",
+              "nnw": "북북서",
+              "none": "바람 없음",
+              "vrb": "변동"
+            }
+          },
+          "cloud": {
+            "name": "구름량"
+          },
+          "dew": {
+            "name": "이슬점"
+          },
+          "precip": {
+            "name": "강수량"
+          },
+          "precip_probability": {
+            "name": "강수 확률"
+          },
+          "feels_like": {
+            "name": "체감 온도"
+          },
+          "wind_scale": {
+            "name": "풍력 등급"
+          },
+          "sunrise": {
+            "name": "일출 시간"
+          },
+          "sunset": {
+            "name": "일몰 시간"
+          },
+          "moon_phase": {
+            "name": "달의 위상",
+            "state": {
+              "new-moon": "신월",
+              "waxing-crescent": "초승달",
+              "first-quarter": "상현달",
+              "waxing-gibbous": "차오르는 볼록달",
+              "full-moon": "보름달",
+              "waning-gibbous": "기우는 볼록달",
+              "last-quarter": "하현달",
+              "waning-crescent": "그믐달"
+            }
+          },
+          "moonrise": {
+            "name": "월출 시간"
+          },
+          "moonset": {
+            "name": "월몰 시간"
+          },
+          "minutely_summary": {
+            "name": "분 단위 날씨 요약"
+          },
+          "moon_phase_icon": {
+            "name": "달 위상 아이콘"
+          },
+          "text_night": {
+            "name": "야간 날씨 상태"
+          },
+          "icon_night": {
+            "name": "야간 아이콘"
+          },
+          "wind_scale_day": {
+            "name": "주간 풍력 등급"
+          },
+          "wind_scale_night": {
+            "name": "야간 풍력 등급"
+          },
+          "wind_dir_day": {
+            "name": "주간 풍향",
+            "state": {
+              "n": "북풍",
+              "nne": "북북동",
+              "ne": "북동풍",
+              "ene": "동북동",
+              "e": "동풍",
+              "ese": "동남동",
+              "se": "남동풍",
+              "sse": "남남동",
+              "s": "남풍",
+              "ssw": "남남서",
+              "sw": "남서풍",
+              "wsw": "서남서",
+              "w": "서풍",
+              "wnw": "서북서",
+              "nw": "북서풍",
+              "nnw": "북북서",
+              "none": "바람 없음",
+              "vrb": "변동"
+            }
+          },
+          "wind_dir_night": {
+            "name": "야간 풍향",
+            "state": {
+              "n": "북풍",
+              "nne": "북북동",
+              "ne": "북동풍",
+              "ene": "동북동",
+              "e": "동풍",
+              "ese": "동남동",
+              "se": "남동풍",
+              "sse": "남남동",
+              "s": "남풍",
+              "ssw": "남남서",
+              "sw": "남서풍",
+              "wsw": "서남서",
+              "w": "서풍",
+              "wnw": "서북서",
+              "nw": "북서풍",
+              "nnw": "북북서",
+              "none": "바람 없음",
+              "vrb": "변동"
+            }
+          },
+          "forecast_pressure": {
+            "name": "예상 기압"
+          },
+          "forecast_vis": {
+            "name": "예상 가시거리"
+          },
+          "forecast_cloud": {
+            "name": "예상 구름량"
+          },
+          "aqi": {
+            "name": "대기질 지수"
+          },
+          "weather_abstract": {
+            "name": "날씨 요약 추상"
+          },
+          "city": {
+            "name": "도시"
+          },
+          "warning": {
+            "name": "경보 정보"
+          },
+          "suggestion": {
+            "name": "생활 지수 제안"
+          }
         }
       }
     }
