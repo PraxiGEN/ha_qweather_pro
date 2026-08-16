@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Final
+from typing import Any, Final, Mapping
 from homeassistant.const import (
     Platform,
     CONF_API_KEY,
@@ -43,6 +43,19 @@ ATTR_SUGGESTION: Final = "suggestion"
 # --- 默认值 ---
 DEFAULT_NAME: Final = "和风天气Pro"
 DEFAULT_UPDATE_INTERVAL: Final = 15
+API_KEY_UPDATE_INTERVAL: Final = 100
+
+
+def resolve_update_interval(
+    options: "Mapping[str, Any] | None", use_token: bool
+) -> int:
+    """选择轮询间隔（分钟）。"""
+    if options and CONF_UPDATE_INTERVAL in options:
+        try:
+            return int(options[CONF_UPDATE_INTERVAL])  # type: ignore[arg-type]
+        except (TypeError, ValueError):
+            pass
+    return DEFAULT_UPDATE_INTERVAL if use_token else API_KEY_UPDATE_INTERVAL
 
 # --- 生活指数类型映射 (QWeather API v7) ---
 SUGGESTION_TYPE_MAP: Final[dict[str, str]] = {
