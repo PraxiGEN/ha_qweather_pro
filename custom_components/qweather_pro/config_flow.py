@@ -117,7 +117,7 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema({
                 vol.Required(CONF_HOST): selector.TextSelector(),
                 vol.Required(CONF_LOCATION_ID, default=default_location): selector.TextSelector(),                                       
-                vol.Required(CONF_USE_TOKEN, default=False): selector.BooleanSelector(),
+                vol.Required(CONF_USE_TOKEN, default=True): selector.BooleanSelector(),
                 vol.Optional(CONF_API_KEY): selector.TextSelector(
                     selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
                 ),
@@ -149,24 +149,31 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_jwt_setup(self, user_input: dict[str, Any] | None = None) -> FlowResult:
-        """JWT 身份验证步骤."""
+        """JWT 身份验证步骤（默认鉴权方式；API KEY 将自 2027-01-01 起受每日限额且 SDK 5+ 不再支持，故默认 JWT）."""
         if not self._generated_private_key:
             self._generated_private_key, self._generated_public_key = await self.hass.async_add_executor_job(
                 self._generate_key_pair_sync
             )
 
         if user_input is not None:
-            self._temp_data.update({
-                **user_input, 
-                CONF_PRIVATE_KEY: self._generated_private_key
-            })
+            self._temp_data.update(user_input)
+            if user_input.get(CONF_USE_TOKEN):
+                # 使用 JWT：注入自动生成的私钥，进入位置校验
+                self._temp_data[CONF_PRIVATE_KEY] = self._generated_private_key
+            else:
+                # 用户在 JWT 步骤退回 API KEY（无需填写 Project/Key ID）
+                self._temp_data.pop(CONF_PRIVATE_KEY, None)
             return await self._async_search_location(self._temp_data)
 
         return self.async_show_form(
             step_id="jwt_setup",
             data_schema=vol.Schema({
+                vol.Required(CONF_USE_TOKEN, default=True): selector.BooleanSelector(),
                 vol.Required(CONF_PROJECT_ID): selector.TextSelector(),
                 vol.Required(CONF_KEY_ID): selector.TextSelector(),
+                vol.Optional(CONF_API_KEY): selector.TextSelector(
+                    selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
+                ),
             }),
             description_placeholders={
                 "public_key": self._generated_public_key,
@@ -337,8 +344,12 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         # JWT 模式下的回显
         if data.get(CONF_USE_TOKEN):
             return vol.Schema({
+                vol.Required(CONF_USE_TOKEN, default=True): selector.BooleanSelector(),
                 vol.Required(CONF_PROJECT_ID, default=data.get(CONF_PROJECT_ID)): selector.TextSelector(),
                 vol.Required(CONF_KEY_ID, default=data.get(CONF_KEY_ID)): selector.TextSelector(),
+                vol.Optional(CONF_API_KEY, default=data.get(CONF_API_KEY)): selector.TextSelector(
+                    selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
+                ),
             })
 
         # 普通 setup 模式下的全量回显
@@ -378,10 +389,6 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 ),
             })
         )
-
-    # --- 重认证 (SOURCE_REAUTH) ---
-    # 触发条件：coordinator 刷新时 API 返回 401/403，DataUpdateCoordinator
-    # 捕获 ConfigEntryAuthFailed 后自动调用本流程，无需用户手动操作。
 
     async def async_step_reauth(self, user_input: dict[str, Any] | None = None) -> FlowResult:
         """认证失效后的入口步骤：载入原条目并引导重新输入凭据."""
@@ -523,7 +530,7 @@ class QWeatherOptionsFlow(config_entries.OptionsFlow):
                     default=str(options.get(CONF_DAILYSTEPS, 7))
                 ): selector.SelectSelector(
                     selector.SelectSelectorConfig(
-                        # V1 每日预报仅支持 1-10 天 (v7 的 15/30 在 V1 不存在)
+                        # V1 每日预报仅支持 1-10 天
                         options=["3", "7", "10"],
                         mode=selector.SelectSelectorMode.DROPDOWN
                     )
