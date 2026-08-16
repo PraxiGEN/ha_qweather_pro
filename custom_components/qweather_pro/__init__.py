@@ -5,6 +5,7 @@ import os
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.loader import async_get_integration
 from homeassistant.components.http import StaticPathConfig
@@ -21,6 +22,9 @@ from .services import async_setup_services
 
 # 定义强类型别名，便于 IDE 补全 runtime_data
 type QWeatherConfigEntry = ConfigEntry[QWeatherUpdateCoordinator]
+
+# 本集成只能通过 UI 配置流添加，YAML 无配置项（hassfest CONFIG_SCHEMA 规范）
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 # Repairs 条目 ID：引导仍用 API KEY 的用户迁移 JWT
 ISSUE_API_KEY_QUOTA = "api_key_quota"
