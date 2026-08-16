@@ -46,7 +46,6 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
 
     entity_description: WeatherEntityDescription
     _attr_has_entity_name = True
-
     _attr_native_precipitation_unit = UnitOfLength.MILLIMETERS
     _attr_native_pressure_unit = UnitOfPressure.HPA
     _attr_native_temperature_unit = UnitOfTemperature.CELSIUS
@@ -61,13 +60,9 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
     ) -> None:
         super().__init__(coordinator)
         self.entity_description = description
-
         self._attr_unique_id = f"{entry.entry_id}_{description.key}"
         self._attr_translation_key = description.translation_key
-
-        # 直接引用 coordinator 中定义好的设备信息
         self._attr_device_info = coordinator.device_info
-        
         self._attr_supported_features = (
             WeatherEntityFeature.FORECAST_DAILY |
             WeatherEntityFeature.FORECAST_HOURLY |
@@ -123,71 +118,96 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
 
     @property
     def uv_index(self) -> float | None:
-        """当前紫外线指数 (V1 current 的 uvIndex，降级时回退今日 uvIndexMax)."""
+        """当前紫外线指数."""
         return self.coordinator.data.get("now", {}).get("uv_index")
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        """coordinator 数据刷新：写入新状态并推送预报订阅者.
-
-        按 HA 官方文档 "Updating weather forecast(s)" 建议：预报缓存失效时
-        调用 async_update_listeners，将更新推送给活跃的 forecast 订阅方
-        (前端卡片 / weather.get_forecasts 服务)。
-        """
+        """数据刷新后推送预报订阅者."""
         super()._handle_coordinator_update()
         self.hass.async_create_task(self.async_update_listeners())
 
-    # --- 预报数据同步 (键序与 HA 官方 Forecast 字段表一致) ---
     async def async_forecast_daily(self) -> list[Forecast] | None:
-        """每日预报 (V1 嵌套结构 → HA Forecast 标准键).
-
-        1 天 1 条、白天视角 (HA 生态惯例)：日级 temp_max/min + daytime 时段数据。
-        """
+        """每日预报 (V1 嵌套结构 → 完整 day/night 键集)."""
         daily_data = self.coordinator.data.get("daily")
         if not daily_data:
             return None
-        return [{
-            "datetime": d.get("datetime"),
-            "is_daytime": True,
-            "cloud_coverage": d.get("daytime", {}).get("cloud"),
-            "condition": d.get("daytime", {}).get("condition"),
-            "humidity": d.get("daytime", {}).get("humidity"),
-            "native_precipitation": d.get("daytime", {}).get("precip_amount"),
-            "native_temperature": d.get("temp_max"),
-            "native_templow": d.get("temp_min"),
-            "native_wind_gust_speed": d.get("daytime", {}).get("wind_gust_max"),
-            "native_wind_speed": d.get("daytime", {}).get("wind_speed"),
-            "precipitation_probability": d.get("daytime", {}).get("precip_probability"),
-            "uv_index": d.get("uv_index_max"),
-            "wind_bearing": d.get("daytime", {}).get("wind_degree"),
-        } for d in daily_data]
+        forecasts: list[Forecast] = []
+        for d in daily_data:
+            day = d.get("daytime", {})
+            night = d.get("nighttime", {})
+            astro = d.get("astro", {})
+            forecasts.append({
+                # --- HA 标准字段（默认卡片 / weather.get_forecasts 服务兼容） ---
+                "datetime": d.get("datetime"),
+                "is_daytime": True,
+                "condition": day.get("condition"),
+                "native_temperature": d.get("temp_max"),
+                "native_templow": d.get("temp_min"),
+                "native_wind_speed": day.get("wind_speed"),
+                "wind_bearing": day.get("wind_degree"),
+                "native_wind_gust_speed": day.get("wind_gust_max"),
+                "humidity": day.get("humidity"),
+                "cloud_coverage": day.get("cloud"),
+                "native_precipitation": day.get("precip_amount"),
+                "precipitation_probability": day.get("precip_probability"),
+                "uv_index": d.get("uv_index_max"),
+                "icon": day.get("icon"),
+                "icon_night": night.get("icon"),
+                "text": day.get("text"),
+                "text_night": night.get("text"),
+                "condition_night": night.get("condition"),
+                "wind_360_day": day.get("wind_degree"),
+                "wind_dir_day": day.get("wind_compass"),
+                "wind_scale_day": day.get("wind_scale"),
+                "wind_speed": day.get("wind_speed"),
+                "wind_360_night": night.get("wind_degree"),
+                "wind_dir_night": night.get("wind_compass"),
+                "wind_scale_night": night.get("wind_scale"),
+                "wind_speed_night": night.get("wind_speed"),
+                "sunrise": astro.get("sunrise"),
+                "sunset": astro.get("sunset"),
+                "moonrise": astro.get("moonrise"),
+                "moonset": astro.get("moonset"),
+                "moon_phase": astro.get("moon_phase"),
+                "cloud": day.get("cloud"),
+                "temperature": d.get("temp_max"),
+                "templow": d.get("temp_min"),
+                "precipitation": day.get("precip_amount"),
+            })
+        return forecasts
 
     async def async_forecast_hourly(self) -> list[Forecast] | None:
-        """逐小时预报 (V1 hourly → HA Forecast 标准键).
-
-        键序与 hourly API 文档同步：forecastTime → condition → temperature → precipitation.probability。
-        """
+        """逐小时预报 (V1 hourly → HA Forecast 标准键 + 自定义键)."""
         hourly_data = self.coordinator.data.get("hourly")
         if not hourly_data:
             return None
         return [{
-            # forecastTime
             "datetime": h.get("datetime"),
-            # condition
             "condition": h.get("condition"),
-            # temperature
+            "text": h.get("text"),
+            "icon": h.get("icon"),
             "native_temperature": h.get("native_temperature"),
-            # precipitation.probability
+            "native_apparent_temperature": h.get("native_apparent_temperature"),
+            "native_humidity": h.get("native_humidity"),
+            "native_cloud_coverage": h.get("native_cloud_coverage"),
+            "native_wind_bearing": h.get("native_wind_bearing"),
+            "wind_compass": h.get("wind_compass"),
+            "native_wind_speed": h.get("native_wind_speed"),
+            "wind_scale": h.get("wind_scale"),
+            "native_wind_gust_speed": h.get("native_wind_gust_speed"),
+            "native_precipitation": h.get("native_precipitation"),
+            "precipitation_intensity": h.get("precipitation_intensity"),
+            "precipitation_type": h.get("precipitation_type"),
             "precipitation_probability": h.get("precipitation_probability"),
+            "native_pressure": h.get("native_pressure"),
+            "native_visibility": h.get("native_visibility"),
+            "native_dew_point": h.get("native_dew_point"),
+            "uv_index": h.get("uv_index"),
         } for h in hourly_data]
 
     async def async_forecast_twice_daily(self) -> list[Forecast] | None:
-        """实现每日两次（昼夜）预报逻辑.
-
-        V1 升级：不再用本地 8 点/20 点平移猜测时段边界，直接取
-        daytime/nighttime 时段真实的 forecastStartTime 与各自独立的
-        condition/温度区间/风/降水 (is_daytime 标记昼夜)。
-        """
+        """每日两次（昼夜）预报."""
         daily_data = self.coordinator.data.get("daily")
         if not daily_data:
             return None
@@ -221,7 +241,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
                     "condition": night.get("condition"),
                     "humidity": night.get("humidity"),
                     "native_precipitation": night.get("precip_amount"),
-                    "native_temperature": night.get("temp_min"),
+                    "native_temperature": night.get("temp_max"),
                     "native_templow": night.get("temp_min"),
                     "native_wind_gust_speed": night.get("wind_gust_max"),
                     "native_wind_speed": night.get("wind_speed"),
@@ -252,27 +272,16 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
         }
 
         # ===== 实时天气 (weather-v1-current 文档序) =====
-        # condition.text (condition 本体由实体 state 覆盖)
         attrs["condition_cn"] = now.get("text_cn")
-        # temperature (实体 state 覆盖，无属性)
-        # feelsLike
         attrs["feels_like"] = now.get("feelsLike")
-        # humidity (实体 state 覆盖，此属性为卡片兼容保留)
         attrs["humidity"] = now.get("humidity")
-        # wind: direction.compass / scale (degree/speed 由实体 state 覆盖)
         attrs["wind_dir"] = now.get("windDir")
         attrs["wind_scale"] = now.get("windScale")
-        # precipitation.amount
         attrs["precip"] = now.get("precip")
-        # pressure (实体 state 覆盖，卡片兼容保留)
         attrs["pressure"] = now.get("pressure")
-        # visibility (实体 state 覆盖，卡片兼容保留)
         attrs["visibility"] = now.get("vis")
-        # dewPoint
         attrs["dew"] = now.get("dew")
-        # cloudCover
         attrs["cloud"] = now.get("cloud")
-        # uvIndex (current 无此字段，取自 daily 的 uvIndexMax，见下)
 
         # ===== 今日预报 (weather-v1-daily 文档序, daily[0]) =====
         if daily:
@@ -280,26 +289,18 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
             astro = today.get("astro", {})
             day_seg = today.get("daytime", {})
             night_seg = today.get("nighttime", {})
-            # forecastStartTime (预报 datetime 走 forecast 服务，无属性)
-            # astro: sunrise / sunset / moonrise / moonset / moonPhase
             attrs["sunrise"] = astro.get("sunrise")
             attrs["sunset"] = astro.get("sunset")
             attrs["moonrise"] = astro.get("moonrise")
             attrs["moonset"] = astro.get("moonset")
             attrs["moon_phase"] = astro.get("moon_phase")
-            # (V1 无 moonPhaseIcon，图标由前端按 moon_phase 推导，属性已剔除)
-            # temperatureMax / temperatureMin (预报走 forecast 服务，无属性)
-            # uvIndexMax (当前 UV 走实体 uv_index 标准属性；日级最大值走 forecast 服务)
-            # daytime: condition (state 白天视角覆盖) / wind / cloudCover
             attrs["wind_scale_day"] = day_seg.get("wind_scale")
             attrs["wind_dir_day"] = day_seg.get("wind_compass")
             attrs["forecast_cloud"] = day_seg.get("cloud")
-            # nighttime: condition / wind
             attrs["text_night"] = night_seg.get("text")
             attrs["icon_night"] = night_seg.get("icon")
             attrs["wind_scale_night"] = night_seg.get("wind_scale")
             attrs["wind_dir_night"] = night_seg.get("wind_compass")
-            # (V1 每日预报不含 pressure/visibility，forecast_pressure/forecast_vis 死属性已剔除)
 
         # ===== 临近降水摘要 (weather-v1-minutely) =====
         attrs["minutely_summary"] = data.get("minutely_summary")
@@ -308,43 +309,6 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
         if hourly:
             # precipitation.probability
             attrs["precip_probability"] = hourly[0].get("precipitation_probability")
-
-        # ===== [暂时剔除 2026-08-15] 大块嵌套属性 =====
-        # 剔除原因：降低 recorder 落库体积；计划迁移至集成自有服务按需读取
-        # (卡片额外数据走服务的方案，见讨论记录)。需要临时恢复时取消注释即可。
-
-        # --- 空气质量 (weather-v1-air-current 文档序) ---
-        # if aqi_data := data.get("aqi"):
-        #     pollutants = {
-        #         "pm2p5": f"{aqi_data.get('pm2p5', '--')} {aqi_data.get('pm2p5_unit', '')}".strip(),
-        #         "pm10": f"{aqi_data.get('pm10', '--')} {aqi_data.get('pm10_unit', '')}".strip(),
-        #         "no2": f"{aqi_data.get('no2', '--')} {aqi_data.get('no2_unit', '')}".strip(),
-        #         "so2": f"{aqi_data.get('so2', '--')} {aqi_data.get('so2_unit', '')}".strip(),
-        #         "o3": f"{aqi_data.get('o3', '--')} {aqi_data.get('o3_unit', '')}".strip(),
-        #         "co": f"{aqi_data.get('co', '--')} {aqi_data.get('co_unit', '')}".strip(),
-        #     }
-        #     attrs["aqi"] = {
-        #         "aqi": aqi_data.get("aqi"),
-        #         "aqi_category": aqi_data.get("category"),
-        #         "aqi_level": aqi_data.get("level"),
-        #         "primary_pollutant": aqi_data.get("primary"),
-        #         "health_effect": aqi_data.get("health_effect"),
-        #         "air_quality_advice": aqi_data.get("health_advice"),
-        #         "pollutants": pollutants,
-        #         "stations": aqi_data.get("stations", []),
-        #     }
-
-        # --- 天气摘要 ---
-        # if abstract := data.get("weather_abstract"):
-        #     attrs["weather_abstract"] = abstract
-
-        # --- 预警信息 (weather-v1-warning-alert 文档序) ---
-        # if warnings := data.get("warning"):
-        #     attrs["warning"] = warnings
-
-        # --- 生活指数 (weather-v1-indices 文档序) ---
-        # if indices := data.get("indices"):
-        #     attrs["suggestion"] = indices
 
         # ===== [卡片兼容] 自定义 UI 触发标志 (Lovelace 卡片) =====
         if self.coordinator.entry.options.get(CONF_CUSTOM_UI):
