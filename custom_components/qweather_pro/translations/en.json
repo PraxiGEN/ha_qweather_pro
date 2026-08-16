@@ -11,7 +11,7 @@
       },
       "setup": {
         "title": "Configure QWeather Pro",
-        "description": "### Setup Steps\r\n**Go to the [QWeather Console]({qweather_console}):**\r\n1. In Settings, copy the **API Host** and fill it into the **API Host** field below.\r\n2. Project Management → Create a project, then add credentials to the project: optional **JSON Web Token** and **API KEY**.\r\n3. The location only supports latitude and longitude (WGS-84), for example: 116.40,39.90.\r\nThe default location is the HA latitude and longitude.\r\n#### Note: API KEY authentication does not provide sufficient security. All requests using API KEY authentication are subject to rate limits. It is recommended to use JSON Web Token (JWT) authentication!",
+        "description": "### Setup Steps\r\n**Go to the [QWeather Console]({qweather_console}):**\r\n1. In Settings, copy the **API Host** and fill it into the **API Host** field below.\r\n2. Project Management → Create a project, then add credentials to the project: optional **JSON Web Token** and **API KEY**.\r\n3. The location can be latitude and longitude (WGS-84) or a city name.\r\n4. The default location is the HA latitude and longitude.\r\n#### Note: API KEY authentication does not provide sufficient security. API KEY authentication will be subject to request limits. JSON Web Token (JWT) is recommended!",
         "data": {
           "host": "API Host",
           "location_id": "Geographical location. Only supports latitude and longitude (longitude first).",
@@ -300,11 +300,8 @@
           "update_time": {
             "name": "Update Time"
           },
-          "obs_time": {
-            "name": "Observation Time"
-          },
           "condition_cn": {
-            "name": "Weather Condition (English)"
+            "name": "Weather Condition"
           },
           "wind_dir": {
             "name": "Wind Direction",
@@ -375,9 +372,6 @@
           "minutely_summary": {
             "name": "Minute Summary"
           },
-          "moon_phase_icon": {
-            "name": "Moon Phase Icon"
-          },
           "text_night": {
             "name": "Night Weather Condition"
           },
@@ -436,32 +430,32 @@
               "vrb": "Variable"
             }
           },
-          "forecast_pressure": {
-            "name": "Forecast Pressure"
-          },
-          "forecast_vis": {
-            "name": "Forecast Visibility Distance"
-          },
           "forecast_cloud": {
             "name": "Forecast Cloud Cover"
           },
-          "aqi": {
-            "name": "Air Quality Index"
-          },
-          "weather_abstract": {
-            "name": "Weather Abstract"
-          },
           "city": {
             "name": "City"
-          },
-          "warning": {
-            "name": "Warnings and Advisories"
-          },
-          "suggestion": {
-            "name": "Life Index Suggestions"
           }
         }
       }
+    }
+  },
+  "services": {
+    "get_weather": {
+      "name": "Get weather data",
+      "description": "Return the full weather dataset for a QWeather Pro weather entity, including current conditions, daily/hourly forecasts, air quality, warnings, life indices and the smart weather abstract. Optionally restrict the response to specific top-level data blocks using 'keys'.",
+      "fields": {
+        "keys": {
+          "name": "Keys",
+          "description": "Optional list of top-level data blocks to return. Omit to return the entire dataset."
+        }
+      }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "QWeather API KEY daily quota",
+      "description": "Your QWeather Pro integration is still using API KEY authentication.\r\nNote: API KEY authentication does not provide sufficient security. Starting 2027-01-01, QWeather will limit daily requests for API KEY authentication (exact amount TBD), and SDK 5+ will drop API KEY support; JWT is unlimited and recommended. If you keep API KEY, polling defaults to 100 minutes; switch to JWT in \"Reconfigure\" for unlimited, faster updates."
     }
   }
 }
