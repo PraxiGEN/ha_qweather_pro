@@ -1,0 +1,31 @@
+get_weather:
+  name: Get weather data
+  description: >-
+    Return the full weather dataset for a QWeather Pro weather entity,
+    including current conditions, daily/hourly forecasts, air quality,
+    warnings, life indices and the smart weather abstract. Pass "keys"
+    to restrict the response to specific top-level data blocks.
+  target:
+    entity:
+      domain: weather
+  fields:
+    keys:
+      name: Keys
+      description: >-
+        Optional list of top-level data blocks to return. Omit to return
+        the entire dataset.
+      required: false
+      example: ["aqi", "warning"]
+      selector:
+        select:
+          multiple: true
+          mode: dropdown
+          options:
+            - now
+            - daily
+            - hourly
+            - aqi
+            - warning
+            - indices
+            - weather_abstract
+            - minutely_detail
