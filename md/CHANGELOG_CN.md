@@ -2,6 +2,13 @@
 
 ### 🛠 [1.2.0-beta.2] - 2026-08-16
 
+### ⚠️ 破坏性变更（Breaking Changes）
+- **API 迁移（V7 → V1）**：数据层已从和风天气 V7 API 全面切换到 **V1 API**。coordinator 解析器已按 V1 的 `daytime` / `nighttime` 嵌套结构重写，并新增主备数据源回退（primary/backup fallback）。依赖旧 V7 字段映射的自定义模板/自动化需重新核对。
+- **天气实体属性变更**：预报与实况属性已按 V1 结构重组。
+  - 每日预报改为昼夜嵌套：新增 `wind_scale_day` / `wind_dir_day` / `wind_scale_night` / `wind_dir_night`、`icon_night` / `text_night` / `condition_night`、`wind_360_*` 等键；风向改用 `wind_degree`（角度）/ `wind_compass`（方位）表达。
+  - 实况扩展属性按 V1 重排：`wind_dir`、`wind_scale`、`forecast_cloud`、`moon_phase` 等键名/取值有调整；旧的 `obsTime` 观测时间戳已移除，由 `update_time` 兜底。
+  - 任何直接引用旧（V7 扁平）属性键的模板/自动化/第三方卡片，现在都会取到 `unknown`，请改用新键。
+
 ### 🔐 认证与额度策略
 - 默认使用 JWT：新接入和重新配置默认采用 JWT 认证，无请求限制；API KEY 仍可用，但改为可选。
 - API KEY 即将受限：自 2027-01-01 起，和风天气将对 API KEY 认证设置每日请求上限（具体数值未公布），且 SDK 5+ 不再支持 API KEY，推荐使用 JWT。
@@ -12,7 +19,7 @@
 - 改用 Home Assistant 原生存储缓存天气数据。重启后，上一次的数据会立即恢复，无需等待下一次刷新。
 
 ### 🔧 按需天气服务
-- 新增 `get_weather` 服务，卡片（以及你本人）可随时主动拉取最新天气数据。
+- 新增 `get_weather` 服务，可随时主动拉取最新天气；卡片已改用它读取空气质量（AQI）与恶劣天气预警。
 
 ### 🃏 卡片升级（V1）
 - 卡片通过 `get_weather` 服务读取空气质量（AQI）与恶劣天气预警。
@@ -20,7 +27,13 @@
 - 品牌名与技术缩写不再塞进翻译文件，仅可本地化文案参与翻译。
 
 ### 🌐 翻译
-- 已将 API KEY 额度提示同步至全部 12 种语言。
+- 已将 API KEY 额度提示同步至全部 12 种语言；同时更新了 V1 API 相关文案与新界面字符串。
+
+### 🧰 其他
+- 新增诊断页（diagnostics），可导出集成数据用于排障。
+- 新增凭证过期后的重新认证流程（re‑auth flow）。
+- 重构传感器以适配 V1 每日嵌套结构。
+- 详情面板补齐风向、月相等字段与本地化。
 
 ### 🛠 [1.1.0] - 2026-06-02 (里程碑)
 
