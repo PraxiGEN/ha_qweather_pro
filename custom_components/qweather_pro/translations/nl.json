@@ -11,7 +11,7 @@
       },
       "setup": {
         "title": "QWeather Pro configureren",
-        "description": "### Configuratiestappen\r\n**Ga naar de [QWeather Console]({qweather_console}):**\r\n1. Kopieer in Instellingen de **API Host** en vul deze hieronder in.\r\n2. Projectbeheer → Maak een project aan en voeg vervolgens referenties toe: optioneel **JSON Web Token** en **API KEY**.\r\n3. Locatie ondersteunt alleen breedte- en lengtegraad (WGS‑84), bijvoorbeeld: 116.40,39.90.\r\nDe standaardlocatie is de breedte- en lengtegraad van Home Assistant.\r\n#### Opmerking: API KEY-authenticatie biedt onvoldoende beveiliging. Alle verzoeken met API KEY zijn onderworpen aan strikte limieten. Gebruik bij voorkeur JWT-authenticatie!",
+        "description": "### Installatiestappen\r\n**Ga naar de [QWeather-console]({qweather_console}):**\r\n1. Kopieer in Instellingen de **API Host** en vul deze in het veld **API Host** hieronder in.\r\n2. Projectbeheer → Maak een project aan en voeg vervolgens referenties toe aan het project: **JSON Web Token** en **API KEY** (optioneel).\r\n3. De locatie kan uit breedte- en lengtegraad (WGS-84) of een stadsnaam bestaan.\r\n4. De standaardlocatie is de breedte- en lengtegraad van HA.\r\n#### Opmerking: Authenticatie met API KEY biedt onvoldoende beveiliging. Verzoeken met API KEY zijn onderhevig aan limieten. JSON Web Token (JWT) wordt aanbevolen.",
         "data": {
           "host": "API Host",
           "location_id": "Geografische locatie. Alleen lengte- en breedtegraad (lengte eerst).",
@@ -50,6 +50,23 @@
           "use_token": "JWT-authenticatie gebruiken",
           "api_key": "API Key"
         }
+      },
+      "reauth_confirm": {
+        "title": "Herauthenticatie vereist",
+        "description": "Uw QWeather-inloggegevens zijn niet langer geldig. Werk hieronder de **API-host** en inloggegevens bij. Uw locatie-instellingen blijven behouden.\r\n**Ga naar de [QWeather-console]({qweather_console})** om uw project en inloggegevens te controleren.",
+        "data": {
+          "host": "API-host",
+          "use_token": "JWT-authenticatie gebruiken",
+          "api_key": "API-sleutel"
+        }
+      },
+      "reauth_jwt": {
+        "title": "JWT-inloggegevens bijwerken",
+        "description": "Vul de nieuwe **project-ID** en **sleutel-ID** in voor JWT-authenticatie. Uw locatie-instellingen blijven behouden.\r\n**Ga naar de [QWeather-console]({qweather_console})** om uw project en inloggegevens te controleren.",
+        "data": {
+          "project_id": "Project-ID",
+          "key_id": "Sleutel-ID"
+        }
       }
     },
     "error": {
@@ -72,7 +89,9 @@
     },
     "abort": {
       "already_configured": "Deze locatie is al geconfigureerd",
-      "reconfigure_successful": "Configuratie succesvol bijgewerkt!"
+      "reconfigure_successful": "Configuratie succesvol bijgewerkt!",
+      "reauth_successful": "Authenticatie succesvol bijgewerkt!",
+      "reauth_failed_entry_not_found": "Configuratie-item niet gevonden. Voeg de integratie opnieuw toe."
     }
   },
   "selector": {
@@ -137,7 +156,7 @@
           "health_effect": {
             "name": "Gezondheidseffecten",
             "state": {
-              "No data available": "Geen gegevens beschikbaar"
+              "no_data_available": "Geen gegevens beschikbaar"
             }
           },
           "health_advice": {
@@ -225,9 +244,6 @@
       "weather_summary": {
         "name": "Weeroverzicht",
         "state_attributes": {
-          "display_state": {
-            "name": "Weergavestatus"
-          },
           "period": {
             "name": "Huidige periode",
             "state": {
@@ -267,6 +283,9 @@
               "very_unhealthy": "Lucht is slecht",
               "extazardous": "Lucht is gevaarlijk"
             }
+          },
+          "tonight_text": {
+            "name": "Weer van de komende nacht"
           }
         }
       }
@@ -280,9 +299,6 @@
           },
           "update_time": {
             "name": "Tijd van gegevensupdate"
-          },
-          "obs_time": {
-            "name": "Observatietijd"
           },
           "condition_cn": {
             "name": "Weerconditie (Chinees)"
@@ -356,9 +372,6 @@
           "minutely_summary": {
             "name": "Samenvatting per minuut"
           },
-          "moon_phase_icon": {
-            "name": "Maanfase‑pictogram"
-          },
           "text_night": {
             "name": "Weerconditie ’s nachts"
           },
@@ -417,32 +430,32 @@
               "vrb": "Wisselend"
             }
           },
-          "forecast_pressure": {
-            "name": "Verwachte luchtdruk"
-          },
-          "forecast_vis": {
-            "name": "Verwachte zichtbaarheid"
-          },
           "forecast_cloud": {
             "name": "Verwachte bewolking"
           },
-          "aqi": {
-            "name": "Luchtkwaliteitsindex"
-          },
-          "weather_abstract": {
-            "name": "Weeroverzicht abstract"
-          },
           "city": {
             "name": "Stad"
-          },
-          "warning": {
-            "name": "Waarschuwingsinformatie"
-          },
-          "suggestion": {
-            "name": "Levensindex‑advies"
           }
         }
       }
+    }
+  },
+  "services": {
+    "get_weather": {
+      "name": "Weergegevens ophalen",
+      "description": "Geeft de volledige weergegevensset van een QWeather Pro-weerentiteit terug, inclusief huidige omstandigheden, dag-/uurprognoses, luchtkwaliteit, waarschuwingen, levensindices en de slimme weersamenvatting. Beperk de respons optioneel tot specifieke gegevensblokken met 'keys'.",
+      "fields": {
+        "keys": {
+          "name": "Sleutels",
+          "description": "Optionele lijst met terug te geven gegevensblokken op het hoogste niveau. Laat weg om de volledige gegevensset terug te geven."
+        }
+      }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "QWeather API KEY dagelijkse quota",
+      "description": "Uw QWeather Pro-integratie gebruikt nog steeds API KEY-authenticatie.\r\nOpmerking: Authenticatie met API KEY biedt onvoldoende beveiliging. Vanaf 01-01-2027 zal QWeather de dagelijkse verzoeken met API KEY beperken (exact bedrag nog onbekend), en SDK 5+ zal API KEY niet langer ondersteunen; JWT is onbeperkt en aanbevolen. Als u API KEY behoudt, is het polsinterval standaard 100 minuten; schakel over naar JWT in «Opnieuw configureren» voor onbeperkte, snellere updates."
     }
   }
 }
