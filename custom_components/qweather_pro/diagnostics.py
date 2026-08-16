@@ -23,7 +23,14 @@ async def async_get_config_entry_diagnostics(
     entry: ConfigEntry,
 ) -> dict[str, Any]:
     """返回配置条目的诊断信息 (供 HA 问题上报使用)."""
-    coordinator: QWeatherUpdateCoordinator = entry.runtime_data
+    # setup 失败/重试中的 entry，runtime_data 可能为 None（官方顺序：
+    # 首刷成功后才挂载），需判空防护
+    coordinator: QWeatherUpdateCoordinator | None = entry.runtime_data
+    if coordinator is None:
+        return {
+            "entry": async_redact_data(entry.as_dict(), TO_REDACT),
+            "coordinator_data": {},
+        }
     return {
         "entry": async_redact_data(entry.as_dict(), TO_REDACT),
         "coordinator_data": coordinator.data if coordinator.data else {},
