@@ -1,5 +1,27 @@
 ## Release Notes: QWeather Pro 2026
 
+### 🛠 [1.2.0-beta.2] - 2026-08-16
+
+### 🔐 Authentication & Quota Strategy
+- JWT by default: New setups and re‑configurations now default to JWT, which has no request limit. API KEY stays available but becomes optional.
+- API KEY will be capped: From 2027‑01‑01 QWeather limits daily requests for API KEY auth (exact number not yet announced), and SDK 5+ drops API KEY support. JWT is the recommended path.
+- Smart migration prompt: If you are still on API KEY, a Repairs (修复) notice appears, guiding you to switch to JWT for unlimited, faster updates.
+- Gentler polling on API KEY: When using API KEY, the default refresh interval is slowed to 100 minutes (was 15) to stay safely under the coming limit.
+
+### 💾 Cache That Survives Restarts
+- Now uses Home Assistant’s native storage to cache weather data. After a restart the last known data is restored instantly instead of waiting for the next refresh.
+
+### 🔧 On‑Demand Weather Service
+- Added a `get_weather` service so the card (and you) can fetch fresh weather data any time.
+
+### 🃏 Card Improvements (V1)
+- The card now reads AQI and severe weather warnings through the `get_weather` service.
+- The more‑info panel shows more V1 fields, including separate day/night conditions.
+- Brand names and technical abbreviations are no longer pushed into the translation files — only localizable text is translated.
+
+### 🌐 Translations
+- Added the API KEY quota notice to all 12 supported languages.
+
 ### 🛠 [1.1.0] - 2026-06-02 (Milestone)
 
 ### 🌍 Full‑chain Internationalization (I18N)
