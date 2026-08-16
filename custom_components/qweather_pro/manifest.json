@@ -1,10 +1,10 @@
 {
   "domain": "qweather_pro",
   "name": "QWeather Pro",
+  "after_dependencies": ["frontend"],
   "codeowners": ["@PraxiGEN"],
   "config_flow": true,
   "dependencies": ["http"],
-  "after_dependencies": ["frontend"],
   "documentation": "https://github.com/PraxiGEN/ha_qweather_pro",
   "integration_type": "service",
   "iot_class": "cloud_polling",
