@@ -1,5 +1,5 @@
 {
-  "name": "QWeather Pro",
+  "title": "QWeather Pro",
   "config": {
     "step": {
       "user": {
@@ -11,7 +11,7 @@
       },
       "setup": {
         "title": "QWeather Pro konfigurieren",
-        "description": "### Einrichtungsschritte\r\n**Öffnen Sie die [QWeather-Konsole]({qweather_console}):**\r\n1. Kopieren Sie unter Einstellungen den **API-Host** und tragen Sie ihn unten im Feld **API Host** ein.\r\n2. Projektverwaltung → Projekt erstellen und dann Anmeldeinformationen hinzufügen: optional **JSON Web Token** und **API KEY**.\r\n3. Der Standort unterstützt nur Breiten- und Längengrad (WGS‑84), z. B.: 116.40,39.90.\r\nDer Standardstandort ist der Breiten- und Längengrad von Home Assistant.\r\n#### Hinweis: Die Authentifizierung mit API KEY bietet keine ausreichende Sicherheit. Alle Anfragen mit API KEY unterliegen strengen Limits. Es wird empfohlen, die JWT‑Authentifizierung zu verwenden!",
+        "description": "### Einrichtungsschritte\r\n**Öffnen Sie die [QWeather-Konsole]({qweather_console}):**\r\n1. Kopieren Sie in den Einstellungen den **API-Host** und tragen Sie ihn unten in das Feld **API Host** ein.\r\n2. Projektverwaltung → Projekt erstellen und dann dem Projekt Anmeldeinformationen hinzufügen: optional **JSON Web Token** und **API KEY**.\r\n3. Der Standort kann aus Breiten- und Längengrad (WGS-84) oder einem Stadtnamen bestehen.\r\n4. Der Standardstandort ist der Breiten- und Längengrad von Home Assistant.\r\n#### Hinweis: Die Authentifizierung mit API KEY bietet keine ausreichende Sicherheit. Anfragen mit API KEY unterliegen Limits. JSON Web Token (JWT) wird empfohlen!",
         "data": {
           "host": "API-Host",
           "location_id": "Geografischer Standort. Unterstützt nur Längen- und Breitengrad (zuerst Länge).",
@@ -50,6 +50,23 @@
           "use_token": "JWT-Authentifizierung verwenden",
           "api_key": "API-Schlüssel"
         }
+      },
+      "reauth_confirm": {
+        "title": "Erneute Authentifizierung erforderlich",
+        "description": "Ihre QWeather-Zugangsdaten sind nicht mehr gültig. Bitte aktualisieren Sie unten den **API Host** und die Zugangsdaten. Ihre Standorteinstellungen bleiben erhalten.\r\n**Öffnen Sie die [QWeather-Konsole]({qweather_console})**, um Projekte und Zugangsdaten zu prüfen.",
+        "data": {
+          "host": "API Host",
+          "use_token": "JWT-Authentifizierung verwenden",
+          "api_key": "API-Schlüssel"
+        }
+      },
+      "reauth_jwt": {
+        "title": "JWT-Zugangsdaten aktualisieren",
+        "description": "Bitte geben Sie die neue **Projekt-ID** und **Schlüssel-ID** für die JWT-Authentifizierung ein. Ihre Standorteinstellungen bleiben erhalten.\r\n**Öffnen Sie die [QWeather-Konsole]({qweather_console})**, um Projekte und Zugangsdaten zu prüfen.",
+        "data": {
+          "project_id": "Projekt-ID",
+          "key_id": "Schlüssel-ID"
+        }
       }
     },
     "error": {
@@ -72,7 +89,9 @@
     },
     "abort": {
       "already_configured": "Dieser Standort wurde bereits konfiguriert",
-      "reconfigure_successful": "Konfiguration erfolgreich aktualisiert!"
+      "reconfigure_successful": "Konfiguration erfolgreich aktualisiert!",
+      "reauth_successful": "Authentifizierung erfolgreich aktualisiert!",
+      "reauth_failed_entry_not_found": "Konfigurationseintrag nicht gefunden. Bitte fügen Sie die Integration erneut hinzu."
     }
   },
   "selector": {
@@ -225,9 +244,6 @@
       "weather_summary": {
         "name": "Wetterübersicht",
         "state_attributes": {
-          "display_state": {
-            "name": "Anzeigestatus"
-          },
           "period": {
             "name": "Aktueller Zeitraum",
             "state": {
@@ -267,6 +283,9 @@
               "very_unhealthy": "Schlechte Luft",
               "extazardous": "Gefährliche Luft"
             }
+          },
+          "tonight_text": {
+            "name": "Wetter in der kommenden Nacht"
           }
         }
       }
@@ -280,9 +299,6 @@
           },
           "update_time": {
             "name": "Datenaktualisierungszeit"
-          },
-          "obs_time": {
-            "name": "Beobachtungszeit"
           },
           "condition_cn": {
             "name": "Wetterzustand (Chinesisch)"
@@ -356,9 +372,6 @@
           "minutely_summary": {
             "name": "Minütliche Wetterzusammenfassung"
           },
-          "moon_phase_icon": {
-            "name": "Mondphasensymbol"
-          },
           "text_night": {
             "name": "Wetter in der Nacht"
           },
@@ -417,32 +430,32 @@
               "vrb": "Wechselnd"
             }
           },
-          "forecast_pressure": {
-            "name": "Prognostizierter Luftdruck"
-          },
-          "forecast_vis": {
-            "name": "Prognostizierte Sichtweite"
-          },
           "forecast_cloud": {
             "name": "Prognostizierte Bewölkung"
           },
-          "aqi": {
-            "name": "Luftqualitätsindex"
-          },
-          "weather_abstract": {
-            "name": "Wetterzusammenfassung"
-          },
           "city": {
             "name": "Stadt"
-          },
-          "warning": {
-            "name": "Warninformationen"
-          },
-          "suggestion": {
-            "name": "Lebensindextipps"
           }
         }
       }
+    }
+  },
+  "services": {
+    "get_weather": {
+      "name": "Wetterdaten abrufen",
+      "description": "Gibt den vollständigen Wetterdatensatz einer QWeather Pro Wetter-Entität zurück, einschließlich aktueller Wetterdaten, Tages-/Stundenprognosen, Luftqualität, Warnungen, Lebensindizes und der intelligenten Wetterzusammenfassung. Optional kann die Antwort mit 'keys' auf bestimmte Datenblöcke beschränkt werden.",
+      "fields": {
+        "keys": {
+          "name": "Schlüssel",
+          "description": "Optionale Liste zurückzugebender Datenblöcke. Ohne Angabe wird der komplette Datensatz zurückgegeben."
+        }
+      }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "QWeather API KEY Tageskontingent",
+      "description": "Ihre QWeather Pro-Integration verwendet noch die API KEY-Authentifizierung.\r\nHinweis: Die Authentifizierung mit API KEY bietet keine ausreichende Sicherheit. Ab dem 01.01.2027 wird QWeather die täglichen Anfragen mit API KEY begrenzen (genaue Zahl noch nicht bekannt), und SDK 5+ wird API KEY nicht mehr unterstützen; JWT ist unbegrenzt und wird empfohlen. Wenn Sie API KEY behalten, beträgt das Abfrageintervall standardmäßig 100 Minuten; wechseln Sie in „Neu konfigurieren“ zu JWT für unbegrenzte, schnellere Updates."
     }
   }
 }

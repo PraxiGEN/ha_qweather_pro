@@ -11,7 +11,7 @@
       },
       "setup": {
         "title": "Configura QWeather Pro",
-        "description": "### Passaggi di configurazione\r\n**Vai alla [Console QWeather]({qweather_console}):**\r\n1. In Impostazioni, copia l’**API Host** e inseriscilo nel campo **API Host** qui sotto.\r\n2. Gestione progetti → Crea un progetto, quindi aggiungi le credenziali: **JSON Web Token** e **API KEY** (opzionali).\r\n3. La posizione supporta solo latitudine e longitudine (WGS‑84), ad esempio: 116.40,39.90.\r\nLa posizione predefinita è quella impostata in Home Assistant.\r\n#### Nota: L’autenticazione tramite API KEY non offre sicurezza sufficiente. Tutte le richieste con API KEY sono soggette a limiti severi. Si consiglia l’autenticazione JWT.",
+        "description": "### Passaggi di configurazione\r\n**Vai alla [Console QWeather]({qweather_console}):**\r\n1. In Impostazioni, copia l'**API Host** e inseriscilo nel campo **API Host** sottostante.\r\n2. Gestione progetti → Crea un progetto e poi aggiungi le credenziali al progetto: **JSON Web Token** e **API KEY** (opzionali).\r\n3. La posizione può essere latitudine e longitudine (WGS-84) o un nome di città.\r\n4. La posizione predefinita è la latitudine e longitudine di HA.\r\n#### Nota: L'autenticazione con API KEY non offre sicurezza sufficiente. Le richieste con API KEY sono soggette a limiti. JSON Web Token (JWT) è consigliato.",
         "data": {
           "host": "API Host",
           "location_id": "Posizione geografica. Supporta solo longitudine e latitudine (prima la longitudine).",
@@ -50,6 +50,23 @@
           "use_token": "Usa autenticazione JWT",
           "api_key": "API Key"
         }
+      },
+      "reauth_confirm": {
+        "title": "Nuova autenticazione richiesta",
+        "description": "Le credenziali QWeather non sono più valide. Aggiorna l'**API Host** e le credenziali qui sotto. Le impostazioni della posizione verranno conservate.\r\n**Vai alla [console QWeather]({qweather_console})** per controllare il progetto e le credenziali.",
+        "data": {
+          "host": "API Host",
+          "use_token": "Usa autenticazione JWT",
+          "api_key": "Chiave API"
+        }
+      },
+      "reauth_jwt": {
+        "title": "Aggiorna credenziali JWT",
+        "description": "Inserisci la nuova **ID progetto** e la nuova **ID chiave** per l'autenticazione JWT. Le impostazioni della posizione verranno conservate.\r\n**Vai alla [console QWeather]({qweather_console})** per controllare il progetto e le credenziali.",
+        "data": {
+          "project_id": "ID progetto",
+          "key_id": "ID chiave"
+        }
       }
     },
     "error": {
@@ -72,7 +89,9 @@
     },
     "abort": {
       "already_configured": "Questa posizione è già configurata",
-      "reconfigure_successful": "Configurazione aggiornata con successo!"
+      "reconfigure_successful": "Configurazione aggiornata con successo!",
+      "reauth_successful": "Autenticazione aggiornata con successo!",
+      "reauth_failed_entry_not_found": "Voce di configurazione non trovata. Aggiungi di nuovo l'integrazione."
     }
   },
   "selector": {
@@ -225,9 +244,6 @@
       "weather_summary": {
         "name": "Riepilogo meteo",
         "state_attributes": {
-          "display_state": {
-            "name": "Stato di visualizzazione"
-          },
           "period": {
             "name": "Periodo attuale",
             "state": {
@@ -267,6 +283,9 @@
               "very_unhealthy": "Aria scarsa",
               "extazardous": "Aria pericolosa"
             }
+          },
+          "tonight_text": {
+            "name": "Meteo della prossima notte"
           }
         }
       }
@@ -280,9 +299,6 @@
           },
           "update_time": {
             "name": "Orario di aggiornamento dati"
-          },
-          "obs_time": {
-            "name": "Orario di osservazione"
           },
           "condition_cn": {
             "name": "Condizione meteo (cinese)"
@@ -356,9 +372,6 @@
           "minutely_summary": {
             "name": "Sintesi meteo al minuto"
           },
-          "moon_phase_icon": {
-            "name": "Icona della fase lunare"
-          },
           "text_night": {
             "name": "Condizioni notturne"
           },
@@ -417,32 +430,32 @@
               "vrb": "Variabile"
             }
           },
-          "forecast_pressure": {
-            "name": "Pressione atmosferica futura"
-          },
-          "forecast_vis": {
-            "name": "Visibilità futura"
-          },
           "forecast_cloud": {
             "name": "Copertura nuvolosa futura"
           },
-          "aqi": {
-            "name": "Indice di qualità dell’aria"
-          },
-          "weather_abstract": {
-            "name": "Riepilogo meteo abstract"
-          },
           "city": {
             "name": "Città"
-          },
-          "warning": {
-            "name": "Informazioni di allerta"
-          },
-          "suggestion": {
-            "name": "Suggerimenti dell’indice di vita"
           }
         }
       }
+    }
+  },
+  "services": {
+    "get_weather": {
+      "name": "Ottieni i dati meteo",
+      "description": "Restituisce il set completo di dati meteo di un'entità meteo QWeather Pro, incluse le condizioni attuali, le previsioni giornaliere/orarie, la qualità dell'aria, gli allertamenti, gli indici di vita e il riepilogo meteo intelligente. Facoltativamente, è possibile limitare la risposta a specifici blocchi di dati tramite 'keys'.",
+      "fields": {
+        "keys": {
+          "name": "Chiavi",
+          "description": "Elenco facoltativo di blocchi di dati di primo livello da restituire. Omettere per restituire l'intero set di dati."
+        }
+      }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "Quota giornaliera QWeather API KEY",
+      "description": "La tua integrazione QWeather Pro utilizza ancora l'autenticazione con API KEY.\r\nNota: L'autenticazione con API KEY non offre sicurezza sufficiente. A partire dal 01-01-2027, QWeather limiterà le richieste giornaliere autenticate con API KEY (importo esatto da definire), e SDK 5+ non supporterà più API KEY; JWT è illimitato e consigliato. Se mantieni API KEY, l'intervallo di polling è predefinito di 100 minuti; passa a JWT in «Riconfigura» per aggiornamenti illimitati e più rapidi."
     }
   }
 }

@@ -11,7 +11,7 @@
       },
       "setup": {
         "title": "QWeather Pro 구성",
-        "description": "### 설정 단계\r\n**[QWeather 콘솔]({qweather_console})로 이동:**\r\n1. 설정에서 **API Host**를 복사하여 아래 **API Host** 필드에 입력합니다.\r\n2. 프로젝트 관리 → 프로젝트 생성 후, 프로젝트에 자격 증명 추가: **JSON Web Token** 및 **API KEY**(선택 사항).\r\n3. 위치는 위도와 경도(WGS‑84)만 지원합니다. 예: 116.40,39.90.\r\n기본 위치는 Home Assistant의 위도·경도입니다.\r\n#### 참고: API KEY 인증은 보안이 충분하지 않습니다. API KEY를 사용하는 모든 요청은 엄격한 제한을 받습니다. JWT 인증 사용을 권장합니다!",
+        "description": "### 설정 단계\r\n**[QWeather 콘솔]({qweather_console})로 이동하세요:**\r\n1. 설정에서 **API Host**를 복사하여 아래 **API Host** 입력란에 입력합니다.\r\n2. 프로젝트 관리 → 프로젝트를 생성한 후 프로젝트에 자격 증명을 추가합니다(**JSON Web Token** 및 **API KEY** 선택 사항).\r\n3. 위치는 위도와 경도(WGS-84) 또는 도시 이름으로 지정할 수 있습니다.\r\n4. 기본 위치는 HA의 위도와 경도입니다.\r\n#### 참고: API KEY 인증은 충분한 보안을 제공하지 않습니다。API KEY를 사용한 요청은 제한 대상입니다. JSON Web Token(JWT)을 권장합니다.",
         "data": {
           "host": "API Host",
           "location_id": "지리적 위치. 경도와 위도만 지원(경도 먼저).",
@@ -50,6 +50,23 @@
           "use_token": "JWT 인증 사용",
           "api_key": "API Key"
         }
+      },
+      "reauth_confirm": {
+        "title": "재인증 필요",
+        "description": "QWeather 자격 증명이 더 이상 유효하지 않습니다. 아래의 **API Host**와 자격 증명을 업데이트하세요. 위치 설정은 유지됩니다.\r\n[QWeather 콘솔]({qweather_console})에서 프로젝트와 자격 증명을 확인하세요.",
+        "data": {
+          "host": "API Host",
+          "use_token": "JWT 인증 사용",
+          "api_key": "API 키"
+        }
+      },
+      "reauth_jwt": {
+        "title": "JWT 자격 증명 업데이트",
+        "description": "JWT 인증을 위한 새 **프로젝트 ID**와 **키 ID**를 입력하세요. 위치 설정은 유지됩니다.\r\n[QWeather 콘솔]({qweather_console})에서 프로젝트와 자격 증명을 확인하세요.",
+        "data": {
+          "project_id": "프로젝트 ID",
+          "key_id": "키 ID"
+        }
       }
     },
     "error": {
@@ -72,7 +89,9 @@
     },
     "abort": {
       "already_configured": "이 위치는 이미 구성되어 있습니다",
-      "reconfigure_successful": "구성이 성공적으로 업데이트되었습니다!"
+      "reconfigure_successful": "구성이 성공적으로 업데이트되었습니다!",
+      "reauth_successful": "인증 정보가 성공적으로 업데이트되었습니다!",
+      "reauth_failed_entry_not_found": "구성 항목을 찾을 수 없습니다. 통합을 다시 추가하세요."
     }
   },
   "selector": {
@@ -225,9 +244,6 @@
       "weather_summary": {
         "name": "날씨 개요",
         "state_attributes": {
-          "display_state": {
-            "name": "표시 상태"
-          },
           "period": {
             "name": "현재 시간대",
             "state": {
@@ -267,6 +283,9 @@
               "very_unhealthy": "공기가 나쁨",
               "extazardous": "공기가 위험함"
             }
+          },
+          "tonight_text": {
+            "name": "다음 날 밤 날씨"
           }
         }
       }
@@ -280,9 +299,6 @@
           },
           "update_time": {
             "name": "데이터 업데이트 시간"
-          },
-          "obs_time": {
-            "name": "관측 시간"
           },
           "condition_cn": {
             "name": "날씨 상태(중국어)"
@@ -356,9 +372,6 @@
           "minutely_summary": {
             "name": "분 단위 날씨 요약"
           },
-          "moon_phase_icon": {
-            "name": "달 위상 아이콘"
-          },
           "text_night": {
             "name": "야간 날씨 상태"
           },
@@ -417,32 +430,32 @@
               "vrb": "변동"
             }
           },
-          "forecast_pressure": {
-            "name": "예상 기압"
-          },
-          "forecast_vis": {
-            "name": "예상 가시거리"
-          },
           "forecast_cloud": {
             "name": "예상 구름량"
           },
-          "aqi": {
-            "name": "대기질 지수"
-          },
-          "weather_abstract": {
-            "name": "날씨 요약 추상"
-          },
           "city": {
             "name": "도시"
-          },
-          "warning": {
-            "name": "경보 정보"
-          },
-          "suggestion": {
-            "name": "생활 지수 제안"
           }
         }
       }
+    }
+  },
+  "services": {
+    "get_weather": {
+      "name": "날씨 데이터 가져오기",
+      "description": "QWeather Pro 날씨 엔터티의 전체 날씨 데이터셋을 반환합니다. 현재 날씨, 일별/시간별 예보, 대기질, 경보, 생활 지수, 스마트 날씨 요약이 포함됩니다. 'keys'를 사용하여 특정 데이터 블록으로 제한할 수도 있습니다.",
+      "fields": {
+        "keys": {
+          "name": "키",
+          "description": "반환할 최상위 데이터 블록의 선택 목록입니다. 생략하면 전체 데이터셋을 반환합니다."
+        }
+      }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "QWeather API KEY 일일 할당량",
+      "description": "귀하의 QWeather Pro 통합은 여전히 API KEY 인증을 사용하고 있습니다.\r\n참고: API KEY 인증은 충분한 보안을 제공하지 않습니다. 2027-01-01부터 QWeather는 API KEY로 인증된 일일 요청 수를 제한합니다(정확한 수치는 미정), 또한 SDK 5+는 API KEY를 더 이상 지원하지 않습니다. JWT는 무제한이며 권장됩니다. API KEY를 계속 사용하면 폴링 간격은 기본값으로 100분입니다. «재구성»에서 JWT로 전환하면 무제한이고 더 빠른 업데이트를 얻을 수 있습니다."
     }
   }
 }

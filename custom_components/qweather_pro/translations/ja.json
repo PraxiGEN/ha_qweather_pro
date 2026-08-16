@@ -11,7 +11,7 @@
       },
       "setup": {
         "title": "QWeather Pro の設定",
-        "description": "### 設定手順\r\n**[QWeather コンソール]({qweather_console}) にアクセス:**\r\n1. 設定で **API Host** をコピーし、下の **API Host** フィールドに入力します。\r\n2. プロジェクト管理 → プロジェクトを作成し、認証情報（**JSON Web Token** または **API KEY**）を追加します。\r\n3. 位置情報は緯度・経度（WGS‑84）のみ対応しています。例：116.40,39.90。\r\nデフォルトの位置情報は Home Assistant の緯度・経度です。\r\n#### 注意: API KEY 認証は十分なセキュリティを提供しません。API KEY を使用したすべてのリクエストは厳しい制限を受けます。JWT 認証の使用を推奨します。",
+        "description": "### 設定手順\r\n**[QWeather コンソール]({qweather_console}) を開いてください:**\r\n1. 設定で **API Host** をコピーし、下の **API Host** 欄に入力します。\r\n2. プロジェクト管理 → プロジェクトを作成し、プロジェクトに認証情報を追加します（**JSON Web Token** と **API KEY** は任意）。\r\n3. 場所は緯度と経度（WGS-84）または都市名で指定できます。\r\n4. デフォルトの場所は HA の緯度と経度です。\r\n#### 注意: API KEY 認証は十分なセキュリティを提供しません。API KEY によるリクエストは制限の対象となります。JSON Web Token (JWT) を推奨します。",
         "data": {
           "host": "API Host",
           "location_id": "地理位置情報（経度・緯度。経度が先）",
@@ -50,6 +50,23 @@
           "use_token": "JWT 認証を使用",
           "api_key": "API Key"
         }
+      },
+      "reauth_confirm": {
+        "title": "再認証が必要です",
+        "description": "QWeather の認証情報が無効になりました。下記の **API Host** と認証情報を更新してください。位置情報の設定は保持されます。\r\n[QWeather コンソール]({qweather_console}) でプロジェクトと認証情報を確認してください。",
+        "data": {
+          "host": "API Host",
+          "use_token": "JWT 認証を使用",
+          "api_key": "API キー"
+        }
+      },
+      "reauth_jwt": {
+        "title": "JWT 認証情報の更新",
+        "description": "JWT 認証用の新しい**プロジェクト ID**と**キー ID**を入力してください。位置情報の設定は保持されます。\r\n[QWeather コンソール]({qweather_console}) でプロジェクトと認証情報を確認してください。",
+        "data": {
+          "project_id": "プロジェクト ID",
+          "key_id": "キー ID"
+        }
       }
     },
     "error": {
@@ -72,7 +89,9 @@
     },
     "abort": {
       "already_configured": "この位置情報はすでに設定されています",
-      "reconfigure_successful": "設定が正常に更新されました！"
+      "reconfigure_successful": "設定が正常に更新されました！",
+      "reauth_successful": "認証情報を更新しました！",
+      "reauth_failed_entry_not_found": "構成エントリが見つかりません。統合を再度追加してください。"
     }
   },
   "selector": {
@@ -225,9 +244,6 @@
       "weather_summary": {
         "name": "天気概要",
         "state_attributes": {
-          "display_state": {
-            "name": "表示状態"
-          },
           "period": {
             "name": "現在の時間帯",
             "state": {
@@ -267,6 +283,9 @@
               "very_unhealthy": "空気は悪い",
               "extazardous": "空気は危険"
             }
+          },
+          "tonight_text": {
+            "name": "翌晩の天気"
           }
         }
       }
@@ -280,9 +299,6 @@
           },
           "update_time": {
             "name": "データ更新時間"
-          },
-          "obs_time": {
-            "name": "観測時間"
           },
           "condition_cn": {
             "name": "天気状況（中国語）"
@@ -356,9 +372,6 @@
           "minutely_summary": {
             "name": "1分ごとの天気概要"
           },
-          "moon_phase_icon": {
-            "name": "月相アイコン"
-          },
           "text_night": {
             "name": "夜間の天気状況"
           },
@@ -417,32 +430,32 @@
               "vrb": "風向変化"
             }
           },
-          "forecast_pressure": {
-            "name": "予想気圧"
-          },
-          "forecast_vis": {
-            "name": "予想視程"
-          },
           "forecast_cloud": {
             "name": "予想雲量"
           },
-          "aqi": {
-            "name": "空気質指数"
-          },
-          "weather_abstract": {
-            "name": "天気概要抽象"
-          },
           "city": {
             "name": "都市"
-          },
-          "warning": {
-            "name": "警報情報"
-          },
-          "suggestion": {
-            "name": "生活指数の提案"
           }
         }
       }
+    }
+  },
+  "services": {
+    "get_weather": {
+      "name": "天気データを取得",
+      "description": "QWeather Pro の天気エンティティの完全な天気データセットを返します。現在の気象状況、日別・時間別予報、空気質、警報、生活指数、スマート天気概要を含みます。'keys' を使って特定のデータブロックに制限することもできます。",
+      "fields": {
+        "keys": {
+          "name": "キー",
+          "description": "返すトップレベルのデータブロックのオプションリスト。省略するとデータセット全体を返します。"
+        }
+      }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "QWeather API KEY の1日あたり割り当て",
+      "description": "お使いの QWeather Pro 統合はまだ API KEY 認証を使用しています。\r\n注意: API KEY 認証は十分なセキュリティを提供しません。2027-01-01 以降、QWeather は API KEY で認証された1日あたりのリクエスト数を制限します（正確な数値は未定）、また SDK 5+ は API KEY をサポートしなくなります。JWT は無制限で推奨されます。API KEY を使い続ける場合、ポーリング間隔はデフォルトで 100 分です。「再設定」で JWT に切り替えると、無制限でより高速な更新が得られます。"
     }
   }
 }

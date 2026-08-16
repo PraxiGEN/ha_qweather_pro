@@ -8,9 +8,14 @@
   const I18N = window.QW_I18N;
   const stripUnit = (v) => (v || "").toString().replace(/[^\d.-]/g, "");
 
+  // 富数据缓存（按 entity_id），避免 more-info 多次开关/重渲染重复请求 get_weather
+  const _richCache = new Map();
+  const RICH_CACHE_TTL = 10 * 60 * 1000;   // 10 分钟内命中直接复用
+  const RICH_MIN_REFRESH = 60 * 1000;      // 最小刷新间隔 60 秒，防抖合并
+
   class QWeatherMoreInfo extends Lit {
     static get properties() {
-      return { hass: {}, stateObj: {}, _lang: {} };
+      return { hass: {}, stateObj: {}, _lang: {}, _richData: {}, _richEid: {} };
     }
 
     constructor() {
@@ -50,6 +55,71 @@
     set hass(hass) {
       this._hass = hass;
       this._detectLang(hass);
+      this._maybeFetch();
+    }
+
+    set stateObj(value) {
+      const old = this._stateObj;
+      this._stateObj = value;
+      this.requestUpdate("stateObj", old);
+      this._maybeFetch();
+    }
+
+    get stateObj() {
+      return this._stateObj;
+    }
+
+    // 实体切换或首次打开时拉取一次富数据；缓存命中则不重复请求
+    _maybeFetch() {
+      const eid = this._stateObj?.entity_id;
+      if (!eid || !this._hass) return;
+      if (eid !== this._richEid || !this._richData) {
+        this._richEid = eid;
+        this._fetchRichData(true);
+      }
+    }
+
+    /** 通过自定义服务 qweather_pro.get_weather 获取实体属性中已剔除的富数据块
+     * (aqi / indices)。
+     * 原则：实体属性能读的读属性，不能的走服务；此处仅拉取属性中不再暴露的两块。
+     * 缓存：命中模块级 _richCache 且未过期直接复用，避免 more-info 重复开关造成重复请求。
+     * @param {boolean} force 是否强制刷新（实体切换 / 首次打开时 true）
+     */
+    _fetchRichData(force = false) {
+      const eid = this._stateObj?.entity_id;
+      if (!eid || !this._hass) return;
+
+      const cached = _richCache.get(eid);
+      const now = Date.now();
+      if (cached && now - cached.ts < RICH_CACHE_TTL) {
+        // 命中缓存：非 force 直接复用；force 但缓存仍很新也复用
+        if (!force || now - cached.ts < RICH_MIN_REFRESH) {
+          this._richData = cached.data;
+          this.requestUpdate();
+          return;
+        }
+      }
+
+      clearTimeout(this._richTimer);
+      this._richTimer = setTimeout(async () => {
+        try {
+          const result = await this._hass.callWS({
+            type: "call_service",
+            domain: "qweather_pro",
+            service: "get_weather",
+            service_data: { keys: ["aqi", "indices"] },
+            target: { entity_id: eid },
+            return_response: true,
+          });
+          // 兼容不同 HA 版本的返回结构：{ response: {...} } 或直接 {...}
+          const data = result?.response ?? result ?? {};
+          this._richData = data;
+          _richCache.set(eid, { data, ts: Date.now() });
+          this.requestUpdate();
+        } catch (e) {
+          console.error("QWeather get_weather service failed:", e);
+        }
+      }, 200);
     }
 
     _getIcon(code, datetime = null) {
@@ -106,9 +176,9 @@
         return html`<div style="padding:30px;text-align:center;">${this._t("loading")}</div>`;
 
       const a = this.stateObj.attributes;
-      const aqiVal = a.aqi?.aqi || "--";
-      const aqiCat = a.aqi?.aqi_category || (this._lang === "zh" ? "未知" : "Unknown");
-      const lifeList = a.suggestion || []; 
+      const rd = this._richData || {};
+      const air = rd.aqi || {};
+      const lifeList = rd.indices || [];
 
       return html`
         <div class="content">
@@ -137,8 +207,8 @@
           <div class="grid-2x2">
             ${this._renderAttr(
               "mdi:gauge",
-              `${this._t("pressure")} · ${this._t("forecast_pressure")}`,
-              `${a.pressure || "0"} · ${a.forecast_pressure || "0"} hPa`
+              this._t("pressure"),
+              `${a.pressure || "0"} hPa`
             )}
             ${this._renderAttr("mdi:thermometer", this._t("dew_point"), `${a.dew_point} °C`)}
             ${this._renderAttr(
@@ -153,17 +223,15 @@
             )}
           </div>
 
-          <!-- 空气质量 6 项（3×2） -->
+          <!-- 空气质量 6 项（3×2）：6 项污染物，来自 get_weather 服务（V1 已剔除实体属性中的 aqi 块） -->
           <div class="section-title">${this._t("aqi")} </div>
           <div class="grid-3x2">
-            <!-- ${this._renderAttr("mdi:air-filter", this._t("aqi"), aqiVal)} -->
-            <!-- ${this._renderAttr("mdi:alert-circle", this._t("aqi_cat"), aqiCat)} -->
-            ${this._renderAttr("mdi:blur", "PM2.5", stripUnit(a.aqi?.pollutants?.pm2p5) || "--")}
-            ${this._renderAttr("mdi:blur", "PM10", stripUnit(a.aqi?.pollutants?.pm10) || "--")}
-            ${this._renderAttr("mdi:chemical-weapon", "NO₂", stripUnit(a.aqi?.pollutants?.no2) || "--")}
-            ${this._renderAttr("mdi:chemical-weapon", "SO₂", stripUnit(a.aqi?.pollutants?.so2) || "--")}
-            ${this._renderAttr("mdi:weather-hazy", "O₃", stripUnit(a.aqi?.pollutants?.o3) || "--")}
-            ${this._renderAttr("mdi:molecule-co", "CO", stripUnit(a.aqi?.pollutants?.co) || "--")}
+            ${this._renderAttr("mdi:blur", "PM2.5", stripUnit(air.pm2p5) || "--")}
+            ${this._renderAttr("mdi:blur", "PM10", stripUnit(air.pm10) || "--")}
+            ${this._renderAttr("mdi:chemical-weapon", "NO₂", stripUnit(air.no2) || "--")}
+            ${this._renderAttr("mdi:chemical-weapon", "SO₂", stripUnit(air.so2) || "--")}
+            ${this._renderAttr("mdi:weather-hazy", "O₃", stripUnit(air.o3) || "--")}
+            ${this._renderAttr("mdi:molecule-co", "CO", stripUnit(air.co) || "--")}
           </div>
 
           <!-- 日月信息 4×1 -->
@@ -182,7 +250,7 @@
           <!-- 页脚 -->
           <div class="footer">
             ${this._t("data_source")}: QWeather |
-            ${this._t("observed")}: ${(a.obs_time || "").slice(5, 16).replace("T", " ") || "--"}
+            ${this._t("update_at")}: ${(a.update_time || "").slice(5, 16) || "--"}
             ${a.degraded ? html`<span class="degraded-tag">${this._t("degraded")}</span>` : ""}
           </div>
         </div>
@@ -239,7 +307,6 @@
         @media (max-width: 600px) {
 
           .grid-3x2,
-          .grid-4x2,
           .grid-4x1 {
             grid-template-columns: repeat(2, 1fr) !important;
           }

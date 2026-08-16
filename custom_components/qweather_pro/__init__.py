@@ -5,65 +5,81 @@ import os
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers.typing import ConfigType
 from homeassistant.loader import async_get_integration
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.components import frontend
+from homeassistant.helpers.issue_registry import (
+    async_create_issue,
+    async_delete_issue,
+    IssueSeverity,
+)
 
-from .const import DOMAIN, PLATFORMS, LOGGER
+from .const import DOMAIN, PLATFORMS, LOGGER, CONF_USE_TOKEN
 from .coordinator import QWeatherUpdateCoordinator
+from .services import async_setup_services
 
 # 定义强类型别名，便于 IDE 补全 runtime_data
 type QWeatherConfigEntry = ConfigEntry[QWeatherUpdateCoordinator]
 
+# 本集成只能通过 UI 配置流添加，YAML 无配置项（hassfest CONFIG_SCHEMA 规范）
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
+# Repairs 条目 ID：引导仍用 API KEY 的用户迁移 JWT
+ISSUE_API_KEY_QUOTA = "api_key_quota"
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """初始化集成"""
+    await async_setup_services(hass)
+    return True
+
 async def async_setup_entry(hass: HomeAssistant, entry: QWeatherConfigEntry) -> bool:
     """设置配置条目."""
     
-    # 动态获取集成元数据（版本号用于前端缓存刷新）
     integration = await async_get_integration(hass, DOMAIN)
     version = str(integration.version) if integration.version else "1.0.0"
 
-    # 注册静态资源 (跨 Entry 全局任务，仅在 HA 启动后执行一次)
     if f"{DOMAIN}_assets" not in hass.data:
-        # 动态获取物理路径
         local_path = hass.config.path("custom_components", DOMAIN, "www")
-        
         if os.path.exists(local_path):
-            # 注册静态路径映射
             await hass.http.async_register_static_paths([
                 StaticPathConfig("/qweather_pro-local", local_path, False)
             ])
-            
-            # 注入资源：主卡片与详情页 JS
             assets = [
                 f"/qweather_pro-local/qweather-pro-card.js?v={version}",
                 f"/qweather_pro-local/qweather-pro-more-info.js?v={version}",
                 f"/qweather_pro-local/qweather-pro-i18n.js?v={version}"
             ]
-            
             for url in assets:
                 frontend.add_extra_js_url(hass, url)
                 
             hass.data[f"{DOMAIN}_assets"] = True
             LOGGER.info("QWeather Lovelace 资源注册成功 (v%s)", version)
 
-    # 初始化协调器
-    # 此时 entry.title 已经在 config_flow 阶段被锁定为城市名
     coordinator = QWeatherUpdateCoordinator(hass, entry, version)
-
-    # 先挂载 runtime_data 再执行首刷：即使首次刷新失败（如临时网络异常），
-    # 协调器实例也始终可被 reauth/diagnostics 等链路访问。
-    entry.runtime_data = coordinator
-
-    # 执行初次刷新获取数据
+    await coordinator.async_load_cache()
     await coordinator.async_config_entry_first_refresh()
-
-    # 加载平台
+    entry.runtime_data = coordinator
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-
-    # 注册选项更新监听器
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
-
+    # 存量引导：仍用 API KEY 的用户推送 Repairs 条目，引导迁移 JWT
+    await _async_refresh_api_key_issue(hass, entry)
     return True
+
+async def _async_refresh_api_key_issue(hass: HomeAssistant, entry: QWeatherConfigEntry) -> None:
+    """仍用 API KEY 时推送 Repairs 引导迁移 JWT；已用 JWT 则清理该条目。"""
+    if entry.data.get(CONF_USE_TOKEN):
+        async_delete_issue(hass, DOMAIN, ISSUE_API_KEY_QUOTA)
+        return
+    async_create_issue(
+        hass,
+        DOMAIN,
+        ISSUE_API_KEY_QUOTA,
+        is_fixable=False,
+        severity=IssueSeverity.WARNING,
+        translation_key="api_key_quota",
+    )
 
 async def async_reload_entry(hass: HomeAssistant, entry: QWeatherConfigEntry) -> None:
     """当用户在 UI 修改配置选项时，重新加载整个集成."""

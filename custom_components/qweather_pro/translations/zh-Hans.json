@@ -300,9 +300,6 @@
           "update_time": {
             "name": "数据更新时间"
           },
-          "obs_time": {
-            "name": "实况观测时间"
-          },
           "condition_cn": {
             "name": "天气状况（中文）"
           },
@@ -375,9 +372,6 @@
           "minutely_summary": {
             "name": "分钟级天气总结"
           },
-          "moon_phase_icon": {
-            "name": "月相图标"
-          },
           "text_night": {
             "name": "夜晚天气状况"
           },
@@ -436,32 +430,32 @@
               "vrb": "风向多变"
             }
           },
-          "forecast_pressure": {
-            "name": "未来气压"
-          },
-          "forecast_vis": {
-            "name": "未来能见度"
-          },
           "forecast_cloud": {
             "name": "未来云量"
           },
-          "aqi": {
-            "name": "空气质量指数"
-          },
-          "weather_abstract": {
-            "name": "天气概括"
-          },
           "city": {
             "name": "城市"
-          },
-          "warning": {
-            "name": "预警信息"
-          },
-          "suggestion": {
-            "name": "生活指数建议"
           }
         }
       }
+    }
+  },
+  "services": {
+    "get_weather": {
+      "name": "获取天气数据",
+      "description": "返回和风天气 Pro 天气实体的完整天气数据集，包含实时天气、每日/逐小时预报、空气质量、预警、生活指数与智能天气摘要。可通过 'keys' 参数仅返回指定的顶层数据块。",
+      "fields": {
+        "keys": {
+          "name": "数据块",
+          "description": "可选，指定要返回的顶层数据块列表。省略则返回完整数据集。"
+        }
+      }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "QWeather API KEY 即将限额",
+      "description": "您的 QWeather Pro 集成仍在使用 API KEY 鉴权。\r\n注意: API KEY 认证方式无法提供足够的安全性, 使用 API KEY 认证方式自 2027-01-01 起将限制每日请求量（具体数值未公布），且 SDK 5+ 不再支持 API KEY；JWT 无限制，推荐使用。若继续使用 API KEY，轮询默认放慢至 100 分钟；在「重新配置」中切换到 JWT 即可获得无限额、更快的更新。"
     }
   }
 }

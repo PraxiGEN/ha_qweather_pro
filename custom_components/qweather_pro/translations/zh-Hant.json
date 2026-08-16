@@ -11,7 +11,7 @@
       },
       "setup": {
         "title": "設定 QWeather Pro",
-        "description": "### 設定步驟\r\n**前往 [QWeather 控制台]({qweather_console})：**\r\n1. 在設定中複製 **API Host**，並填入下方的 **API Host** 欄位。\r\n2. 專案管理 → 建立專案，然後為專案新增憑證：可選 **JSON Web Token** 與 **API KEY**。\r\n3. 位置僅支援經緯度（WGS‑84），例如：116.40,39.90。\r\n預設位置為 Home Assistant 的經緯度。\r\n### 注意：API KEY 驗證的安全性不足，所有使用 API KEY 的請求都會受到嚴格限制。建議使用 JWT 驗證！",
+        "description": "### 新增步驟\r\n**前往 [和風天氣控制台]({qweather_console}):**\r\n1. 在設定中複製 **API Host** 並填入下方的 **API Host** 欄位。\r\n2. 專案管理 → 建立專案，然後在專案中新增憑證：可選 **JSON Web Token** 與 **API KEY**。\r\n3. 地理位置可輸入經緯度（WGS-84）或城市名稱。\r\n4. 預設位置為 HA 的經緯度。\r\n#### 注意：API KEY 認證方式無法提供足夠的安全性，使用 API KEY 認證方式將受請求量的限制，推薦使用 JSON Web Token(JWT)。",
         "data": {
           "host": "API Host",
           "location_id": "地理位置。僅支援經緯度（先經度後緯度）。",
@@ -50,6 +50,23 @@
           "use_token": "使用 JWT 驗證",
           "api_key": "API Key"
         }
+      },
+      "reauth_confirm": {
+        "title": "需要重新認證",
+        "description": "您的和風天氣憑證已失效。請更新下方的 **API Host** 與憑證，您的位置設定將保持不變。\r\n**前往[和風天氣控制台]({qweather_console})** 檢查您的專案與憑證。",
+        "data": {
+          "host": "API Host",
+          "use_token": "使用 JWT 認證",
+          "api_key": "API 金鑰 (Key)"
+        }
+      },
+      "reauth_jwt": {
+        "title": "更新 JWT 憑證",
+        "description": "請填寫 JWT 認證新的**專案 ID**與**憑證 ID**，您的位置設定將保持不變。\r\n**前往[和風天氣控制台]({qweather_console})** 檢查您的專案與憑證。",
+        "data": {
+          "project_id": "專案 ID (Project ID)",
+          "key_id": "憑證 ID (Key ID)"
+        }
       }
     },
     "error": {
@@ -72,7 +89,9 @@
     },
     "abort": {
       "already_configured": "此位置已經設定過",
-      "reconfigure_successful": "設定已成功更新！"
+      "reconfigure_successful": "設定已成功更新！",
+      "reauth_successful": "認證資訊已成功更新！",
+      "reauth_failed_entry_not_found": "未找到設定項目，請重新新增整合。"
     }
   },
   "selector": {
@@ -137,7 +156,7 @@
           "health_effect": {
             "name": "健康影響",
             "state": {
-              "No data available": "暫無資料"
+              "no_data_available": "無可用資料"
             }
           },
           "health_advice": {
@@ -225,9 +244,6 @@
       "weather_summary": {
         "name": "天氣概況",
         "state_attributes": {
-          "display_state": {
-            "name": "顯示狀態"
-          },
           "period": {
             "name": "當前時段",
             "state": {
@@ -267,6 +283,9 @@
               "very_unhealthy": "空氣品質差",
               "extazardous": "空氣品質有危险性"
             }
+          },
+          "tonight_text": {
+            "name": "未來天氣狀況"
           }
         }
       }
@@ -280,9 +299,6 @@
           },
           "update_time": {
             "name": "資料更新時間"
-          },
-          "obs_time": {
-            "name": "觀測時間"
           },
           "condition_cn": {
             "name": "天氣狀況（中文）"
@@ -356,9 +372,6 @@
           "minutely_summary": {
             "name": "分鐘級天氣摘要"
           },
-          "moon_phase_icon": {
-            "name": "月相圖示"
-          },
           "text_night": {
             "name": "夜間天氣狀況"
           },
@@ -417,32 +430,32 @@
               "vrb": "風向多變"
             }
           },
-          "forecast_pressure": {
-            "name": "未來氣壓"
-          },
-          "forecast_vis": {
-            "name": "未來能見度"
-          },
           "forecast_cloud": {
             "name": "未來雲量"
           },
-          "aqi": {
-            "name": "空氣品質指數"
-          },
-          "weather_abstract": {
-            "name": "天氣概況"
-          },
           "city": {
             "name": "城市"
-          },
-          "warning": {
-            "name": "預警資訊"
-          },
-          "suggestion": {
-            "name": "生活指數建議"
           }
         }
       }
+    }
+  },
+  "services": {
+    "get_weather": {
+      "name": "取得天氣資料",
+      "description": "回傳 QWeather Pro 天氣實體的完整天氣資料集，包含目前天氣、每日/每小時預報、空氣品質、預警、生活指數與智慧天氣摘要。可選擇使用 'keys' 限制回傳特定的頂層資料區塊。",
+      "fields": {
+        "keys": {
+          "name": "鍵值",
+          "description": "選填的頂層資料區塊清單。省略時回傳完整資料集。"
+        }
+      }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "QWeather API KEY 即將限額",
+      "description": "您的和風天氣 Pro 整合仍在使用 API KEY 認證。\r\n注意: API KEY 認證方式無法提供足夠的安全性, 使用和風天氣自 2027-01-01 起將限制使用 API KEY 認證的每日請求數量（具體數值未公布），且 SDK 5+ 不再支援 API KEY；JWT 無限制，推薦使用。若繼續使用 API KEY，輪詢預設放慢至 100 分鐘；在「重新配置」中切換到 JWT 即可獲得無限制、更快的更新。"
     }
   }
 }

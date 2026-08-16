@@ -31,7 +31,6 @@ class QWeatherAPI:
         self.project_id = project_id
         self.key_id = key_id
         self.private_key = private_key
-        # 规范化 Host：容忍用户输入带 https:// 前缀或尾斜杠
         self.host = self._normalize_host(host)
 
     @staticmethod
@@ -50,20 +49,16 @@ class QWeatherAPI:
             if not self.private_key:
                 return None
             
-            # 加载 Ed25519 私钥
             private_key_obj = serialization.load_pem_private_key(
                 self.private_key.encode('utf-8'), password=None
             )
             
             now_ts = int(time.time())
-            # Payload: 仅包含 sub, iat, exp。移除所有默认字段。
             payload = {
                 'sub': self.project_id,
                 'iat': now_ts - 30,   # 解决服务器时钟不同步
                 'exp': now_ts + 900    # 有效期 15 分钟
             }
-            
-            # Header: 显式指定 alg 和 kid
             headers = {'kid': self.key_id}
             
             return jwt.encode(
@@ -84,10 +79,8 @@ class QWeatherAPI:
         """统一底层异步请求方法 (3 次重试后异常正常抛出，由调用方处理)."""
 
         params = {k: v for k, v in params.items() if v is not None}
-        
         # 路径适配：V1 版本特殊处理，其他版本直接使用 version_path
         real_version = "geo/v2" if version_path == "v2" else version_path
-            
         # 如果 endpoint 包含占位符 {lat}/{lon}，则进行替换
         if "{lat}" in endpoint and "lat" in params and "lon" in params:
             url_endpoint = endpoint.format(lat=params.pop("lat"), lon=params.pop("lon"))
@@ -128,11 +121,11 @@ class QWeatherAPI:
                 return data 
         except asyncio.TimeoutError:
             LOGGER.debug("QWeather API 请求超时: %s", endpoint)
-            raise # 触发重试
+            raise
         except Exception as err:
             LOGGER.error("QWeather API 连接失败: %s", err)
-            raise # 触发重试
-
+            raise
+        
     # --- 城市搜索 (全球) ---
     async def city_lookup(self, location: str, lang: str):
         """城市搜索: 全球范围，支持名称、ID 或 坐标 (语言跟随 HA 设置)."""
