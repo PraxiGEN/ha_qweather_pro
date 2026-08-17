@@ -23,6 +23,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest pytest-asyncio voluptuous
           pip install pytest-homeassistant-custom-component
+          # 安装集成声明的第三方依赖（manifest.json requirements）
+          python - <<'PYEOF'
+          import json, subprocess, sys
+          with open("custom_components/qweather_pro/manifest.json") as f:
+              reqs = json.load(f).get("requirements", [])
+          if reqs:
+              subprocess.check_call([sys.executable, "-m", "pip", "install", *reqs])
+          PYEOF
 
       - name: Run pytest
         run: pytest -v
