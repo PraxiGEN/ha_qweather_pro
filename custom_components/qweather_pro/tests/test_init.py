@@ -18,10 +18,16 @@ try:
     from custom_components.qweather_pro.const import (  # noqa: E402
         DOMAIN,
         CONF_USE_TOKEN,
+        CONF_API_KEY,
+        CONF_LOCATION_ID,
+        CONF_PROJECT_ID,
+        CONF_KEY_ID,
+        CONF_PRIVATE_KEY,
     )
     from custom_components.qweather_pro.coordinator import (  # noqa: E402
         QWeatherUpdateCoordinator,
     )
+    from pytest_homeassistant_custom_component.common import MockConfigEntry
 
     _HA_OK = True
 except Exception:  # pragma: no cover - 本地缺依赖时跳过
@@ -38,10 +44,14 @@ async def test_setup_registers_get_weather_service(hass):
     assert hass.services.has_service(DOMAIN, "get_weather")
 
 
-async def test_setup_entry_api_key_creates_repairs_issue(hass, mock_config_entry):
+async def test_setup_entry_api_key_creates_repairs_issue(hass):
     """仍用 API KEY：应推送 Repairs 引导迁移 JWT（is_fixable=False）。"""
-    mock_config_entry.data[CONF_USE_TOKEN] = False
-    mock_config_entry.add_to_hass(hass)
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        data={CONF_USE_TOKEN: False, CONF_API_KEY: "test", CONF_LOCATION_ID: "120,30"},
+        entry_id="test",
+    )
+    entry.add_to_hass(hass)
     hass.data[f"{DOMAIN}_assets"] = True  # 跳过静态资源注册（非本测试关注点）
 
     create = MagicMock()
@@ -57,7 +67,7 @@ async def test_setup_entry_api_key_creates_repairs_issue(hass, mock_config_entry
     ), patch.object(
         hass.config_entries, "async_forward_entry_setups", new=AsyncMock()
     ):
-        assert await async_setup_entry(hass, mock_config_entry) is True
+        assert await async_setup_entry(hass, entry) is True
 
     create.assert_called_once()
     call_args = create.call_args
@@ -67,10 +77,20 @@ async def test_setup_entry_api_key_creates_repairs_issue(hass, mock_config_entry
     delete.assert_not_called()
 
 
-async def test_setup_entry_jwt_deletes_repairs_issue(hass, mock_config_entry):
+async def test_setup_entry_jwt_deletes_repairs_issue(hass):
     """已用 JWT：应清理历史遗留的 API KEY Repairs 条目。"""
-    mock_config_entry.data[CONF_USE_TOKEN] = True
-    mock_config_entry.add_to_hass(hass)
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        data={
+            CONF_USE_TOKEN: True,
+            CONF_PROJECT_ID: "p",
+            CONF_KEY_ID: "k",
+            CONF_PRIVATE_KEY: "pk",
+            CONF_LOCATION_ID: "120,30",
+        },
+        entry_id="test",
+    )
+    entry.add_to_hass(hass)
     hass.data[f"{DOMAIN}_assets"] = True  # 跳过静态资源注册（非本测试关注点）
 
     create = MagicMock()
@@ -86,7 +106,7 @@ async def test_setup_entry_jwt_deletes_repairs_issue(hass, mock_config_entry):
     ), patch.object(
         hass.config_entries, "async_forward_entry_setups", new=AsyncMock()
     ):
-        assert await async_setup_entry(hass, mock_config_entry) is True
+        assert await async_setup_entry(hass, entry) is True
 
     delete.assert_called_once()
     create.assert_not_called()

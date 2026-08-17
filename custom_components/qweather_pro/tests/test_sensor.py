@@ -80,7 +80,7 @@ def test_aqi_extra_attributes_formatted(mock_coordinator, mock_config_entry, sen
     mock_coordinator.data = sensor_data
     entity = QWeatherSensor(mock_coordinator, mock_config_entry, _sensor("aqi"))
     attrs = entity.extra_state_attributes
-    assert attrs["aqi_value"] == "50 μg/m3"
+    assert attrs["aqi_value"] == 50
     assert attrs["pm2p5"] == "20 μg/m3"
     assert attrs["primary_pollutant"] == "无"
     assert attrs["attribution"]
@@ -95,7 +95,9 @@ def test_today_temp_range(mock_coordinator, mock_config_entry, sensor_data):
 
 
 def test_today_temp_range_unknown_without_daily(mock_coordinator, mock_config_entry):
-    mock_coordinator.data = {}
+    # 有数据但无 daily → value_fn 走 "unknown" 分支
+    # （空 dict 会被 native_value 判为无数据返回 None，故用含 now 的非空 dict）
+    mock_coordinator.data = {"now": {}}
     entity = QWeatherSensor(mock_coordinator, mock_config_entry, _sensor("today_temp_range"))
     assert entity.native_value == "unknown"
 

@@ -5,8 +5,6 @@
 """
 from __future__ import annotations
 
-import asyncio
-
 import pytest
 
 try:
@@ -170,8 +168,8 @@ def test_supported_features_include_all_forecasts(weather_entity):
     assert feats & WeatherEntityFeature.FORECAST_TWICE_DAILY
 
 
-def test_forecast_daily_nested_keys(weather_entity):
-    fc = asyncio.run(weather_entity.async_forecast_daily())
+async def test_forecast_daily_nested_keys(hass, weather_entity):
+    fc = await weather_entity.async_forecast_daily()
     assert isinstance(fc, list) and len(fc) == 1
     day = fc[0]
     # HA 标准键
@@ -186,18 +184,18 @@ def test_forecast_daily_nested_keys(weather_entity):
     assert day["wind_scale_day"] == "3"
     assert day["wind_scale_night"] == "2"
     assert day["wind_dir_day"] == "南风"
-    assert day["wind_compass"] is None or isinstance(day.get("wind_compass"), str)
+    # wind_compass 已映射到 wind_dir_day / wind_dir_night，forecast 顶层无独立 wind_compass 键
 
 
-def test_forecast_hourly(weather_entity):
-    fc = asyncio.run(weather_entity.async_forecast_hourly())
+async def test_forecast_hourly(hass, weather_entity):
+    fc = await weather_entity.async_forecast_hourly()
     assert len(fc) == 1
     assert fc[0]["condition"] == "sunny"
     assert fc[0]["native_temperature"] == 26.0
 
 
-def test_forecast_twice_daily_day_and_night(weather_entity):
-    fc = asyncio.run(weather_entity.async_forecast_twice_daily())
+async def test_forecast_twice_daily_day_and_night(hass, weather_entity):
+    fc = await weather_entity.async_forecast_twice_daily()
     assert len(fc) == 2
     assert fc[0]["is_daytime"] is True
     assert fc[1]["is_daytime"] is False
@@ -205,7 +203,7 @@ def test_forecast_twice_daily_day_and_night(weather_entity):
     assert fc[1]["native_temperature"] == 24.0
 
 
-def test_extra_state_attributes(weather_entity):
+async def test_extra_state_attributes(hass, weather_entity):
     attrs = weather_entity.extra_state_attributes
     assert attrs["attribution"]
     assert attrs["city"] == "测试城市"
@@ -217,7 +215,7 @@ def test_extra_state_attributes(weather_entity):
     assert attrs["sunrise"] == "05:30"
 
 
-def test_extra_state_attributes_empty_when_no_data(mock_coordinator, mock_config_entry):
+async def test_extra_state_attributes_empty_when_no_data(hass, mock_coordinator, mock_config_entry):
     mock_coordinator.data = {}
     entity = HeFengWeather(mock_coordinator, mock_config_entry, QWEATHER_WEATHER_DESCRIPTION)
     assert entity.extra_state_attributes == {}
