@@ -5,7 +5,8 @@
 """
 from __future__ import annotations
 
-from unittest.mock import MagicMock, SimpleNamespace
+from types import SimpleNamespace
+from unittest.mock import MagicMock
 
 import pytest
 
