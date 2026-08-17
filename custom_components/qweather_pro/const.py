@@ -52,9 +52,12 @@ def resolve_update_interval(
     """选择轮询间隔（分钟）。"""
     if options and CONF_UPDATE_INTERVAL in options:
         try:
-            return int(options[CONF_UPDATE_INTERVAL])  # type: ignore[arg-type]
+            value = int(options[CONF_UPDATE_INTERVAL])  # type: ignore[arg-type]
         except (TypeError, ValueError):
             pass
+        else:
+            if value > 0:
+                return value
     return DEFAULT_UPDATE_INTERVAL if use_token else API_KEY_UPDATE_INTERVAL
 
 # --- 生活指数类型映射 (QWeather API v7) ---
