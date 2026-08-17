@@ -42,6 +42,7 @@ async def test_setup_entry_api_key_creates_repairs_issue(hass, mock_config_entry
     """仍用 API KEY：应推送 Repairs 引导迁移 JWT（is_fixable=False）。"""
     mock_config_entry.data[CONF_USE_TOKEN] = False
     mock_config_entry.add_to_hass(hass)
+    hass.data[f"{DOMAIN}_assets"] = True  # 跳过静态资源注册（非本测试关注点）
 
     create = MagicMock()
     delete = MagicMock()
@@ -70,6 +71,7 @@ async def test_setup_entry_jwt_deletes_repairs_issue(hass, mock_config_entry):
     """已用 JWT：应清理历史遗留的 API KEY Repairs 条目。"""
     mock_config_entry.data[CONF_USE_TOKEN] = True
     mock_config_entry.add_to_hass(hass)
+    hass.data[f"{DOMAIN}_assets"] = True  # 跳过静态资源注册（非本测试关注点）
 
     create = MagicMock()
     delete = MagicMock()
