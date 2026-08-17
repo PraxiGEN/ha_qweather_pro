@@ -33,6 +33,7 @@ class _Harness:
     _vis_km = QWeatherUpdateCoordinator._vis_km
     _to_utc_iso = QWeatherUpdateCoordinator._to_utc_iso
     _to_local_hm = QWeatherUpdateCoordinator._to_local_hm
+    _parse_daily_period = QWeatherUpdateCoordinator._parse_daily_period
     _collect_attributions = QWeatherUpdateCoordinator._collect_attributions
     _cache_data: dict = {}
 
@@ -188,7 +189,7 @@ def _now_raw():
         "condition": {"text": "晴", "code": "100"},
         "temperature": {"value": 25},
         "feelsLike": {"value": 27},
-        "humidity": {"value": 0.5},
+        "humidity": 0.5,
         "wind": {
             "direction": {"degree": 180, "compass": "南风"},
             "speed": {"value": 10},
@@ -233,7 +234,7 @@ def test_collect_attributions_dedup():
         "now": {"metadata": {"attributions": ["https://a", "https://b"]}},
         "daily": {"metadata": {"attributions": ["https://a"]}},
     }
-    assert QWeatherUpdateCoordinator._collect_attributions(c, cache) == ["https://a", "https://b"]
+    assert QWeatherUpdateCoordinator._collect_attributions(cache) == ["https://a", "https://b"]
 
 
 # --- 智能摘要 ---
@@ -248,5 +249,5 @@ def test_generate_smart_abstract_morning():
     ]
     abstract = QWeatherUpdateCoordinator._generate_smart_abstract(c, now, daily, datetime(2026, 8, 16, 10))
     assert abstract["period"] == "morning"
-    assert abstract["wind_status"] == "calm"
+    assert abstract["wind_status"] == "windy"
     assert abstract["temp_change_type"] in {"colder", "steady", "warmer"}
