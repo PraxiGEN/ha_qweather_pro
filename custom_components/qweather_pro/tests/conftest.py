@@ -23,3 +23,15 @@ def mock_coordinator():
     coord.data = {}
     coord.device_info = {"identifiers": {(DOMAIN, "test")}}
     return coord
+
+
+@pytest.fixture
+def mock_config_entry():
+    """提供实体/入口测试所需的 config entry 替身。
+
+    ``pytest-homeassistant-custom-component`` 不提供 ``mock_config_entry``，
+    这里用 HA 自带的 ``MockConfigEntry``（含 ``entry_id``/``data``/``add_to_hass``）。
+    """
+    from homeassistant.config_entries import MockConfigEntry
+
+    return MockConfigEntry(domain=DOMAIN, data={}, entry_id="test")
