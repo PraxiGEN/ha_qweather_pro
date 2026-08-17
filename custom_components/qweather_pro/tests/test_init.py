@@ -57,9 +57,9 @@ async def test_setup_entry_api_key_creates_repairs_issue(hass):
     create = MagicMock()
     delete = MagicMock()
     with patch(
-        "homeassistant.helpers.issue_registry.async_create_issue", new=create
+        "custom_components.qweather_pro.async_create_issue", new=create
     ), patch(
-        "homeassistant.helpers.issue_registry.async_delete_issue", new=delete
+        "custom_components.qweather_pro.async_delete_issue", new=delete
     ), patch.object(
         QWeatherUpdateCoordinator, "async_load_cache", new=AsyncMock()
     ), patch.object(
@@ -96,9 +96,9 @@ async def test_setup_entry_jwt_deletes_repairs_issue(hass):
     create = MagicMock()
     delete = MagicMock()
     with patch(
-        "homeassistant.helpers.issue_registry.async_create_issue", new=create
+        "custom_components.qweather_pro.async_create_issue", new=create
     ), patch(
-        "homeassistant.helpers.issue_registry.async_delete_issue", new=delete
+        "custom_components.qweather_pro.async_delete_issue", new=delete
     ), patch.object(
         QWeatherUpdateCoordinator, "async_load_cache", new=AsyncMock()
     ), patch.object(
