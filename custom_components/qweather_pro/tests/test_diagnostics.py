@@ -20,6 +20,7 @@ try:
         CONF_PRIVATE_KEY,
         CONF_PROJECT_ID,
         CONF_KEY_ID,
+        CONF_USE_TOKEN,
     )
 
     _HA_OK = True
@@ -39,7 +40,7 @@ async def test_runtime_data_none_returns_empty():
     entry.as_dict.return_value = {"data": {CONF_API_KEY: "x"}, "title": "T"}
     result = await async_get_config_entry_diagnostics(None, entry)
     assert result["coordinator_data"] == {}
-    assert result["entry"]["data"][CONF_API_KEY] == "********"
+    assert result["entry"]["data"][CONF_API_KEY] == "**REDACTED**"
 
 
 async def test_redacts_sensitive_fields():
@@ -55,9 +56,9 @@ async def test_redacts_sensitive_fields():
     entry.runtime_data = SimpleNamespace(data={"now": {"temp": 1}})
     entry.as_dict.return_value = {"data": data, "title": "T"}
     result = await async_get_config_entry_diagnostics(None, entry)
-    assert result["entry"]["data"][CONF_API_KEY] == "********"
-    assert result["entry"]["data"][CONF_PRIVATE_KEY] == "********"
-    assert result["entry"]["data"][CONF_PROJECT_ID] == "********"
+    assert result["entry"]["data"][CONF_API_KEY] == "**REDACTED**"
+    assert result["entry"]["data"][CONF_PRIVATE_KEY] == "**REDACTED**"
+    assert result["entry"]["data"][CONF_PROJECT_ID] == "**REDACTED**"
     # 非敏感字段保留
     assert result["entry"]["data"]["location_id"] == "120,30"
     assert result["coordinator_data"] == {"now": {"temp": 1}}
