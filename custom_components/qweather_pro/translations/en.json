@@ -185,14 +185,11 @@
           "issued": {
             "name": "Issued"
           },
-          "title": {
-            "name": "Title"
+          "type_code": {
+            "name": "Type Code"
           },
-          "text": {
-            "name": "Text"
-          },
-          "instruction": {
-            "name": "Instruction"
+          "type_name": {
+            "name": "Type Name"
           },
           "level": {
             "name": "Level",
@@ -219,8 +216,14 @@
               "black": "Black"
             }
           },
-          "type_name": {
-            "name": "Type Name"
+          "title": {
+            "name": "Title"
+          },
+          "text": {
+            "name": "Text"
+          },
+          "instruction": {
+            "name": "Instruction"
           }
         }
       },

@@ -185,14 +185,11 @@
           "issued": {
             "name": "Ausgabezeit"
           },
-          "title": {
-            "name": "Warnungstitel"
+          "type_code": {
+            "name": "Warnungstyp-Code"
           },
-          "text": {
-            "name": "Warnungstext"
-          },
-          "instruction": {
-            "name": "Handlungsempfehlung"
+          "type_name": {
+            "name": "Warnungstyp"
           },
           "level": {
             "name": "Warnstufe",
@@ -219,8 +216,14 @@
               "black": "Schwarz"
             }
           },
-          "type_name": {
-            "name": "Warnungstyp"
+          "title": {
+            "name": "Warnungstitel"
+          },
+          "text": {
+            "name": "Warnungstext"
+          },
+          "instruction": {
+            "name": "Handlungsempfehlung"
           }
         }
       },

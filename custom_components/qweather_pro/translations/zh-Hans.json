@@ -185,14 +185,11 @@
           "issued": {
             "name": "预警发布时间"
           },
-          "title": {
-            "name": "预警标题"
+          "type_code": {
+            "name": "预警类型代码"
           },
-          "text": {
-            "name": "预警内容"
-          },
-          "instruction": {
-            "name": "预警处置建议"
+          "type_name": {
+            "name": "预警类型名称"
           },
           "level": {
             "name": "预警级别",
@@ -219,8 +216,14 @@
               "black": "黑色"
             }
           },
-          "type_name": {
-            "name": "预警类型名称"
+          "title": {
+            "name": "预警标题"
+          },
+          "text": {
+            "name": "预警内容"
+          },
+          "instruction": {
+            "name": "预警处置建议"
           }
         }
       },

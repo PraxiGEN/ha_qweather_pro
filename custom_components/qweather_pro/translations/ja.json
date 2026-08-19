@@ -185,14 +185,11 @@
           "issued": {
             "name": "発表時間"
           },
-          "title": {
-            "name": "警報タイトル"
+          "type_code": {
+            "name": "警告タイプコード"
           },
-          "text": {
-            "name": "警報内容"
-          },
-          "instruction": {
-            "name": "対応指示"
+          "type_name": {
+            "name": "警報タイプ名"
           },
           "level": {
             "name": "警報レベル",
@@ -219,8 +216,14 @@
               "black": "黒"
             }
           },
-          "type_name": {
-            "name": "警報タイプ名"
+          "title": {
+            "name": "警報タイトル"
+          },
+          "text": {
+            "name": "警報内容"
+          },
+          "instruction": {
+            "name": "対応指示"
           }
         }
       },
