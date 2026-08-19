@@ -130,9 +130,13 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     # --- V1 单位换算与本地化辅助 ---
     def _percent(self, val: Any, default: float | None = None) -> float | None:
-        """V1 比例字段 (0~1) → 百分数 (0-100). 湿度/云量/降水概率通用."""
+        """V1 比例字段 (0~1) → 百分数 (0-100). 湿度/云量/降水概率通用.
+
+        源值为浮点比例, 直接 ``v * 100`` 会产生 57.9999… 这类精度伪影,
+        故对结果取整 (百分比天然为整数粒度, 如 0.58 → 58).
+        """
         v = self._to_f(val, default)
-        return v * 100 if v is not None else None
+        return round(v * 100) if v is not None else None
 
     def _speed_kmh(self, val: Any, default: float | None = None) -> float | None:
         """V1 风速 (m/s) → km/h (×3.6)，匹配 WeatherEntity 声明的 km/h 单位."""
