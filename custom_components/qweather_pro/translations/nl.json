@@ -185,14 +185,11 @@
           "issued": {
             "name": "Uitgiftetijd"
           },
-          "title": {
-            "name": "Titel van de waarschuwing"
+          "type_code": {
+            "name": "Typecode waarschuwing"
           },
-          "text": {
-            "name": "Waarschuwingsinhoud"
-          },
-          "instruction": {
-            "name": "Veiligheidsinstructies"
+          "type_name": {
+            "name": "Type waarschuwing"
           },
           "level": {
             "name": "Waarschuwingsniveau",
@@ -219,8 +216,14 @@
               "black": "Zwart"
             }
           },
-          "type_name": {
-            "name": "Type waarschuwing"
+          "title": {
+            "name": "Titel van de waarschuwing"
+          },
+          "text": {
+            "name": "Waarschuwingsinhoud"
+          },
+          "instruction": {
+            "name": "Veiligheidsinstructies"
           }
         }
       },

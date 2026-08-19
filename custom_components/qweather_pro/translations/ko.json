@@ -185,14 +185,11 @@
           "issued": {
             "name": "발령 시각"
           },
-          "title": {
-            "name": "경보 제목"
+          "type_code": {
+            "name": "경보 유형 코드"
           },
-          "text": {
-            "name": "경보 내용"
-          },
-          "instruction": {
-            "name": "대응 지침"
+          "type_name": {
+            "name": "경보 유형 이름"
           },
           "level": {
             "name": "경보 수준",
@@ -219,8 +216,14 @@
               "black": "검은색"
             }
           },
-          "type_name": {
-            "name": "경보 유형 이름"
+          "title": {
+            "name": "경보 제목"
+          },
+          "text": {
+            "name": "경보 내용"
+          },
+          "instruction": {
+            "name": "대응 지침"
           }
         }
       },

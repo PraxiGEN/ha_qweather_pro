@@ -185,14 +185,11 @@
           "issued": {
             "name": "Ora di emissione"
           },
-          "title": {
-            "name": "Titolo dell’allerta"
+          "type_code": {
+            "name": "Codice del tipo"
           },
-          "text": {
-            "name": "Contenuto dell’allerta"
-          },
-          "instruction": {
-            "name": "Istruzioni operative"
+          "type_name": {
+            "name": "Tipo di allerta"
           },
           "level": {
             "name": "Livello di allerta",
@@ -219,8 +216,14 @@
               "black": "Nero"
             }
           },
-          "type_name": {
-            "name": "Tipo di allerta"
+          "title": {
+            "name": "Titolo dell’allerta"
+          },
+          "text": {
+            "name": "Contenuto dell’allerta"
+          },
+          "instruction": {
+            "name": "Istruzioni operative"
           }
         }
       },

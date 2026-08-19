@@ -185,14 +185,11 @@
           "issued": {
             "name": "Hora de emisión"
           },
-          "title": {
-            "name": "Título de la alerta"
+          "type_code": {
+            "name": "Código de tipo"
           },
-          "text": {
-            "name": "Contenido de la alerta"
-          },
-          "instruction": {
-            "name": "Instrucciones de seguridad"
+          "type_name": {
+            "name": "Tipo de alerta"
           },
           "level": {
             "name": "Nivel de alerta",
@@ -219,8 +216,14 @@
               "black": "Negro"
             }
           },
-          "type_name": {
-            "name": "Tipo de alerta"
+          "title": {
+            "name": "Título de la alerta"
+          },
+          "text": {
+            "name": "Contenido de la alerta"
+          },
+          "instruction": {
+            "name": "Instrucciones de seguridad"
           }
         }
       },

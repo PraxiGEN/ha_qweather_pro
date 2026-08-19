@@ -185,14 +185,11 @@
           "issued": {
             "name": "Heure de publication"
           },
-          "title": {
-            "name": "Titre de l’alerte"
+          "type_code": {
+            "name": "Code du type"
           },
-          "text": {
-            "name": "Contenu de l’alerte"
-          },
-          "instruction": {
-            "name": "Consignes de sécurité"
+          "type_name": {
+            "name": "Type d’alerte"
           },
           "level": {
             "name": "Niveau d’alerte",
@@ -219,8 +216,14 @@
               "black": "Noir"
             }
           },
-          "type_name": {
-            "name": "Type d’alerte"
+          "title": {
+            "name": "Titre de l’alerte"
+          },
+          "text": {
+            "name": "Contenu de l’alerte"
+          },
+          "instruction": {
+            "name": "Consignes de sécurité"
           }
         }
       },

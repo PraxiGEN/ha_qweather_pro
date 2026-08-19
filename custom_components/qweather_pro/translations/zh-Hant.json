@@ -185,14 +185,11 @@
           "issued": {
             "name": "預警發布時間"
           },
-          "title": {
-            "name": "預警標題"
+          "type_code": {
+            "name": "預警類型代碼"
           },
-          "text": {
-            "name": "預警內容"
-          },
-          "instruction": {
-            "name": "預警處置建議"
+          "type_name": {
+            "name": "預警類型名稱"
           },
           "level": {
             "name": "預警級別",
@@ -219,8 +216,14 @@
               "black": "黑色"
             }
           },
-          "type_name": {
-            "name": "預警類型名稱"
+          "title": {
+            "name": "預警標題"
+          },
+          "text": {
+            "name": "預警內容"
+          },
+          "instruction": {
+            "name": "預警處置建議"
           }
         }
       },
