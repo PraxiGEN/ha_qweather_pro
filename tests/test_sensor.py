@@ -48,6 +48,7 @@ def sensor_data() -> dict:
         "daily": [
             {"temp_min": 22, "temp_max": 30},
         ],
+        "now": {"temp": 25, "feelsLike": 26, "dew": 18},
         "warning": [{"title": "高温橙色预警"}],
         "minutely_summary": "未来两小时无降水",
         "weather_abstract": {"tonight_text": "晴"},
@@ -63,7 +64,7 @@ def test_all_five_sensors_defined():
     keys = {d.key for d in SENSOR_DESCRIPTIONS}
     assert keys == {
         "aqi",
-        "today_temp_range",
+        "current_temperature",
         "warning_info",
         "precipitation_summary",
         "weather_summary",
@@ -86,20 +87,24 @@ def test_aqi_extra_attributes_formatted(mock_coordinator, mock_config_entry, sen
     assert attrs["attribution"]
 
 
-def test_today_temp_range(mock_coordinator, mock_config_entry, sensor_data):
+def test_current_temperature(mock_coordinator, mock_config_entry, sensor_data):
     mock_coordinator.data = sensor_data
-    entity = QWeatherSensor(mock_coordinator, mock_config_entry, _sensor("today_temp_range"))
-    assert entity.native_value == "22°C/30°C"
-    assert entity.extra_state_attributes["max_temp"] == "30°C"
-    assert entity.extra_state_attributes["min_temp"] == "22°C"
+    entity = QWeatherSensor(mock_coordinator, mock_config_entry, _sensor("current_temperature"))
+    assert entity.native_value == 25
+    attrs = entity.extra_state_attributes
+    assert attrs["temp_range"] == "22°C ~ 30°C"
+    assert attrs["max_temp"] == 30
+    assert attrs["min_temp"] == 22
+    assert attrs["feels_like"] == 26
+    assert attrs["dew_point"] == 18
 
 
-def test_today_temp_range_unknown_without_daily(mock_coordinator, mock_config_entry):
-    # 有数据但无 daily → value_fn 走 "unknown" 分支
-    # （空 dict 会被 native_value 判为无数据返回 None，故用含 now 的非空 dict）
-    mock_coordinator.data = {"now": {}}
-    entity = QWeatherSensor(mock_coordinator, mock_config_entry, _sensor("today_temp_range"))
-    assert entity.native_value == "unknown"
+def test_current_temperature_unknown_without_now(mock_coordinator, mock_config_entry):
+    # 有数据但无 now → 实时温度为 None（无数值状态）
+    mock_coordinator.data = {"daily": [{"temp_min": 22, "temp_max": 30}]}
+    entity = QWeatherSensor(mock_coordinator, mock_config_entry, _sensor("current_temperature"))
+    assert entity.native_value is None
+    assert entity.extra_state_attributes["temp_range"] == "22°C ~ 30°C"
 
 
 def test_warning_info(mock_coordinator, mock_config_entry, sensor_data):

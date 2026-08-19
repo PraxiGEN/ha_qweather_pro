@@ -224,17 +224,23 @@
           }
         }
       },
-      "today_temp_range": {
-        "name": "Intervallo di temperatura di oggi",
-        "state": {
-          "unknown": "Sconosciuto"
-        },
+            "current_temperature": {
+        "name": "Temperatura in Tempo Reale",
         "state_attributes": {
+          "temp_range": {
+            "name": "Intervallo di Temperatura di Oggi"
+          },
           "max_temp": {
-            "name": "Temperatura massima"
+            "name": "Temperatura Massima"
           },
           "min_temp": {
-            "name": "Temperatura minima"
+            "name": "Temperatura Minima"
+          },
+          "feels_like": {
+            "name": "Temperatura Percepita"
+          },
+          "dew_point": {
+            "name": "Temperatura del Punto di Rugiada"
           }
         }
       },

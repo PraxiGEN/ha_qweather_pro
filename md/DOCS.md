@@ -52,6 +52,6 @@ entity: weather.qweather_pro_area_weather  # Default entity ID
 | `sensor.qweather_aqi` | Air Quality | Provides AQI value and level (e.g., Excellent / Good / Light Pollution). Attributes include PM2.5, PM10, CO, NO₂, O₃, and other pollutant details |
 | `sensor.qweather_precipitation_summary` | Precipitation Summary | Minute‑level precipitation trend summary, e.g., “No precipitation in the next two hours” |
 | `sensor.qweather_weather_summary` | Weather Summary | 6‑hour weather trend summary, e.g., “Next 6 hours: blowing sand” |
-| `sensor.qweather_today_temp_range` | Today’s Temperature Range | Today’s high/low temperature range, e.g., `12°C / 25°C`. Attributes include `min_temp` and `max_temp` |
+| `sensor.qweather_current_temperature` | Real-time Temperature | Numeric temperature sensor (unit °C, `device_class: temperature`). Supports long-term statistics and history graphs. Attributes include `temp_range` (today’s high/low), `max_temp`, `min_temp`, `feels_like`, and `dew_point` |
 | `sensor.qweather_warning_count` | Weather Warning Count | Number of active weather alerts (e.g., typhoon, heavy rain, strong wind) |
 

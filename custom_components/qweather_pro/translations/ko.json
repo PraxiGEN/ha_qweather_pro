@@ -224,17 +224,23 @@
           }
         }
       },
-      "today_temp_range": {
-        "name": "오늘의 기온 범위",
-        "state": {
-          "unknown": "알 수 없음"
-        },
+            "current_temperature": {
+        "name": "실시간 기온",
         "state_attributes": {
+          "temp_range": {
+            "name": "오늘 기온 범위"
+          },
           "max_temp": {
             "name": "최고 기온"
           },
           "min_temp": {
             "name": "최저 기온"
+          },
+          "feels_like": {
+            "name": "체감 온도"
+          },
+          "dew_point": {
+            "name": "이슬점 온도"
           }
         }
       },

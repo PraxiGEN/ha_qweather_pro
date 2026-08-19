@@ -224,17 +224,23 @@
           }
         }
       },
-      "today_temp_range": {
-        "name": "Plage de température du jour",
-        "state": {
-          "unknown": "Inconnu"
-        },
+            "current_temperature": {
+        "name": "Temperature en Temps Reel",
         "state_attributes": {
+          "temp_range": {
+            "name": "Plage de Temperature du Jour"
+          },
           "max_temp": {
-            "name": "Température maximale"
+            "name": "Temperature Maximale"
           },
           "min_temp": {
-            "name": "Température minimale"
+            "name": "Temperature Minimale"
+          },
+          "feels_like": {
+            "name": "Temperature Ressentie"
+          },
+          "dew_point": {
+            "name": "Temperature du Point de Rosee"
           }
         }
       },

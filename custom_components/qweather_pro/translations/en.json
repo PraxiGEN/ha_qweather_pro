@@ -224,17 +224,23 @@
           }
         }
       },
-      "today_temp_range": {
-        "name": "Today Temperature Range",
-        "state": {
-          "unknown": "Unknown"
-        },
+            "current_temperature": {
+        "name": "Real-time Temperature",
         "state_attributes": {
+          "temp_range": {
+            "name": "Today Temperature Range"
+          },
           "max_temp": {
             "name": "Maximum Temperature"
           },
           "min_temp": {
             "name": "Minimum Temperature"
+          },
+          "feels_like": {
+            "name": "Feels-like Temperature"
+          },
+          "dew_point": {
+            "name": "Dew Point Temperature"
           }
         }
       },
