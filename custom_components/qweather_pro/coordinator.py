@@ -403,7 +403,6 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 "type_name": a.get("eventType", {}).get("name"),
                 "level": a.get("severity"),
                 "color": a.get("color", {}).get("code"),
-                "color_name": a.get("color", {}).get("name"),
                 "title": a.get("headline"),
                 "text": a.get("description"),
                 "instruction": a.get("instruction"),
