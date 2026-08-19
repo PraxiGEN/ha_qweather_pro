@@ -173,7 +173,10 @@
               "black": "黒"
             }
           },
-          "type_name": { "name": "警報タイプ名" }
+          "type_name": { "name": "警報タイプ名" },
+          "type_code": {
+            "name": "警告タイプコード"
+          }
         }
       },
 

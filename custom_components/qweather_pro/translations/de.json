@@ -173,7 +173,10 @@
               "black": "Schwarz"
             }
           },
-          "type_name": { "name": "Warnungstyp" }
+          "type_name": { "name": "Warnungstyp" },
+          "type_code": {
+            "name": "Warnungstyp-Code"
+          }
         }
       },
 

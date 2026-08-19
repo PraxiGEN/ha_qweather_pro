@@ -173,7 +173,10 @@
               "black": "Black"
             }
           },
-          "type_name": { "name": "Type Name" }
+          "type_name": { "name": "Type Name" },
+          "type_code": {
+            "name": "Type Code"
+          }
         }
       },
 

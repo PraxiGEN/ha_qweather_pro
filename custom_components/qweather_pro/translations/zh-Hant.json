@@ -173,7 +173,10 @@
               "black": "黑色"
             }
           },
-          "type_name": { "name": "預警類型名稱" }
+          "type_name": { "name": "預警類型名稱" },
+          "type_code": {
+            "name": "預警類型代碼"
+          }
         }
       },
 

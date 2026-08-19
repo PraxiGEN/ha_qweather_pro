@@ -173,7 +173,10 @@
               "black": "Zwart"
             }
           },
-          "type_name": { "name": "Type waarschuwing" }
+          "type_name": { "name": "Type waarschuwing" },
+          "type_code": {
+            "name": "Typecode waarschuwing"
+          }
         }
       },
 

@@ -173,7 +173,10 @@
               "black": "Nero"
             }
           },
-          "type_name": { "name": "Tipo di allerta" }
+          "type_name": { "name": "Tipo di allerta" },
+          "type_code": {
+            "name": "Codice del tipo"
+          }
         }
       },
 

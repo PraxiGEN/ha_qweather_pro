@@ -173,7 +173,10 @@
               "black": "검은색"
             }
           },
-          "type_name": { "name": "경보 유형 이름" }
+          "type_name": { "name": "경보 유형 이름" },
+          "type_code": {
+            "name": "경보 유형 코드"
+          }
         }
       },
 

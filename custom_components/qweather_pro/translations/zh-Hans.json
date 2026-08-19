@@ -173,7 +173,10 @@
               "black": "黑色"
             }
           },
-          "type_name": { "name": "预警类型名称" }
+          "type_name": { "name": "预警类型名称" },
+          "type_code": {
+            "name": "预警类型代码"
+          }
         }
       },
 
