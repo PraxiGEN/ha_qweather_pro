@@ -224,17 +224,23 @@
           }
         }
       },
-      "today_temp_range": {
-        "name": "Faixa de temperatura de hoje",
-        "state": {
-          "unknown": "Desconhecido"
-        },
+            "current_temperature": {
+        "name": "Temperatura em Tempo Real",
         "state_attributes": {
+          "temp_range": {
+            "name": "Faixa de Temperatura de Hoje"
+          },
           "max_temp": {
-            "name": "Temperatura máxima"
+            "name": "Temperatura Maxima"
           },
           "min_temp": {
-            "name": "Temperatura mínima"
+            "name": "Temperatura Minima"
+          },
+          "feels_like": {
+            "name": "Sensacao Termica"
+          },
+          "dew_point": {
+            "name": "Temperatura do Ponto de Orvalho"
           }
         }
       },

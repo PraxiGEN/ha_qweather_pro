@@ -8,6 +8,7 @@
   - Daily forecast is now day/night nested: new keys such as `wind_scale_day` / `wind_dir_day` / `wind_scale_night` / `wind_dir_night`, `icon_night` / `text_night` / `condition_night`, and `wind_360_*`; wind direction is now expressed as `wind_degree` (degrees) / `wind_compass` (cardinal).
   - Current‑condition extra attributes were reshuffled per V1: `wind_dir`, `wind_scale`, `forecast_cloud`, `moon_phase`, etc.; the legacy `obsTime` observation timestamp was removed and is now covered by `update_time`.
   - Any template/automation/third‑party card that referenced the old (V7 flat) attribute keys will now read `unknown` — please switch to the new keys.
+- **Temperature sensor entity renamed:** `sensor.qweather_today_temp_range` → `sensor.qweather_current_temperature`. It is now a **numeric** temperature sensor (`device_class: temperature`, `state_class: measurement`, unit °C) instead of a string. The old string state `12°C/25°C` is replaced by a numeric state plus attributes `temp_range` (today’s high/low), `max_temp`, `min_temp`, `feels_like`, and `dew_point`. Any template/automation referencing the old entity id or the old string state must be updated.
 
 ### 🔐 Authentication & Quota Strategy
 - JWT by default: New setups and re‑configurations now default to JWT, which has no request limit. API KEY stays available but becomes optional.

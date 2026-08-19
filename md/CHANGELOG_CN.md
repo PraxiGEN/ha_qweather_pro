@@ -8,6 +8,7 @@
   - 每日预报改为昼夜嵌套：新增 `wind_scale_day` / `wind_dir_day` / `wind_scale_night` / `wind_dir_night`、`icon_night` / `text_night` / `condition_night`、`wind_360_*` 等键；风向改用 `wind_degree`（角度）/ `wind_compass`（方位）表达。
   - 实况扩展属性按 V1 重排：`wind_dir`、`wind_scale`、`forecast_cloud`、`moon_phase` 等键名/取值有调整；旧的 `obsTime` 观测时间戳已移除，由 `update_time` 兜底。
   - 任何直接引用旧（V7 扁平）属性键的模板/自动化/第三方卡片，现在都会取到 `unknown`，请改用新键。
+- **温度传感器实体重命名**：`sensor.qweather_today_temp_range` → `sensor.qweather_current_temperature`。由字符串实体改为**数值型**温度传感器（`device_class: temperature`、`state_class: measurement`、单位 °C）。原字符串状态 `12°C/25°C` 改为数值状态 + 属性 `temp_range`（今日温度范围）、`max_temp`、`min_temp`、`feels_like`（体感温度）、`dew_point`（露点温度）。引用旧实体 id 或旧字符串状态的模板/自动化需相应更新。
 
 ### 🔐 认证与额度策略
 - 默认使用 JWT：新接入和重新配置默认采用 JWT 认证，无请求限制；API KEY 仍可用，但改为可选。

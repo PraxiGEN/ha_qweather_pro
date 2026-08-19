@@ -224,17 +224,23 @@
           }
         }
       },
-      "today_temp_range": {
-        "name": "Temperatuurbereik vandaag",
-        "state": {
-          "unknown": "Onbekend"
-        },
+            "current_temperature": {
+        "name": "Real-time Temperatuur",
         "state_attributes": {
+          "temp_range": {
+            "name": "Temperatuurbereik Vandaag"
+          },
           "max_temp": {
-            "name": "Maximale temperatuur"
+            "name": "Hoogste Temperatuur"
           },
           "min_temp": {
-            "name": "Minimale temperatuur"
+            "name": "Laagste Temperatuur"
+          },
+          "feels_like": {
+            "name": "Gevoelstemperatuur"
+          },
+          "dew_point": {
+            "name": "Dauwpunttemperatuur"
           }
         }
       },

@@ -224,17 +224,23 @@
           }
         }
       },
-      "today_temp_range": {
-        "name": "Temperaturbereich heute",
-        "state": {
-          "unknown": "Unbekannt"
-        },
+            "current_temperature": {
+        "name": "Live-Temperatur",
         "state_attributes": {
+          "temp_range": {
+            "name": "Temperaturbereich heute"
+          },
           "max_temp": {
-            "name": "Höchsttemperatur"
+            "name": "Hochsttemperatur"
           },
           "min_temp": {
             "name": "Tiefsttemperatur"
+          },
+          "feels_like": {
+            "name": "Gefuhlte Temperatur"
+          },
+          "dew_point": {
+            "name": "Taupunkttemperatur"
           }
         }
       },

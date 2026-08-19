@@ -224,17 +224,23 @@
           }
         }
       },
-      "today_temp_range": {
-        "name": "今日の気温範囲",
-        "state": {
-          "unknown": "不明"
-        },
+            "current_temperature": {
+        "name": "リアルタイム気温",
         "state_attributes": {
+          "temp_range": {
+            "name": "今日の気温範围"
+          },
           "max_temp": {
             "name": "最高気温"
           },
           "min_temp": {
             "name": "最低気温"
+          },
+          "feels_like": {
+            "name": "体感気温"
+          },
+          "dew_point": {
+            "name": "露点温度"
           }
         }
       },
