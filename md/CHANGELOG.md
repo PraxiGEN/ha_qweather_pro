@@ -5,6 +5,7 @@
 ### 🐛 Bug Fixes
 - Fixed humidity (and other percentage fields) showing long floating-point artifacts such as `57.99999999999999%`. Percent values are now rounded to integers.
 - Removed the invalid `color_name` field from severe-weather-warning attributes, as the V1 API does not return it.
+- Slimmed `manifest.json` requirements to only `tenacity==9.1.4` (pinned). `aiohttp` / `cryptography` / `PyJWT` are built into Home Assistant core and no longer need explicit declaration.
 
 ### 🛠 [1.2.0-beta.2] - 2026-08-16
 
