@@ -1,5 +1,19 @@
 ## Release Notes: QWeather Pro 2026
 
+### 🛠 [1.2.0-beta.4] - 2026-08-23
+
+### 🐛 Bug Fixes
+- Fixed a `TypeError: async_update_listeners() missing 1 required positional argument: 'forecast_types'` that was raised on every coordinator update. The call now passes `None` (refresh all forecast types), as required by Home Assistant since 2024.4.
+
+### ✨ Newly Exposed Entity Attributes
+- Weather entity now exposes previously unexposed current-condition fields: `wind_gust` (gust wind speed, km/h), `precip_type` (rain/snow/none), and `precip_intensity` (precipitation intensity).
+- Daily forecast entries now include `precipitation_type`, matching the hourly forecast.
+- Added 14 astronomical/lunar time fields to the weather entity attributes (all in local HH:MM): `sunrise`, `sunset`, `astronomical_dawn`, `nautical_dawn`, `civil_dawn`, `astronomical_dusk`, `nautical_dusk`, `civil_dusk`, `solar_noon`, `solar_midnight`, `moonrise`, `moonset`, `moon_transit`, `moon_underfoot`.
+- The `current_temperature` sensor now exposes `temp_avg` (daily average temperature).
+
+### 🌐 Translations
+- Added i18n name keys for all newly exposed fields across the 12 supported languages.
+
 ### 🛠 [1.2.0-beta.3] - 2026-08-19
 
 ### 🐛 Bug Fixes

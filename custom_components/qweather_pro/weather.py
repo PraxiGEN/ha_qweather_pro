@@ -23,6 +23,10 @@ from . import QWeatherConfigEntry
 from .const import ATTRIBUTION, CONF_CUSTOM_UI
 from .coordinator import QWeatherUpdateCoordinator
 
+# HA 自 2024.4 起重构天气预报系统，WeatherEntity.async_update_listeners 改为必填
+# forecast_types 参数（传 None 表示刷新 daily/hourly/twice_daily 全部类型）。
+# 本项目最低支持 2026.x，无需兼容旧签名，直接传 None。
+
 # 定义天气描述符
 QWEATHER_WEATHER_DESCRIPTION = WeatherEntityDescription(
     key="weather",
@@ -125,7 +129,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
     def _handle_coordinator_update(self) -> None:
         """数据刷新后推送预报订阅者."""
         super()._handle_coordinator_update()
-        self.hass.async_create_task(self.async_update_listeners())
+        self.hass.async_create_task(self.async_update_listeners(None))
 
     async def async_forecast_daily(self) -> list[Forecast] | None:
         """每日预报 (V1 嵌套结构 → 完整 day/night 键集)."""
@@ -151,6 +155,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
                 "cloud_coverage": day.get("cloud"),
                 "native_precipitation": day.get("precip_amount"),
                 "precipitation_probability": day.get("precip_probability"),
+                "precipitation_type": day.get("precip_type"),
                 "uv_index": d.get("uv_index_max"),
                 "icon": day.get("icon"),
                 "icon_night": night.get("icon"),
@@ -282,6 +287,10 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
         attrs["visibility"] = now.get("vis")
         attrs["dew"] = now.get("dew")
         attrs["cloud"] = now.get("cloud")
+        # 当前阵风 / 降水类型 / 降水强度（V1 current 解析字段，原仅服务可见）
+        attrs["wind_gust"] = now.get("windGust")
+        attrs["precip_type"] = now.get("precipType")
+        attrs["precip_intensity"] = now.get("precipIntensity")
 
         # ===== 今日预报 (weather-v1-daily 文档序, daily[0]) =====
         if daily:
@@ -289,10 +298,21 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
             astro = today.get("astro", {})
             day_seg = today.get("daytime", {})
             night_seg = today.get("nighttime", {})
+            # 天文 / 月相时间（V1 astro，本地 HH:MM）
             attrs["sunrise"] = astro.get("sunrise")
             attrs["sunset"] = astro.get("sunset")
+            attrs["astronomical_dawn"] = astro.get("astronomical_dawn")
+            attrs["nautical_dawn"] = astro.get("nautical_dawn")
+            attrs["civil_dawn"] = astro.get("civil_dawn")
+            attrs["astronomical_dusk"] = astro.get("astronomical_dusk")
+            attrs["nautical_dusk"] = astro.get("nautical_dusk")
+            attrs["civil_dusk"] = astro.get("civil_dusk")
+            attrs["solar_noon"] = astro.get("solar_noon")
+            attrs["solar_midnight"] = astro.get("solar_midnight")
             attrs["moonrise"] = astro.get("moonrise")
             attrs["moonset"] = astro.get("moonset")
+            attrs["moon_transit"] = astro.get("moon_transit")
+            attrs["moon_underfoot"] = astro.get("moon_underfoot")
             attrs["moon_phase"] = astro.get("moon_phase")
             attrs["wind_scale_day"] = day_seg.get("wind_scale")
             attrs["wind_dir_day"] = day_seg.get("wind_compass")

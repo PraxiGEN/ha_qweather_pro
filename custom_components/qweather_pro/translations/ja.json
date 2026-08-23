@@ -227,7 +227,7 @@
           }
         }
       },
-            "current_temperature": {
+      "current_temperature": {
         "name": "リアルタイム気温",
         "state_attributes": {
           "temp_range": {
@@ -238,6 +238,9 @@
           },
           "min_temp": {
             "name": "最低気温"
+          },
+          "temp_avg": {
+            "name": "日平均気温"
           },
           "feels_like": {
             "name": "体感気温"
@@ -350,6 +353,15 @@
           "feels_like": {
             "name": "体感温度"
           },
+          "wind_gust": {
+            "name": "突風の風速"
+          },
+          "precip_type": {
+            "name": "降水の種類"
+          },
+          "precip_intensity": {
+            "name": "降水強度"
+          },
           "wind_scale": {
             "name": "風力階級"
           },
@@ -358,6 +370,36 @@
           },
           "sunset": {
             "name": "日の入り時刻"
+          },
+          "astronomical_dawn": {
+            "name": "天文薄明（始）"
+          },
+          "nautical_dawn": {
+            "name": "航海薄明（始）"
+          },
+          "civil_dawn": {
+            "name": "民用薄明（始）"
+          },
+          "astronomical_dusk": {
+            "name": "天文薄明（終）"
+          },
+          "nautical_dusk": {
+            "name": "航海薄明（終）"
+          },
+          "civil_dusk": {
+            "name": "民用薄明（終）"
+          },
+          "solar_noon": {
+            "name": "太陽正午"
+          },
+          "solar_midnight": {
+            "name": "太陽子夜"
+          },
+          "moon_transit": {
+            "name": "月の上中天"
+          },
+          "moon_underfoot": {
+            "name": "月の下中天"
           },
           "moon_phase": {
             "name": "月相",

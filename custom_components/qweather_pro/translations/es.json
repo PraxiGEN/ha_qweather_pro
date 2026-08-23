@@ -227,7 +227,7 @@
           }
         }
       },
-            "current_temperature": {
+      "current_temperature": {
         "name": "Temperatura en Tiempo Real",
         "state_attributes": {
           "temp_range": {
@@ -238,6 +238,9 @@
           },
           "min_temp": {
             "name": "Temperatura Minima"
+          },
+          "temp_avg": {
+            "name": "Temperatura media diaria"
           },
           "feels_like": {
             "name": "Sensacion Termica"
@@ -350,6 +353,15 @@
           "feels_like": {
             "name": "Sensación térmica"
           },
+          "wind_gust": {
+            "name": "Velocidad del viento por ráfagas"
+          },
+          "precip_type": {
+            "name": "Tipo de precipitación"
+          },
+          "precip_intensity": {
+            "name": "Intensidad de precipitación"
+          },
           "wind_scale": {
             "name": "Escala del viento"
           },
@@ -358,6 +370,36 @@
           },
           "sunset": {
             "name": "Atardecer"
+          },
+          "astronomical_dawn": {
+            "name": "Alborada astronómica"
+          },
+          "nautical_dawn": {
+            "name": "Alborada náutica"
+          },
+          "civil_dawn": {
+            "name": "Alborada civil"
+          },
+          "astronomical_dusk": {
+            "name": "Crepúsculo astronómico"
+          },
+          "nautical_dusk": {
+            "name": "Crepúsculo náutico"
+          },
+          "civil_dusk": {
+            "name": "Crepúsculo civil"
+          },
+          "solar_noon": {
+            "name": "Mediodía solar"
+          },
+          "solar_midnight": {
+            "name": "Medianoche solar"
+          },
+          "moon_transit": {
+            "name": "Tránsito lunar superior"
+          },
+          "moon_underfoot": {
+            "name": "Tránsito lunar inferior"
           },
           "moon_phase": {
             "name": "Fase lunar",

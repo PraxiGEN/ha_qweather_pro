@@ -227,7 +227,7 @@
           }
         }
       },
-            "current_temperature": {
+      "current_temperature": {
         "name": "Real-time Temperatuur",
         "state_attributes": {
           "temp_range": {
@@ -238,6 +238,9 @@
           },
           "min_temp": {
             "name": "Laagste Temperatuur"
+          },
+          "temp_avg": {
+            "name": "Dagelijkse gemiddelde temperatuur"
           },
           "feels_like": {
             "name": "Gevoelstemperatuur"
@@ -350,6 +353,15 @@
           "feels_like": {
             "name": "Gevoelstemperatuur"
           },
+          "wind_gust": {
+            "name": "Windstoten snelheid"
+          },
+          "precip_type": {
+            "name": "Neerslagtype"
+          },
+          "precip_intensity": {
+            "name": "Neerslagintensiteit"
+          },
           "wind_scale": {
             "name": "Windkracht"
           },
@@ -358,6 +370,36 @@
           },
           "sunset": {
             "name": "Zonsondergang"
+          },
+          "astronomical_dawn": {
+            "name": "Astronomische dageraad"
+          },
+          "nautical_dawn": {
+            "name": "Nautische dageraad"
+          },
+          "civil_dawn": {
+            "name": "Burgerlijke dageraad"
+          },
+          "astronomical_dusk": {
+            "name": "Astronomische schemering"
+          },
+          "nautical_dusk": {
+            "name": "Nautische schemering"
+          },
+          "civil_dusk": {
+            "name": "Burgerlijke schemering"
+          },
+          "solar_noon": {
+            "name": "Zonnig middaguur"
+          },
+          "solar_midnight": {
+            "name": "Zonnige middernacht"
+          },
+          "moon_transit": {
+            "name": "Maantransit (bovenste culminatie)"
+          },
+          "moon_underfoot": {
+            "name": "Maan beneden de voeten (onderste culminatie)"
           },
           "moon_phase": {
             "name": "Maanfase",
