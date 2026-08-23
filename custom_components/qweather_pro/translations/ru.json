@@ -227,7 +227,7 @@
           }
         }
       },
-            "current_temperature": {
+      "current_temperature": {
         "name": "Температура в Реальном Времени",
         "state_attributes": {
           "temp_range": {
@@ -238,6 +238,9 @@
           },
           "min_temp": {
             "name": "Минимальная Температура"
+          },
+          "temp_avg": {
+            "name": "Среднесуточная температура"
           },
           "feels_like": {
             "name": "Ощущаемая Температура"
@@ -350,6 +353,15 @@
           "feels_like": {
             "name": "Ощущаемая температура"
           },
+          "wind_gust": {
+            "name": "Скорость порывов ветра"
+          },
+          "precip_type": {
+            "name": "Тип осадков"
+          },
+          "precip_intensity": {
+            "name": "Интенсивность осадков"
+          },
           "wind_scale": {
             "name": "Сила ветра"
           },
@@ -358,6 +370,36 @@
           },
           "sunset": {
             "name": "Время заката"
+          },
+          "astronomical_dawn": {
+            "name": "Астрономические сумерки (рассвет)"
+          },
+          "nautical_dawn": {
+            "name": "Навигационные сумерки (рассвет)"
+          },
+          "civil_dawn": {
+            "name": "Гражданские сумерки (рассвет)"
+          },
+          "astronomical_dusk": {
+            "name": "Астрономические сумерки (закат)"
+          },
+          "nautical_dusk": {
+            "name": "Навигационные сумерки (закат)"
+          },
+          "civil_dusk": {
+            "name": "Гражданские сумерки (закат)"
+          },
+          "solar_noon": {
+            "name": "Солнечный полдень"
+          },
+          "solar_midnight": {
+            "name": "Солнечная полночь"
+          },
+          "moon_transit": {
+            "name": "Верхняя кульминация Луны"
+          },
+          "moon_underfoot": {
+            "name": "Нижняя кульминация Луны"
           },
           "moon_phase": {
             "name": "Фаза луны",

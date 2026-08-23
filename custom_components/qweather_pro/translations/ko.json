@@ -227,7 +227,7 @@
           }
         }
       },
-            "current_temperature": {
+      "current_temperature": {
         "name": "실시간 기온",
         "state_attributes": {
           "temp_range": {
@@ -238,6 +238,9 @@
           },
           "min_temp": {
             "name": "최저 기온"
+          },
+          "temp_avg": {
+            "name": "일평균 기온"
           },
           "feels_like": {
             "name": "체감 온도"
@@ -350,6 +353,15 @@
           "feels_like": {
             "name": "체감 온도"
           },
+          "wind_gust": {
+            "name": "돌풍 풍속"
+          },
+          "precip_type": {
+            "name": "강수 유형"
+          },
+          "precip_intensity": {
+            "name": "강수 강도"
+          },
           "wind_scale": {
             "name": "풍력 등급"
           },
@@ -358,6 +370,36 @@
           },
           "sunset": {
             "name": "일몰 시간"
+          },
+          "astronomical_dawn": {
+            "name": "천문박명(시작)"
+          },
+          "nautical_dawn": {
+            "name": "항해박명(시작)"
+          },
+          "civil_dawn": {
+            "name": "민용박명(시작)"
+          },
+          "astronomical_dusk": {
+            "name": "천문박명(끝)"
+          },
+          "nautical_dusk": {
+            "name": "항해박명(끝)"
+          },
+          "civil_dusk": {
+            "name": "민용박명(끝)"
+          },
+          "solar_noon": {
+            "name": "태양 정오"
+          },
+          "solar_midnight": {
+            "name": "태양 자정"
+          },
+          "moon_transit": {
+            "name": "달 상중천"
+          },
+          "moon_underfoot": {
+            "name": "달 하중천"
           },
           "moon_phase": {
             "name": "달의 위상",
