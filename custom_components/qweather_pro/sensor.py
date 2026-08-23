@@ -42,6 +42,7 @@ def _current_temp_attributes(data: dict[str, Any]) -> dict[str, Any]:
         "temp_range": temp_range,
         "max_temp": t_max,
         "min_temp": t_min,
+        "temp_avg": first.get("temp_avg"),
         "feels_like": now.get("feelsLike"),
         "dew_point": now.get("dew"),
     }
