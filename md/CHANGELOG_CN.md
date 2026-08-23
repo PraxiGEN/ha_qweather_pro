@@ -1,5 +1,19 @@
 ## 更新说明：和风天气 Pro 2026
 
+### 🛠 [1.2.0-beta.4] - 2026-08-23
+
+### 🐛 问题修复
+- 修复每次 coordinator 更新都会抛出的 `TypeError: async_update_listeners() missing 1 required positional argument: 'forecast_types'` 报错。现已传入 `None`（刷新全部预报类型），符合 Home Assistant 2024.4 起的必填要求。
+
+### ✨ 新增暴露的实体属性
+- 天气实体新增暴露原先未输出的实况字段：`wind_gust`（阵风风速，km/h）、`precip_type`（降水类型：雨/雪/无）、`precip_intensity`（降水强度）。
+- 每日预报条目新增 `precipitation_type`，与逐小时预报保持一致。
+- 天气实体属性新增 14 个天文/月相时间字段（均为本地时间 HH:MM）：`sunrise`（日出）、`sunset`（日落）、`astronomical_dawn`（天文晨光）、`nautical_dawn`（航海晨光）、`civil_dawn`（民用晨光）、`astronomical_dusk`（天文暮光）、`nautical_dusk`（航海暮光）、`civil_dusk`（民用暮光）、`solar_noon`（正午太阳时）、`solar_midnight`（子夜太阳时）、`moonrise`（月出）、`moonset`（月落）、`moon_transit`（月上中天）、`moon_underfoot`（月下中天）。
+- `current_temperature` 温度传感器新增暴露 `temp_avg`（日均温）。
+
+### 🌐 翻译
+- 为全部 12 种语言新增上述新字段的本地化名称键。
+
 ### 🛠 [1.2.0-beta.3] - 2026-08-19
 
 ### 🐛 问题修复
