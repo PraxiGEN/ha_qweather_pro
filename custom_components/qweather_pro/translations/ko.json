@@ -357,7 +357,15 @@
             "name": "돌풍 풍속"
           },
           "precip_type": {
-            "name": "강수 유형"
+            "name": "강수 유형",
+            "state": {
+              "rain": "비",
+              "snow": "눈",
+              "ice": "얼음",
+              "mixed": "혼합",
+              "none": "없음",
+              "unknown": "알 수 없음"
+            }
           },
           "precip_intensity": {
             "name": "강수 강도"

@@ -357,7 +357,15 @@
             "name": "Velocidade do vento em rajadas"
           },
           "precip_type": {
-            "name": "Tipo de precipitação"
+            "name": "Tipo de precipitação",
+            "state": {
+              "rain": "Chuva",
+              "snow": "Neve",
+              "ice": "Gelo",
+              "mixed": "Misto",
+              "none": "Nenhuma",
+              "unknown": "Desconhecido"
+            }
           },
           "precip_intensity": {
             "name": "Intensidade de precipitação"

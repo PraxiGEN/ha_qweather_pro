@@ -357,7 +357,15 @@
             "name": "突風の風速"
           },
           "precip_type": {
-            "name": "降水の種類"
+            "name": "降水の種類",
+            "state": {
+              "rain": "雨",
+              "snow": "雪",
+              "ice": "氷",
+              "mixed": "混合",
+              "none": "なし",
+              "unknown": "不明"
+            }
           },
           "precip_intensity": {
             "name": "降水強度"

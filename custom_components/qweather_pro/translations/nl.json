@@ -357,7 +357,15 @@
             "name": "Windstoten snelheid"
           },
           "precip_type": {
-            "name": "Neerslagtype"
+            "name": "Neerslagtype",
+            "state": {
+              "rain": "Regen",
+              "snow": "Sneeuw",
+              "ice": "IJs",
+              "mixed": "Gemengd",
+              "none": "Geen",
+              "unknown": "Onbekend"
+            }
           },
           "precip_intensity": {
             "name": "Neerslagintensiteit"

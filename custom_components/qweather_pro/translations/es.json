@@ -357,7 +357,15 @@
             "name": "Velocidad del viento por ráfagas"
           },
           "precip_type": {
-            "name": "Tipo de precipitación"
+            "name": "Tipo de precipitación",
+            "state": {
+              "rain": "Lluvia",
+              "snow": "Nieve",
+              "ice": "Hielo",
+              "mixed": "Mixto",
+              "none": "Ninguna",
+              "unknown": "Desconocido"
+            }
           },
           "precip_intensity": {
             "name": "Intensidad de precipitación"
