@@ -5,7 +5,8 @@
   const Lit = window.LitElement || Object.getPrototypeOf(customElements.get("ha-card"));
   const html = Lit.prototype.html;
   const css = Lit.prototype.css;
-  const I18N = window.QW_I18N;
+  // 动态读取：i18n 为独立文件、加载时序不固定，一次性捕获会导致晚到时回退成翻译键甚至报错
+  const getI18N = () => window.QW_I18N || {};
   const stripUnit = (v) => (v || "").toString().replace(/[^\d.-]/g, "");
 
   // 富数据缓存（按 entity_id），避免 more-info 多次开关/重渲染重复请求 get_weather
@@ -25,16 +26,16 @@
 
     _detectLang(hass) {
       const lang = hass.selectedLanguage || hass.language || "en";
-      this._lang = I18N[lang] ? lang : "en";
+      this._lang = getI18N()[lang] ? lang : "en";
     }
 
     _t(k) {
       // 支持点分键路径 (如 "wd.sw")，同时保持扁平键向后兼容
       const parts = String(k).split(".");
-      let s = I18N[this._lang] || {};
+      let s = getI18N()[this._lang] || {};
       for (const p of parts) s = s && s[p];
       if (s != null && typeof s !== "object") return s;
-      s = I18N.en || {};
+      s = getI18N().en || {};
       for (const p of parts) s = s && s[p];
       return s != null && typeof s !== "object" ? s : k;
     }
