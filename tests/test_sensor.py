@@ -110,6 +110,7 @@ def test_current_temperature_unknown_without_now(mock_coordinator, mock_config_e
 
 def test_current_humidity(mock_coordinator, mock_config_entry, sensor_data):
     sensor_data["now"]["humidity"] = 57
+    mock_coordinator.data = sensor_data
     entity = QWeatherSensor(mock_coordinator, mock_config_entry, _sensor("current_humidity"))
     assert entity.native_value == 57
 
