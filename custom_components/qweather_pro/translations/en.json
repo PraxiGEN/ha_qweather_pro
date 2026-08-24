@@ -360,7 +360,15 @@
             "name": "Gust Wind Speed"
           },
           "precip_type": {
-            "name": "Precipitation Type"
+            "name": "Precipitation Type",
+            "state": {
+              "rain": "Rain",
+              "snow": "Snow",
+              "ice": "Ice",
+              "mixed": "Mixed",
+              "none": "None",
+              "unknown": "Unknown"
+            }
           },
           "precip_intensity": {
             "name": "Precipitation Intensity"

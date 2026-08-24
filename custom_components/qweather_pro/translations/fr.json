@@ -360,7 +360,15 @@
             "name": "Vitesse du vent en rafales"
           },
           "precip_type": {
-            "name": "Type de précipitation"
+            "name": "Type de précipitation",
+            "state": {
+              "rain": "Pluie",
+              "snow": "Neige",
+              "ice": "Glace",
+              "mixed": "Mixte",
+              "none": "Aucune",
+              "unknown": "Inconnu"
+            }
           },
           "precip_intensity": {
             "name": "Intensité des précipitations"

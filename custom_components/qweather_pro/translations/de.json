@@ -360,7 +360,15 @@
             "name": "Böen-Windgeschwindigkeit"
           },
           "precip_type": {
-            "name": "Niederschlagsart"
+            "name": "Niederschlagsart",
+            "state": {
+              "rain": "Regen",
+              "snow": "Schnee",
+              "ice": "Eis",
+              "mixed": "Gemischt",
+              "none": "Keiner",
+              "unknown": "Unbekannt"
+            }
           },
           "precip_intensity": {
             "name": "Niederschlagsintensität"

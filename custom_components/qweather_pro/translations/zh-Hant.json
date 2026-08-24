@@ -360,7 +360,15 @@
             "name": "陣風風速"
           },
           "precip_type": {
-            "name": "降水類型"
+            "name": "降水類型",
+            "state": {
+              "rain": "雨",
+              "snow": "雪",
+              "ice": "冰粒或凍雨",
+              "mixed": "混合降水",
+              "none": "無降水",
+              "unknown": "未知"
+            }
           },
           "precip_intensity": {
             "name": "降水強度"

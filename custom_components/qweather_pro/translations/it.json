@@ -360,7 +360,15 @@
             "name": "Velocità del vento a raffica"
           },
           "precip_type": {
-            "name": "Tipo di precipitazione"
+            "name": "Tipo di precipitazione",
+            "state": {
+              "rain": "Pioggia",
+              "snow": "Neve",
+              "ice": "Ghiaccio",
+              "mixed": "Misto",
+              "none": "Nessuna",
+              "unknown": "Sconosciuto"
+            }
           },
           "precip_intensity": {
             "name": "Intensità delle precipitazioni"
