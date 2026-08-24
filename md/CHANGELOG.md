@@ -1,5 +1,19 @@
 ## Release Notes: QWeather Pro 2026
 
+### 🛠 [1.2.0-beta.5] - 2026-08-24
+
+### ✨ New Features
+- Added a new `current_humidity` sensor entity reporting the current relative humidity (%).
+
+### 🐛 Bug Fixes
+- Translated the `precip_type` state values (rain / snow / ice / mixed / none / unknown) in all 12 languages, so the weather entity's precipitation-type attribute now shows a localized label instead of the raw code.
+- Fixed the custom card occasionally rendering raw translation keys instead of localized text. The card now reads the i18n bundle dynamically and repaints once ready, removing the load-order race.
+- Fixed the chart reset button switching the X axis to numeric indices (0,1,2…) instead of weekday/time labels; reset now rebuilds the chart.
+- Fixed the forecast chart not filling the card width with few data points by switching to a numeric axis so data always spans edge to edge.
+
+### 🔧 Card / Chart Enhancements
+- Hourly forecast chart now supports mouse-wheel zoom and left/right pan, with a default 10-hour window and a custom reset button.
+
 ### 🛠 [1.2.0-beta.4] - 2026-08-23
 
 ### 🐛 Bug Fixes

@@ -300,6 +300,9 @@
             "name": "Weer van de komende nacht"
           }
         }
+      },
+      "current_humidity": {
+        "name": "Huidige luchtvochtigheid"
       }
     },
     "weather": {

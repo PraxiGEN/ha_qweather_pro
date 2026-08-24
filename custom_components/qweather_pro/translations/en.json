@@ -300,6 +300,9 @@
             }
           }
         }
+      },
+      "current_humidity": {
+        "name": "Current Humidity"
       }
     },
     "weather": {

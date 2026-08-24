@@ -300,6 +300,9 @@
             "name": "翌晩の天気"
           }
         }
+      },
+      "current_humidity": {
+        "name": "現在の湿度"
       }
     },
     "weather": {

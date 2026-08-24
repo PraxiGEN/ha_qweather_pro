@@ -300,6 +300,9 @@
             "name": "Wetter in der kommenden Nacht"
           }
         }
+      },
+      "current_humidity": {
+        "name": "Aktuelle Luftfeuchtigkeit"
       }
     },
     "weather": {
