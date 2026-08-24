@@ -300,6 +300,9 @@
             "name": "다음 날 밤 날씨"
           }
         }
+      },
+      "current_humidity": {
+        "name": "현재 습도"
       }
     },
     "weather": {

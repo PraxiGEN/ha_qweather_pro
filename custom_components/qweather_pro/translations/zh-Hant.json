@@ -300,6 +300,9 @@
             "name": "未來天氣狀況"
           }
         }
+      },
+      "current_humidity": {
+        "name": "即時濕度"
       }
     },
     "weather": {

@@ -300,6 +300,9 @@
             }
           }
         }
+      },
+      "current_humidity": {
+        "name": "实时湿度"
       }
     },
     "weather": {

@@ -300,6 +300,9 @@
             "name": "Tempo da próxima noite"
           }
         }
+      },
+      "current_humidity": {
+        "name": "Umidade atual"
       }
     },
     "weather": {

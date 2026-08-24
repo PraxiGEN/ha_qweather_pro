@@ -1,4 +1,4 @@
-"""sensor 平台单测：5 个传感器的 native_value 与扩展属性.
+"""sensor 平台单测：6 个传感器的 native_value 与扩展属性.
 
 依赖 cryptography/aiohttp，本地无 homeassistant 时自动 skip，由 CI 跑。
 运行：``pytest tests/test_sensor.py -v``。
@@ -60,11 +60,12 @@ def _sensor(key: str):
     return next(d for d in SENSOR_DESCRIPTIONS if d.key == key)
 
 
-def test_all_five_sensors_defined():
+def test_all_six_sensors_defined():
     keys = {d.key for d in SENSOR_DESCRIPTIONS}
     assert keys == {
         "aqi",
         "current_temperature",
+        "current_humidity",
         "warning_info",
         "precipitation_summary",
         "weather_summary",
@@ -105,6 +106,19 @@ def test_current_temperature_unknown_without_now(mock_coordinator, mock_config_e
     entity = QWeatherSensor(mock_coordinator, mock_config_entry, _sensor("current_temperature"))
     assert entity.native_value is None
     assert entity.extra_state_attributes["temp_range"] == "22°C ~ 30°C"
+
+
+def test_current_humidity(mock_coordinator, mock_config_entry, sensor_data):
+    sensor_data["now"]["humidity"] = 57
+    mock_coordinator.data = sensor_data
+    entity = QWeatherSensor(mock_coordinator, mock_config_entry, _sensor("current_humidity"))
+    assert entity.native_value == 57
+
+
+def test_current_humidity_unknown_without_now(mock_coordinator, mock_config_entry):
+    mock_coordinator.data = {}
+    entity = QWeatherSensor(mock_coordinator, mock_config_entry, _sensor("current_humidity"))
+    assert entity.native_value is None
 
 
 def test_warning_info(mock_coordinator, mock_config_entry, sensor_data):
