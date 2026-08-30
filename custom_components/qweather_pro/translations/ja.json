@@ -110,7 +110,8 @@
           "update_interval": "更新間隔（分）",
           "dailysteps": "日次予報（日数 3-10）",
           "hourlysteps": "時間予報（24–168 時間）",
-          "custom_ui": "カスタム UI サポートを有効化"
+          "custom_ui": "カスタム UI サポートを有効化",
+                "custom_more_info": "ネイティブ詳細カードを置換"
         }
       }
     }

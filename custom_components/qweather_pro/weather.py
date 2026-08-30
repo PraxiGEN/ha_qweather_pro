@@ -20,7 +20,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import QWeatherConfigEntry
-from .const import ATTRIBUTION, CONF_CUSTOM_UI
+from .const import ATTRIBUTION, CONF_CUSTOM_UI, CONF_CUSTOM_MORE_INFO
 from .coordinator import QWeatherUpdateCoordinator
 
 # HA 自 2024.4 起重构天气预报系统，WeatherEntity.async_update_listeners 改为必填
@@ -331,7 +331,8 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
             attrs["precip_probability"] = hourly[0].get("precipitation_probability")
 
         # ===== [卡片兼容] 自定义 UI 触发标志 (Lovelace 卡片) =====
-        if self.coordinator.entry.options.get(CONF_CUSTOM_UI):
+        # 仅当「覆盖原生详情弹窗」开关开启时，才让 HA 用自定义 more-info 卡片替换原生弹窗
+        if self.coordinator.entry.options.get(CONF_CUSTOM_MORE_INFO):
             attrs["custom_ui_more_info"] = "qweather-pro-more-info"
 
         return attrs

@@ -110,7 +110,8 @@
           "update_interval": "Aktualisierungsintervall (Minuten)",
           "dailysteps": "Tägliche Vorhersagetage (3-10)",
           "hourlysteps": "Stündliche Vorhersagestunden (24–168)",
-          "custom_ui": "Unterstützung für benutzerdefinierte UI aktivieren"
+          "custom_ui": "Unterstützung für benutzerdefinierte UI aktivieren",
+                "custom_more_info": "Native Detail-Karte überschreiben"
         }
       }
     }

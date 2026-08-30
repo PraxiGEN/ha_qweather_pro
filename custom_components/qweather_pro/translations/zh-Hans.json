@@ -110,7 +110,8 @@
           "update_interval": "数据更新频率 (分钟)",
           "dailysteps": "逐日预报天数 (3-10)",
           "hourlysteps": "逐小时预报小时数 (24-168)",
-          "custom_ui": "启用自定义前端 UI 支持"
+          "custom_ui": "启用自定义前端 UI 支持",
+                "custom_more_info": "覆盖原生详情弹窗"
         }
       }
     }

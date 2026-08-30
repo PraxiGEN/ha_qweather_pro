@@ -16,7 +16,7 @@ from homeassistant.helpers.issue_registry import (
     IssueSeverity,
 )
 
-from .const import DOMAIN, PLATFORMS, LOGGER, CONF_USE_TOKEN
+from .const import DOMAIN, PLATFORMS, LOGGER, CONF_USE_TOKEN, CONF_CUSTOM_UI, CONF_CUSTOM_MORE_INFO
 from .coordinator import QWeatherUpdateCoordinator
 from .services import async_setup_services
 
@@ -25,7 +25,6 @@ type QWeatherConfigEntry = ConfigEntry[QWeatherUpdateCoordinator]
 
 # 本集成只能通过 UI 配置流添加，YAML 无配置项（hassfest CONFIG_SCHEMA 规范）
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
-
 # Repairs 条目 ID：引导仍用 API KEY 的用户迁移 JWT
 ISSUE_API_KEY_QUOTA = "api_key_quota"
 
@@ -40,22 +39,29 @@ async def async_setup_entry(hass: HomeAssistant, entry: QWeatherConfigEntry) -> 
     integration = await async_get_integration(hass, DOMAIN)
     version = str(integration.version) if integration.version else "1.0.0"
 
-    if f"{DOMAIN}_assets" not in hass.data:
-        local_path = hass.config.path("custom_components", DOMAIN, "www")
-        if os.path.exists(local_path):
-            await hass.http.async_register_static_paths([
-                StaticPathConfig("/qweather_pro-local", local_path, False)
-            ])
-            assets = [
-                f"/qweather_pro-local/qweather-pro-card.js?v={version}",
-                f"/qweather_pro-local/qweather-pro-more-info.js?v={version}",
-                f"/qweather_pro-local/qweather-pro-i18n.js?v={version}"
-            ]
-            for url in assets:
-                frontend.add_extra_js_url(hass, url)
-                
-            hass.data[f"{DOMAIN}_assets"] = True
-            LOGGER.info("QWeather Lovelace 资源注册成功 (v%s)", version)
+    local_path = hass.config.path("custom_components", DOMAIN, "www")
+    path_exists = await hass.async_add_executor_job(os.path.exists, local_path)
+
+    # 静态资源路径只注册一次（重复注册会抛错），用独立标志，避免被「资源注入」
+    if path_exists and f"{DOMAIN}_static_path" not in hass.data:
+        await hass.http.async_register_static_paths([
+            StaticPathConfig("/qweather_pro-local", local_path, False)
+        ])
+        hass.data[f"{DOMAIN}_static_path"] = True
+    # 按开关计算需要注入的前端 JS；add_extra_js_url 幂等（同 URL 不重复添加），
+    names: list[str] = []
+    if entry.options.get(CONF_CUSTOM_UI):
+        names += ["qweather-pro-card.js", "qweather-pro-i18n.js"]
+    if entry.options.get(CONF_CUSTOM_MORE_INFO):
+        names += ["qweather-pro-more-info.js", "qweather-pro-i18n.js"]
+    if path_exists and names:
+        # 注册资源 URL 携带集成版本号：升版后 URL 随之变化，自然绕开浏览器旧缓存
+        for name in dict.fromkeys(names):
+            frontend.add_extra_js_url(hass, f"/qweather_pro-local/{name}?v={version}")
+        LOGGER.info("QWeather Lovelace 资源已注册: %s", ", ".join(dict.fromkeys(names)))
+    elif not names:
+        # 两个开关均未启用：不向全局前端注入资源（HACS 合规，避免无条件污染所有前端）
+        LOGGER.debug("自定义 UI / 原生详情覆盖均未启用，跳过 Lovelace 资源注册")
 
     coordinator = QWeatherUpdateCoordinator(hass, entry, version)
     await coordinator.async_load_cache()

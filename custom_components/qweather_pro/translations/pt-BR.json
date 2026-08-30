@@ -110,7 +110,8 @@
           "update_interval": "Intervalo de atualização (minutos)",
           "dailysteps": "Dias de previsão diária (3-10)",
           "hourlysteps": "Horas de previsão por hora (24–168)",
-          "custom_ui": "Ativar suporte para UI personalizada"
+          "custom_ui": "Ativar suporte para UI personalizada",
+                "custom_more_info": "Substituir o popup de detalhes nativo"
         }
       }
     }

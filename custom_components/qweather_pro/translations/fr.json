@@ -110,7 +110,8 @@
           "update_interval": "Intervalle de mise à jour (minutes)",
           "dailysteps": "Jours de prévision quotidienne (3-10)",
           "hourlysteps": "Heures de prévision horaire (24–168)",
-          "custom_ui": "Activer la prise en charge de l’interface personnalisée"
+          "custom_ui": "Activer la prise en charge de l’interface personnalisée",
+                "custom_more_info": "Remplacer la fenêtre de détails native"
         }
       }
     }
