@@ -20,7 +20,7 @@ Rebuilt using the latest 2026 development standards, delivering not only highly 
 
 - ⚡ **Extreme Performance**
   - **Backend:** Powered by DataUpdateCoordinator with concurrent requests and smart caching to minimize API usage.
-  - **Frontend:** Drops the heavy ApexCharts bundle; renders temperature trend curves with native SVG for fast, dependency-free charts.
+  - **Frontend:** Renders temperature trend curves with native SVG for fast, dependency-free charts.
 
 - 📊 **Deep Data**
   - **Minutely precipitation:** Native API-driven minute-level precipitation summary (e.g., “No precipitation in the next two hours”).
