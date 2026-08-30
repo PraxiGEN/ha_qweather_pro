@@ -25,9 +25,9 @@
 
 ### 📈 前端展示
 
-本集成会自动注册前端资源，您只需在 Lovelace 仪表盘添加卡片：
+前端资源仅在启用时注册。请在集成页面的“选项”中开启“启用自定义前端 UI 支持”（custom_ui）以注册仪表盘卡片，开启“覆盖原生详情弹窗”（custom_more_info）以替换原生弹窗。开启后请重启 Home Assistant。您只需在 Lovelace 仪表盘添加卡片：
 ```yaml
-type: custom:qweather-card
+type: custom:qweather-pro-card
 entity: weather.qweather_pro_地_区_weather # 默认实体 ID
 ```
 
@@ -46,8 +46,9 @@ entity: weather.qweather_pro_地_区_weather # 默认实体 ID
 
 | **实体 ID** | **名称** | **说明** |
 |-------------|----------|----------|
-| `sensor.qweather_aqi` | 空气质量 | 提供 AQI 数值与等级（如：优 / 良 / 轻度污染），属性包含 PM2.5、PM10、CO、NO₂、O₃ 等详细污染物数据 |
-| `sensor.qweather_precipitation_summary` | 降水简报 | 分钟级降水趋势摘要，例如“未来两小时无降水” |
-| `sensor.qweather_weather_summary` | 天气概况 | 未来 6 小时天气趋势总结，例如“未来 6 小时：扬沙” |
-| `sensor.qweather_current_temperature` | 实时温度 | 数值型温度传感器（单位 °C，`device_class: temperature`），支持长期统计与历史曲线。属性包含 `temp_range`（今日温度范围）、`max_temp`、`min_temp`、`feels_like`（体感温度）、`dew_point`（露点温度） |
-| `sensor.qweather_warning_count` | 气象预警数量 | 当前生效中的气象预警数量（如台风、暴雨、大风等） |
+| `sensor.qweather_pro_aqi` | 空气质量 | 提供 AQI 数值与等级（如：优 / 良 / 轻度污染），属性包含 PM2.5、PM10、CO、NO₂、O₃ 等详细污染物数据 |
+| `sensor.qweather_pro_precipitation_summary` | 降水简报 | 分钟级降水趋势摘要，例如“未来两小时无降水” |
+| `sensor.qweather_pro_weather_summary` | 天气概况 | 未来 6 小时天气趋势总结，例如“未来 6 小时：扬沙” |
+| `sensor.qweather_pro_current_temperature` | 实时温度 | 数值型温度传感器（单位 °C，`device_class: temperature`），支持长期统计与历史曲线。属性包含 `temp_range`（今日温度范围）、`max_temp`、`min_temp`、`feels_like`（体感温度）、`dew_point`（露点温度） |
+| `sensor.qweather_pro_current_humidity` | 实时湿度 | 数值型湿度传感器（单位 %，`device_class: humidity`），提供当前环境相对湿度 |
+| `sensor.qweather_pro_warning_count` | 气象预警数量 | 当前生效中的气象预警数量（如台风、暴雨、大风等） |
