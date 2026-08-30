@@ -110,7 +110,8 @@
           "update_interval": "更新間隔（分鐘）",
           "dailysteps": "每日預報天數（3-10）",
           "hourlysteps": "每小時預報時數（24–168）",
-          "custom_ui": "啟用自訂 UI 支援"
+          "custom_ui": "啟用自訂 UI 支援",
+                "custom_more_info": "覆蓋原生詳情彈窗"
         }
       }
     }

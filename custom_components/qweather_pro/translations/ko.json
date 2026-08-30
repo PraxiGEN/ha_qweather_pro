@@ -110,7 +110,8 @@
           "update_interval": "업데이트 간격(분)",
           "dailysteps": "일일 예보 일수(3-10)",
           "hourlysteps": "시간별 예보 시간(24–168)",
-          "custom_ui": "사용자 정의 UI 지원 활성화"
+          "custom_ui": "사용자 정의 UI 지원 활성화",
+                "custom_more_info": "기본 상세 팝업 대체"
         }
       }
     }

@@ -110,7 +110,8 @@
           "update_interval": "Update-interval (minuten)",
           "dailysteps": "Dagen voor dagelijkse voorspelling (3-10)",
           "hourlysteps": "Uren voor uurlijkse voorspelling (24–168)",
-          "custom_ui": "Ondersteuning voor aangepaste UI inschakelen"
+          "custom_ui": "Ondersteuning voor aangepaste UI inschakelen",
+                "custom_more_info": "Systeemeigen detailkaart overschrijven"
         }
       }
     }

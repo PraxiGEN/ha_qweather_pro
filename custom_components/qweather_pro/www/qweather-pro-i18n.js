@@ -50,7 +50,7 @@ window.QW_I18N = {
     aqi_level:{good:"Sehr gut",moderate:"Gut",unhealthy:"Mittelmäßig",very_unhealthy:"Schlecht",hazardous:"Gefährlich"},
     temp_change_prefix:"Morgen",
     now_is:"Jetzt",
-    editor:{name:"Name",entity:"Wetterentität auswählen",weather_briefing_entity:"Wetterbericht-Entität auswählen",show_daily:"Standardmäßig Tagesvorhersage öffnen",show_hourly:"Standardmäßig Stundenvorhersage öffnen",show_warnings:"Warnungen anzeigen"}
+    editor:{name:"Name",entity:"Wetterentität auswählen",weather_briefing_entity:"Wetterbericht-Entität auswählen",show_daily:"Standardmäßig Tagesvorhersage öffnen",show_hourly:"Standardmäßig Stundenvorhersage öffnen",show_warnings:"Warnungen anzeigen",forecast_style:"Stil",forecast_style_list:"Liste",forecast_style_curve:"Kurve"}
   },
 
   /* -------------------- English -------------------- */
@@ -103,7 +103,7 @@ window.QW_I18N = {
     aqi_level:{good:"Excellent",moderate:"Good",unhealthy:"Moderate",very_unhealthy:"Poor",hazardous:"Hazardous"},
     temp_change_prefix:"Tomorrow",
     now_is:"Now",
-    editor:{name:"Name",entity:"Select Weather Entity",weather_briefing_entity:"Select Weather Briefing Entity",show_daily:"Default expand daily forecast",show_hourly:"Default expand hourly forecast",show_warnings:"Show warnings messages"}
+    editor:{name:"Name",entity:"Select Weather Entity",weather_briefing_entity:"Select Weather Briefing Entity",show_daily:"Default expand daily forecast",show_hourly:"Default expand hourly forecast",show_warnings:"Show warnings messages",forecast_style:"Style",forecast_style_list:"List",forecast_style_curve:"Curve"}
   },
 
   /* -------------------- Spanish -------------------- */
@@ -156,7 +156,7 @@ window.QW_I18N = {
     aqi_level:{good:"Excelente",moderate:"Buena",unhealthy:"Moderada",very_unhealthy:"Mala",hazardous:"Peligrosa"},
     temp_change_prefix:"Mañana",
     now_is:"Ahora",
-    editor:{name:"Nombre",entity:"Seleccionar entidad meteorológica",weather_briefing_entity:"Seleccionar entidad de informe meteorológico",show_daily:"Expandir pronóstico diario por defecto",show_hourly:"Expandir pronóstico por hora por defecto",show_warnings:"Mostrar avisos"}
+    editor:{name:"Nombre",entity:"Seleccionar entidad meteorológica",weather_briefing_entity:"Seleccionar entidad de informe meteorológico",show_daily:"Expandir pronóstico diario por defecto",show_hourly:"Expandir pronóstico por hora por defecto",show_warnings:"Mostrar avisos",forecast_style:"Estilo",forecast_style_list:"Lista",forecast_style_curve:"Curva"}
   },
 
   /* -------------------- French -------------------- */
@@ -209,7 +209,7 @@ window.QW_I18N = {
     aqi_level:{good:"Excellent",moderate:"Bon",unhealthy:"Moyen",very_unhealthy:"Mauvais",hazardous:"Dangereux"},
     temp_change_prefix:"Demain",
     now_is:"Maintenant",
-    editor:{name:"Nom",entity:"Sélectionner l’entité météo",weather_briefing_entity:"Sélectionner l’entité du bulletin météo",show_daily:"Développer les prévisions quotidiennes par défaut",show_hourly:"Développer les prévisions horaires par défaut",show_warnings:"Afficher les avvis"}
+    editor:{name:"Nom",entity:"Sélectionner l’entité météo",weather_briefing_entity:"Sélectionner l’entité du bulletin météo",show_daily:"Développer les prévisions quotidiennes par défaut",show_hourly:"Développer les prévisions horaires par défaut",show_warnings:"Afficher les avvis",forecast_style:"Style",forecast_style_list:"Liste",forecast_style_curve:"Courbe"}
   },
 
   /* -------------------- Italian -------------------- */
@@ -262,7 +262,7 @@ window.QW_I18N = {
     aqi_level:{good:"Eccellente",moderate:"Buona",unhealthy:"Moderata",very_unhealthy:"Scarsa",hazardous:"Pericolosa"},
     temp_change_prefix:"Domani",
     now_is:"Adesso",
-    editor:{name:"Nome",entity:"Seleziona entità meteo",weather_briefing_entity:"Seleziona entità del bollettino meteo",show_daily:"Espandi previsioni giornaliere di default",show_hourly:"Espandi previsioni orarie di default",show_warnings:"Mostra avvisi"}
+    editor:{name:"Nome",entity:"Seleziona entità meteo",weather_briefing_entity:"Seleziona entità del bollettino meteo",show_daily:"Espandi previsioni giornaliere di default",show_hourly:"Espandi previsioni orarie di default",show_warnings:"Mostra avvisi",forecast_style:"Stile",forecast_style_list:"Elenco",forecast_style_curve:"Curva"}
   },
 
   /* -------------------- Japanese -------------------- */
@@ -315,7 +315,7 @@ window.QW_I18N = {
     aqi_level:{good:"非常に良い",moderate:"良い",unhealthy:"普通",very_unhealthy:"悪い",hazardous:"危険"},
     temp_change_prefix:"明日",
     now_is:"現在",
-    editor:{name:"名前",entity:"天気エンティティを選択",weather_briefing_entity:"天気概要エンティティを選択",show_daily:"日別予報をデフォルトで展開",show_hourly:"時間別予報をデフォルトで展開",show_warnings:"警告情報を表示"}
+    editor:{name:"名前",entity:"天気エンティティを選択",weather_briefing_entity:"天気概要エンティティを選択",show_daily:"日別予報をデフォルトで展開",show_hourly:"時間別予報をデフォルトで展開",show_warnings:"警告情報を表示",forecast_style:"スタイル",forecast_style_list:"リスト",forecast_style_curve:"曲線"}
   },
 
   /* -------------------- Korean -------------------- */
@@ -368,7 +368,7 @@ window.QW_I18N = {
     aqi_level:{good:"매우 좋음",moderate:"좋음",unhealthy:"보통",very_unhealthy:"나쁨",hazardous:"위험"},
     temp_change_prefix:"내일",
     now_is:"현재",
-    editor:{name:"이름",entity:"날씨 엔티티 선택",weather_briefing_entity:"날씨 요약 엔티티 선택",show_daily:"기본값으로 일일 예보 펼치기",show_hourly:"기본값으로 시간별 예보 펼치기",show_warnings:"경고 정보 표시"}
+    editor:{name:"이름",entity:"날씨 엔티티 선택",weather_briefing_entity:"날씨 요약 엔티티 선택",show_daily:"기본값으로 일일 예보 펼치기",show_hourly:"기본값으로 시간별 예보 펼치기",show_warnings:"경고 정보 표시",forecast_style:"스타일",forecast_style_list:"목록",forecast_style_curve:"곡선"}
   },
 
   /* -------------------- Dutch -------------------- */
@@ -421,7 +421,7 @@ window.QW_I18N = {
     aqi_level:{good:"Uitstekend",moderate:"Goed",unhealthy:"Matig",very_unhealthy:"Slecht",hazardous:"Gevaarlijk"},
     temp_change_prefix:"Morgen",
     now_is:"Nu",
-    editor:{name:"Naam",entity:"Weerentiteit selecteren",weather_briefing_entity:"Weeroverzicht-entiteit selecteren",show_daily:"Dagelijkse voorspelling standaard uitklappen",show_hourly:"Uurlijkse voorspelling standaard uitklappen",show_warnings:"Toon waarschuwingen"}
+    editor:{name:"Naam",entity:"Weerentiteit selecteren",weather_briefing_entity:"Weeroverzicht-entiteit selecteren",show_daily:"Dagelijkse voorspelling standaard uitklappen",show_hourly:"Uurlijkse voorspelling standaard uitklappen",show_warnings:"Toon waarschuwingen",forecast_style:"Stijl",forecast_style_list:"Lijst",forecast_style_curve:"Curve"}
   },
 
   /* -------------------- Portuguese (Brazil) -------------------- */
@@ -474,7 +474,7 @@ window.QW_I18N = {
     aqi_level:{good:"Excelente",moderate:"Boa",unhealthy:"Moderada",very_unhealthy:"Ruim",hazardous:"Perigosa"},
     temp_change_prefix:"Amanhã",
     now_is:"Agora",
-    editor:{name:"Nome",entity:"Selecionar entidade meteorológica",weather_briefing_entity:"Selecionar entidade de boletim meteorológico",show_daily:"Expandir previsão diária por padrão",show_hourly:"Expandir previsão por hora por padrão",show_warnings:"Mostrar informações de aviso"}
+    editor:{name:"Nome",entity:"Selecionar entidade meteorológica",weather_briefing_entity:"Selecionar entidade de boletim meteorológico",show_daily:"Expandir previsão diária por padrão",show_hourly:"Expandir previsão por hora por padrão",show_warnings:"Mostrar informações de aviso",forecast_style:"Stijl",forecast_style_list:"Lijst",forecast_style_curve:"Curve"}
   },
 
   /* -------------------- Russian -------------------- */
@@ -527,7 +527,7 @@ window.QW_I18N = {
     aqi_level:{good:"Отличное",moderate:"Хорошее",unhealthy:"Среднее",very_unhealthy:"Плохое",hazardous:"Опасное"},
     temp_change_prefix:"Завтра",
     now_is:"Сейчас",
-    editor:{name:"Имя",entity:"Выбрать погодную сущность",weather_briefing_entity:"Выбрать сущность погодного обзора",show_daily:"Развернуть дневной прогноз по умолчанию",show_hourly:"Развернуть почасовой прогноз по умолчанию",show_warnings:"Показать предупреждения о предупреждениях"}
+    editor:{name:"Имя",entity:"Выбрать погодную сущность",weather_briefing_entity:"Выбрать сущность погодного обзора",show_daily:"Развернуть дневной прогноз по умолчанию",show_hourly:"Развернуть почасовой прогноз по умолчанию",show_warnings:"Показать предупреждения о предупреждениях",forecast_style:"Стиль",forecast_style_list:"Список",forecast_style_curve:"Кривая"}
   },
 
   /* -------------------- 简体中文 -------------------- */
@@ -580,7 +580,7 @@ window.QW_I18N = {
     aqi_level:{good:"空气很好",moderate:"空气不错",unhealthy:"空气一般",very_unhealthy:"空气很差",hazardous:"空气危险"},
     temp_change_prefix: "明天",
     now_is: "现在",
-    editor: {name: "名称",entity: "选择天气实体",weather_briefing_entity: "选择天气简报实体",show_daily: "默认展开每日预报",show_hourly: "默认展开每小时预报",show_warnings: "显示预警信息"}
+    editor: {name: "名称",entity: "选择天气实体",weather_briefing_entity: "选择天气简报实体",show_daily: "默认展开每日预报",show_hourly: "默认展开每小时预报",show_warnings: "显示预警信息",forecast_style:"样式",forecast_style_list:"列表",forecast_style_curve:"曲线"}
   },
       
   /* -------------------- 繁體中文 -------------------- */
@@ -633,6 +633,6 @@ window.QW_I18N = {
     aqi_level:{good:"空氣很好",moderate:"空氣不錯",unhealthy:"空氣一般",very_unhealthy:"空氣很差",hazardous:"空氣危險"},
     temp_change_prefix:"明天",
     now_is:"現在",
-    editor:{name:"名稱",entity:"選擇天氣實體",weather_briefing_entity:"選擇天氣簡報實體",show_daily:"預設展開每日預報",show_hourly:"預設展開每小時預報",show_warnings:"顯示預警信息"}
+    editor:{name:"名稱",entity:"選擇天氣實體",weather_briefing_entity:"選擇天氣簡報實體",show_daily:"預設展開每日預報",show_hourly:"預設展開每小時預報",show_warnings:"顯示預警信息",forecast_style:"樣式",forecast_style_list:"列表",forecast_style_curve:"曲線"}
   }
 };

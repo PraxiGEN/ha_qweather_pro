@@ -110,7 +110,8 @@
           "update_interval": "Update Interval (minutes)",
           "dailysteps": "Daily Forecast Days (3-10)",
           "hourlysteps": "Hourly Forecast Hours (24-168)",
-          "custom_ui": "Enable Custom UI Support"
+          "custom_ui": "Enable Custom UI Support",
+                "custom_more_info": "Replace native detail popup"
         }
       }
     }
