@@ -47,9 +47,9 @@ entity: weather.qweather_pro_地_区_weather # 默认实体 ID
 
 | **实体 ID** | **名称** | **说明** |
 |-------------|----------|----------|
-| `sensor.qweather_pro_aqi` | 空气质量 | 提供 AQI 数值与等级（如：优 / 良 / 轻度污染），属性包含 PM2.5、PM10、CO、NO₂、O₃ 等详细污染物数据 |
+| `sensor.qweather_pro_aqi` | 空气质量 | 状态为空气质量**等级文字**（如 优 / 良 / 轻度污染 / 中度污染）；属性含数值 `aqi_value`、等级 `aqi_level`、首要污染物 `primary_pollutant`、各污染物浓度（PM2.5、PM10、SO₂、NO₂、O₃、CO，带单位）及健康提示 `health_effect` / `health_advice` |
 | `sensor.qweather_pro_precipitation_summary` | 降水简报 | 分钟级降水趋势摘要，例如“未来两小时无降水” |
-| `sensor.qweather_pro_weather_summary` | 天气概况 | 未来 6 小时天气趋势总结，例如“未来 6 小时：扬沙” |
+| `sensor.qweather_pro_weather_summary` | 天气概况 | 状态为**今夜天气概况文字**（`tonight_text`，如“今夜多云”）；属性含完整智能概况 `weather_abstract`（时段、温度变化、当前气温、风力等） |
 | `sensor.qweather_pro_current_temperature` | 实时温度 | 数值型温度传感器（单位 °C，`device_class: temperature`），支持长期统计与历史曲线。属性包含 `temp_range`（今日温度范围）、`max_temp`、`min_temp`、`feels_like`（体感温度）、`dew_point`（露点温度） |
 | `sensor.qweather_pro_current_humidity` | 实时湿度 | 数值型湿度传感器（单位 %，`device_class: humidity`），提供当前环境相对湿度 |
-| `sensor.qweather_pro_warning_count` | 气象预警数量 | 当前生效中的气象预警数量（如台风、暴雨、大风等） |
+| `sensor.qweather_pro_warning_info` | 气象预警 | 状态为当前生效预警的**标题文字**（取首条预警的 `headline`，如“暴雨橙色预警”）；无预警时为 `without_warning`。属性含完整预警详情（id、发布单位、发布时间、类型、等级、颜色、正文、防御指引） |
