@@ -25,11 +25,11 @@ Go to the QWeather Console:
 
 ### 📈 Frontend Display
 
-The integration automatically registers frontend resources.  
+Frontend resources are registered only when enabled. Open the integration’s **Options** and turn on **“启用自定义前端 UI 支持”** (`custom_ui`) to register the dashboard card, and **“覆盖原生详情弹窗”** (`custom_more_info`) to replace the native popup. After enabling, restart Home Assistant.  
 You only need to add the card in your Lovelace dashboard:
 
 ```yaml
-type: custom:qweather-card
+type: custom:qweather-pro-card
 entity: weather.qweather_pro_area_weather  # Default entity ID
 
 ```
@@ -49,9 +49,10 @@ entity: weather.qweather_pro_area_weather  # Default entity ID
 
 | **Entity ID** | **Name** | **Description** |
 |---------------|----------|-----------------|
-| `sensor.qweather_aqi` | Air Quality | Provides AQI value and level (e.g., Excellent / Good / Light Pollution). Attributes include PM2.5, PM10, CO, NO₂, O₃, and other pollutant details |
-| `sensor.qweather_precipitation_summary` | Precipitation Summary | Minute‑level precipitation trend summary, e.g., “No precipitation in the next two hours” |
-| `sensor.qweather_weather_summary` | Weather Summary | 6‑hour weather trend summary, e.g., “Next 6 hours: blowing sand” |
-| `sensor.qweather_current_temperature` | Real-time Temperature | Numeric temperature sensor (unit °C, `device_class: temperature`). Supports long-term statistics and history graphs. Attributes include `temp_range` (today’s high/low), `max_temp`, `min_temp`, `feels_like`, and `dew_point` |
-| `sensor.qweather_warning_count` | Weather Warning Count | Number of active weather alerts (e.g., typhoon, heavy rain, strong wind) |
+| `sensor.qweather_pro_aqi` | Air Quality | Provides AQI value and level (e.g., Excellent / Good / Light Pollution). Attributes include PM2.5, PM10, CO, NO₂, O₃, and other pollutant details |
+| `sensor.qweather_pro_precipitation_summary` | Precipitation Summary | Minute‑level precipitation trend summary, e.g., “No precipitation in the next two hours” |
+| `sensor.qweather_pro_weather_summary` | Weather Summary | 6‑hour weather trend summary, e.g., “Next 6 hours: blowing sand” |
+| `sensor.qweather_pro_current_temperature` | Real-time Temperature | Numeric temperature sensor (unit °C, `device_class: temperature`). Supports long-term statistics and history graphs. Attributes include `temp_range` (today’s high/low), `max_temp`, `min_temp`, `feels_like`, and `dew_point` |
+| `sensor.qweather_pro_current_humidity` | Real-time Humidity | Numeric relative humidity sensor (unit %, `device_class: humidity`). Provides current ambient humidity |
+| `sensor.qweather_pro_warning_count` | Weather Warning Count | Number of active weather alerts (e.g., typhoon, heavy rain, strong wind) |
 
