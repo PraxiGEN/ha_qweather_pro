@@ -47,6 +47,7 @@ entity: weather.qweather_pro_地_区_weather # 默认实体 ID
 
 | **实体 ID** | **名称** | **说明** |
 |-------------|----------|----------|
+| `weather.qweather_pro_weather` | 天气 | 主天气实体。状态为当前天气状况与温度。支持 每日预报 / 逐小时预报 / 昼夜两次预报。属性含 `qweather_icon`、`update_time`、`condition_cn`、体感 `feels_like`、湿度、风向/风力/阵风（`wind_dir`/`wind_scale`/`wind_gust`）、降水（`precip`/`precip_type`/`precip_intensity`）、气压、能见度、露点、云量、日出日落与月相、昼夜风力与文字（`wind_scale_day`/`wind_dir_day`/`text_night`/`icon_night`）、`minutely_summary`、降水概率 `precip_probability`；开启「覆盖原生详情弹窗」时额外含 `custom_ui_more_info`。 |
 | `sensor.qweather_pro_aqi` | 空气质量 | 状态为空气质量**等级文字**（如 优 / 良 / 轻度污染 / 中度污染）；属性含数值 `aqi_value`、等级 `aqi_level`、首要污染物 `primary_pollutant`、各污染物浓度（PM2.5、PM10、SO₂、NO₂、O₃、CO，带单位）及健康提示 `health_effect` / `health_advice` |
 | `sensor.qweather_pro_precipitation_summary` | 降水简报 | 分钟级降水趋势摘要，例如“未来两小时无降水” |
 | `sensor.qweather_pro_weather_summary` | 天气概况 | 状态为**今夜天气概况文字**（`tonight_text`，如“今夜多云”）；属性含完整智能概况 `weather_abstract`（时段、温度变化、当前气温、风力等） |

@@ -50,10 +50,11 @@ entity: weather.qweather_pro_area_weather  # Default entity ID
 
 | **Entity ID** | **Name** | **Description** |
 |---------------|----------|-----------------|
+| `weather.qweather_pro_weather` | Weather | Main weather entity. State is the current condition and temperature. Supports `forecast_daily`, `forecast_hourly` and `forecast_twice_daily`. Attributes include `qweather_icon`, `update_time`, `condition_cn`, `feels_like`, `humidity`, `wind_dir`/`wind_scale`/`wind_gust`, `precip`/`precip_type`/`precip_intensity`, `pressure`, `visibility`, `dew`, `cloud`, sunrise/sunset & moon phase times, day/night wind & text (`wind_scale_day`/`wind_dir_day`/`text_night`/`icon_night`), `minutely_summary`, `precip_probability`; when “Replace native detail popup” is on, also `custom_ui_more_info`. |
 | `sensor.qweather_pro_aqi` | Air Quality | State is the air‑quality **category** (e.g. 优 / 良 / 轻度污染 / 中度污染). Attributes include the numeric `aqi_value`, `aqi_level`, `primary_pollutant`, pollutant concentrations with units (PM2.5, PM10, SO₂, NO₂, O₃, CO) and health guidance (`health_effect`, `health_advice`) |
-| `sensor.qweather_pro_precipitation_summary` | Precipitation Summary | Minute‑level precipitation trend summary, e.g., “No precipitation in the next two hours” |
-| `sensor.qweather_pro_weather_summary` | Weather Summary | State is tonight’s weather abstract text (`tonight_text`), e.g. “今夜多云”. Attributes contain the full smart abstract (`weather_abstract`: period, temp change, current temp, wind status, etc.) |
+| `sensor.qweather_pro_precipitation_summary` | Precipitation Forecast | Minute‑level precipitation trend summary, e.g., “No precipitation in the next two hours” |
+| `sensor.qweather_pro_weather_summary` | Weather Briefing | State is tonight’s weather abstract text (`tonight_text`), e.g. “今夜多云”. Attributes contain the full smart abstract (`weather_abstract`: period, temp change, current temp, wind status, etc.) |
 | `sensor.qweather_pro_current_temperature` | Real-time Temperature | Numeric temperature sensor (unit °C, `device_class: temperature`). Supports long-term statistics and history graphs. Attributes include `temp_range` (today’s high/low), `max_temp`, `min_temp`, `feels_like`, and `dew_point` |
 | `sensor.qweather_pro_current_humidity` | Real-time Humidity | Numeric relative humidity sensor (unit %, `device_class: humidity`). Provides current ambient humidity |
-| `sensor.qweather_pro_warning_info` | Weather Warning | State is the title of the active warning (first alert’s `headline`), e.g. “暴雨橙色预警”; `without_warning` when none. Attributes contain the full warning detail (id, sender, issued time, type, level, color, text, instruction) |
+| `sensor.qweather_pro_warning_info` | Weather Warnings | State is the title of the active warning (first alert’s `headline`), e.g. “暴雨橙色预警”; `without_warning` when none. Attributes contain the full warning detail (id, sender, issued time, type, level, color, text, instruction) |
 
