@@ -34,6 +34,7 @@ CONF_UPDATE_INTERVAL: Final = "update_interval"
 CONF_HOURLYSTEPS: Final = "hourlysteps"
 CONF_DAILYSTEPS: Final = "dailysteps"
 CONF_CUSTOM_UI: Final = "custom_ui"
+CONF_CUSTOM_MORE_INFO: Final = "custom_more_info"
 
 # --- 属性扩展键名 ---
 ATTR_UPDATE_TIME: Final = "update_time"

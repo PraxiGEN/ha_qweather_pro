@@ -28,6 +28,7 @@ from .const import (
     CONF_KEY_ID,
     CONF_PRIVATE_KEY,
     CONF_CUSTOM_UI,
+    CONF_CUSTOM_MORE_INFO,
     DEFAULT_UPDATE_INTERVAL,
     LANGUAGE_MAP,
     LOGGER,
@@ -330,6 +331,7 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 CONF_DAILYSTEPS: "7",
                 CONF_HOURLYSTEPS: "24",
                 CONF_CUSTOM_UI: False,
+                CONF_CUSTOM_MORE_INFO: False,
             }
         )
 
@@ -545,5 +547,6 @@ class QWeatherOptionsFlow(config_entries.OptionsFlow):
                     )
                 ),
                 vol.Required(CONF_CUSTOM_UI, default=options.get(CONF_CUSTOM_UI, False)): selector.BooleanSelector(),
+                vol.Required(CONF_CUSTOM_MORE_INFO, default=options.get(CONF_CUSTOM_MORE_INFO, False)): selector.BooleanSelector(),
             }),
         )
