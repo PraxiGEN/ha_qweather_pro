@@ -38,10 +38,11 @@ entity: weather.qweather_pro_area_weather  # Default entity ID
 
 #### Click “Options” on the integration page to adjust in real time:
 
-- Data update interval: 5–1440 minutes
-- Forecast days/hours: compatible with both free and paid API tiers
-- Grid weather: enable 1 km high‑precision grid data
-- Custom UI support: choose whether to enable the professional detail popup
+- Update Interval: 5–1440 minutes
+- Daily Forecast Days: 3 / 7 / 10 days (V1 API limit)
+- Hourly Forecast Hours: 24 / 72 / 168 hours
+- Enable Custom UI Support: choose whether to enable the professional weather card (main card).
+- Replace native detail popup: choose whether to replace the native Home Assistant more-info popup with the professional detail popup.
 
 ### 🛠️ Sensor List
 
