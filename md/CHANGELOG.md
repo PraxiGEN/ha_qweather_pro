@@ -2,6 +2,12 @@
 
 ### 🛠 [1.2.0-beta.5] - 2026-08-24
 
+### ⚠️ Breaking Changes
+- **Lovelace resource injection is now opt-in:** The integration no longer registers its frontend resources (card / more-info / i18n) into every Home Assistant frontend unconditionally. Two independent switches were added under the integration options:
+  - `启用自定义前端 UI 支持` (custom_ui): registers the custom main card. **Off by default.**
+  - `覆盖原生详情弹窗` (custom_more_info): replaces the native entity detail popup with the custom more-info card. **Off by default.**
+  - Any user already relying on the custom card or custom more-info popup must enable the corresponding switch after upgrading, otherwise the frontend falls back to the native UI.
+
 ### ✨ New Features
 - Added a new `current_humidity` sensor entity reporting the current relative humidity (%).
 
