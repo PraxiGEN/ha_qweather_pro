@@ -2,58 +2,23 @@
 
 ### 🛠 [1.2.6] - 2026-08-31
 
-基于 1.2.0-beta 系列构建的首个稳定版。本版解决了 HACS 审查中提出的全部 blocker（协调器陈旧数据、缺失 reauth、全局 JS 注入），并引入 JWT 鉴权与全面重写的零依赖原生 SVG 卡片。
+基于 1.2.0-beta 系列构建的首个稳定版。
 
-### 📣 用户须知（配置与重新配置）
-- **新增 JWT（Ed25519）鉴权：** 在原有 API Key 之外，现支持 JWT 鉴权。配置时需填写 项目ID（project_id）与 密钥ID（key_id），并生成或粘贴 Ed25519 私钥；签发者（iss）为可选项，建议填写以对齐和风开发者控制台。
-- **重新配置支持切换鉴权与补充开发者字段：** 集成选项的"重新配置"现可在 API Key 与 JWT 之间切换，并可补充填写项目ID、密钥ID、签发者等开发者字段；原 API Key 用户无需重建集成即可切换到 JWT。
-- **前端 UI 改为默认关闭（见下方破坏性变更）：** 若此前使用自定义主卡或详情弹窗，升级后请在集成选项中手动开启对应开关，否则前端回退为原生 UI。
+### ✨ 亮点
+- **零依赖原生 SVG 卡片：** 前端卡片已从 ApexCharts（约 871 KB）全面重写为零依赖的原生 SVG 实现（约 32 KB）。这移除了此前会与其他前端资源冲突的全局 JavaScript 注入；卡片现在不再依赖任何第三方图表库即可运行。
+- **SVG 预报图表：** 逐小时与每日预报以原生 SVG 呈现，支持曲线与列表两种风格，并支持鼠标滚轮缩放与左右划动。
 
-### ⚠️ 破坏性变更（用户升级须知）
-1. Lovelace 资源注入改为默认关闭（opt-in 双开关）：集成不再无条件向所有 HA 前端注入卡片/详情/i18n 的 JS 资源。集成选项新增两个独立开关：
-- 启用自定义前端 UI 支持（custom_ui）：注册自定义主卡，默认关。
-- 覆盖原生详情弹窗（custom_more_info）：用自定义详情卡替换原生弹窗，默认关。
-- 已在用自定义卡片/详情弹窗的用户，升级后必须手动开启对应开关，否则前端回退原生 UI。
-2. 实时温度传感器重命名：temp_range 类传感器更名为数值型 current_temperature（实体 registry 会重建）。
+### 🔐 认证与稳定性
+- 强化 JWT 认证与 coordinator 稳定性：更新失败时 coordinator 现在抛出 `UpdateFailed`，而非静默返回陈旧缓存数据，使修复/重试行为正确；JWT 重新认证更稳健。
+- 在 `manifest.json` 的 `requirements` 中声明 `tenacity>=9.1.2`（重试/退避依赖）。
+- 将 JWT 配置说明内联到配置流界面，指引更清晰。
 
-### ✨ 核心新功能
-- 前端卡片零依赖原生 SVG 重写（最大改动，qweather-pro-card.js +814 行，从 ApexCharts 871KB 全局包降为 ~32KB 原生 SVG）：
-- 彻底消除与 apexcharts-card 等生态卡片的全局 JS 冲突（原 issue #61 根因）。
-- 支持列表/曲线两种样式；逐时预报图支持滚轮缩放与左右平移、重置按钮重绘。
-- qweather-pro-i18n.js、qweather-pro-more-info.js 同步重写（i18n 动态读取、消除加载时序竞态）。
-- JWT（Ed25519）鉴权体系：config_flow.py 新增 jwt_setup / reauth_jwt / reconfigure 全流程，密钥对仅生成一次并落库私钥、公钥确定性推导展示 + SHA256 指纹比对。
-- reauth 流程落地：401/403 时协调器抛 ConfigEntryAuthFailed → 自动触发重认证，不再静默陈旧。
-- 新增 current_humidity 实时湿度传感器；天气实体新暴露 wind_gust / precip_type / precip_intensity 等字段；日预报补充 precipitation_type。
-- 新增 qweather_pro.get_weather 服务（services.py +168、services.yaml +31）。
-- diagnostics 凭据脱敏（diagnostics.py +37，redact API Key / 私钥 / project）。
+### 🐛 问题修复
+- 修复配置流重新配置步骤：不再以 `UnknownFlow` 错误中断，并返回正确的 `reconfigure_successful` 结果。
 
-### 🐛 协调器硬化（HACS 审查 blocker 修复）
-- coordinator.py 大幅重写（+596）：抓取全部失败时正确 raise UpdateFailed → last_update_success=False、实体转 unavailable，不再返回并永久服务昨天的数据；update_time 仅在成功路径更新，避免"看起来健康实为陈旧"。
-- API KEY 模式强制锁定 100 分钟刷新间隔、忽略用户越权覆盖。
-
-### 🔧 配置流 / 合规修复
-- 翻译 schema 合规：JWT 说明文本内联进 description、动态公钥块用 {key_block} 运行时占位符（修复 hassfest not a valid option 报错）。
-- manifest 正确声明 tenacity>=9.1.2（HA 2026.1 起 tenacity 已移出核心依赖）；after_dependencies:["frontend"] 正确声明。
-- reconfigure 终止 reason 修正为 reconfigure_successful；async_init 不再误传 entry.data 致流程提前结束。
-- 移除 config_flow.py 未使用的 async_get_translations 死导入（PR #86）。
-
-### 🌐 翻译与文档（HACS 审查回应）
-- 12 语言翻译大幅补全（每语言 +400 行）：JWT 键、SVG 样式键、湿度、预警字段顺序等。
-- README/DOCS 事实修正：SVG 宣称与卡片一致；文档卡片类型改正为 custom:qweather-pro-card（原 qweather-card 不存在）；实体表 warning_info 与实际代码对齐。
-- LICENSE 补 dscao 原作者 MIT 署名（维持主版权行 Copyright (c) 2026 PraxiGEN 不变，新增 Based on dscao/qweather ... used under MIT，PR #86）；LICENSE 文件格式亦已修正，GitHub 现正确识别为 MIT（此前因插入署名行被识别为 NOASSERTION）。
-- brand 清理：删除非 ASCII 备份文件 logo备.png（183KB）。
-
-### 🧪 测试与 CI
-- 测试迁至仓库根 tests/（ludeeus 布局，移出集成目录，HACS 不再误打包）。
-- 新增 pytest CI 工作流（tests.yml）、pr-validate/hassfest 校验；stale.yml 自动关旧 issue。
-- 新增 11 个测试模块（config_flow / weather / sensor / coordinator / services / diagnostics / init / condition / const 等），覆盖 JWT、reconfigure、协调器、传感器。
-
-### 📊 文件规模
-49 文件变更，+7903 / −1788：
-
-- 重写级：coordinator.py(+596)、config_flow.py(+374)、www/qweather-pro-card.js(+814)、weather.py(+313)、translations/*(12×~404)
-- 新增：services.py、services.yaml、diagnostics.py、tests/*(11)、pytest.ini、conftest.py
-- 清理：删 brand/logo备.png、降卡片体积
+### 📄 文档与许可
+- 修正 README/DOCS 中的事实错误，清理品牌名与技术缩写。
+- 在 `LICENSE` 中新增对原作者 **dscao/qweather** 的 MIT 许可署名（集成代码仍版权归 Copyright (c) 2026 PraxiGEN 所有）。
 
 ### 🛠 [1.2.0-beta.5] - 2026-08-24
 
