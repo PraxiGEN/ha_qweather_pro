@@ -162,4 +162,6 @@ async def test_reconfigure_can_switch_to_jwt(hass, _patch_citylookup):
         {CONF_PROJECT_ID: "p", CONF_KEY_ID: "k"},
     )
     assert result["type"] == "abort"
-    assert result["reason"] == "reauth_successful"
+    # reconfigure 流程走 async_update_reload_and_abort，默认 reason 为 reconfigure_successful
+    # （reauth 流程才是 reauth_successful）。
+    assert result["reason"] == "reconfigure_successful"
