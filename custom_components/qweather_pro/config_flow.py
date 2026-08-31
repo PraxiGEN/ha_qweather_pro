@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Any
+import hashlib
+from typing import Any, Final
 
 import voluptuous as vol
 from cryptography.hazmat.primitives import serialization
@@ -14,6 +15,7 @@ from homeassistant.const import CONF_HOST, CONF_API_KEY
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
+from homeassistant.helpers.translation import async_get_translations
 
 from .api import QWeatherAPI
 from .const import (
@@ -27,12 +29,17 @@ from .const import (
     CONF_ACCOUNT_SELECT,
     CONF_KEY_ID,
     CONF_PRIVATE_KEY,
+    CONF_ISS,
+    CONF_JWT_RECONFIGURE_CHOICE,
     CONF_CUSTOM_UI,
     CONF_CUSTOM_MORE_INFO,
     DEFAULT_UPDATE_INTERVAL,
     LANGUAGE_MAP,
     LOGGER,
 )
+
+# 和风天气控制台地址（配置流多处引用，统一常量）
+QWEATHER_CONSOLE_URL: Final = "https://console.qweather.com"
 
 class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """处理和风天气的配置流."""
@@ -67,6 +74,15 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
         return private_bytes.decode('utf-8'), public_bytes.decode('utf-8')
 
+    def _derive_public_key_sync(self, private_pem: str) -> str:
+        """从存储的私钥反推公钥（用于「保留原配置」模式展示核对，不重新生成）。"""
+        private_key = serialization.load_pem_private_key(private_pem.encode("utf-8"), password=None)
+        public_bytes = private_key.public_key().public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo,
+        )
+        return public_bytes.decode("utf-8")
+
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> FlowResult:
         """入口步骤：决定是新建还是复用账号."""
         existing_entries = self._async_current_entries()
@@ -74,19 +90,17 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         # 如果是第一次添加，直接走新建流程
         if not existing_entries:
             return await self.async_step_setup(user_input)
-
         # 如果已存在实例，显示“引导页”
         if user_input is not None:
             selection = user_input.get(CONF_ACCOUNT_SELECT)
             if selection == "new_account":
                 return await self.async_step_setup()
-            
-            # 【复用逻辑】记住选中的 entry_id
+        
             self._temp_data["reuse_from"] = selection
             return await self.async_step_reuse_location()
 
         # 构造“复用或新建”的选择列表
-        account_options = [{"value": "new_account", "label": "Add New Account"}]
+        account_options = [{"value": "new_account", "label": "new_account"}]
         for entry in existing_entries:
             # 标签直接显示为：复用 [城市名] 的账号
             account_options.append({"value": entry.entry_id, "label": entry.title})
@@ -124,7 +138,7 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 ),
             }),
             description_placeholders={
-                "qweather_console": "https://console.qweather.com"
+                "qweather_console": QWEATHER_CONSOLE_URL
             }
         )
 
@@ -134,7 +148,6 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             # 从选中的旧条目中提取认证信息
             reuse_id = self._temp_data["reuse_from"]
             old_entry = next(e for e in self._async_current_entries() if e.entry_id == reuse_id)
-            
             # 合并凭据到临时数据
             self._temp_data.update(old_entry.data)
             self._temp_data[CONF_LOCATION_ID] = user_input[CONF_LOCATION_ID]
@@ -151,35 +164,63 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_jwt_setup(self, user_input: dict[str, Any] | None = None) -> FlowResult:
         """JWT 身份验证步骤（默认鉴权方式；API KEY 将自 2027-01-01 起受每日限额且 SDK 5+ 不再支持，故默认 JWT）."""
-        if not self._generated_private_key:
+        # 重配「保留原配置」进入时已带旧 private_key → 复用既有密钥，不静默重生
+        existing_private = self._temp_data.get(CONF_PRIVATE_KEY)
+        is_reuse = bool(existing_private)
+
+        if user_input is not None:
+            if not is_reuse:
+                # 首次 JWT /「重新生成 JWT」分支：复用展示阶段已生成的密钥对，
+                if not self._generated_private_key:
+                    self._generated_private_key, self._generated_public_key = await self.hass.async_add_executor_job(
+                        self._generate_key_pair_sync
+                    )
+            else:
+                # 保留原密钥：复用既有私钥，公钥从私钥派生用于展示核对
+                self._generated_private_key = existing_private
+                self._generated_public_key = await self.hass.async_add_executor_job(
+                    self._derive_public_key_sync, existing_private
+                )
+
+            self._temp_data.update(user_input)
+            self._temp_data[CONF_PRIVATE_KEY] = self._generated_private_key
+            return await self._async_search_location(self._temp_data)
+
+        # 展示表单：首次 JWT 预先生成密钥对以展示公钥
+        if not is_reuse and not self._generated_private_key:
             self._generated_private_key, self._generated_public_key = await self.hass.async_add_executor_job(
                 self._generate_key_pair_sync
             )
+        # 保留模式：从存储私钥派生公钥供核对（私钥已在 temp_data，不重新生成）
+        if is_reuse and not self._generated_public_key:
+            self._generated_public_key = await self.hass.async_add_executor_job(
+                self._derive_public_key_sync, existing_private
+            )
 
-        if user_input is not None:
-            self._temp_data.update(user_input)
-            if user_input.get(CONF_USE_TOKEN):
-                # 使用 JWT：注入自动生成的私钥，进入位置校验
-                self._temp_data[CONF_PRIVATE_KEY] = self._generated_private_key
-            else:
-                # 用户在 JWT 步骤退回 API KEY（无需填写 Project/Key ID）
-                self._temp_data.pop(CONF_PRIVATE_KEY, None)
-            return await self._async_search_location(self._temp_data)
+        schema_fields: dict = {
+            vol.Optional(CONF_ISS, default=self._temp_data.get(CONF_ISS, "")): selector.TextSelector(),
+            vol.Required(CONF_PROJECT_ID, default=self._temp_data.get(CONF_PROJECT_ID, "")): selector.TextSelector(),
+            vol.Required(CONF_KEY_ID, default=self._temp_data.get(CONF_KEY_ID, "")): selector.TextSelector(),
+        }
+
+        # 公钥 + SHA256 指纹代码块经 description 的 {key_block} 占位符注入。
+        # first_block/reuse_block 说明文本已内联进 translations 的 jwt_setup.description
+        # （HA 配置流翻译 schema 的 step 级不含 description_placeholders 键，自定义键会被 hassfest 拒绝）。
+        if self._generated_public_key:
+            pub_pem = self._generated_public_key
+            pub_sha256 = hashlib.sha256(pub_pem.strip().encode("utf-8")).hexdigest()
+            key_block = (
+                "\r\n```text\r\n" + pub_pem + "\r\n```\r\n"
+                + "SHA256: " + pub_sha256
+            )
+            placeholders: dict[str, str] = {"key_block": key_block}
+        else:
+            placeholders = {}
 
         return self.async_show_form(
             step_id="jwt_setup",
-            data_schema=vol.Schema({
-                vol.Required(CONF_USE_TOKEN, default=True): selector.BooleanSelector(),
-                vol.Required(CONF_PROJECT_ID): selector.TextSelector(),
-                vol.Required(CONF_KEY_ID): selector.TextSelector(),
-                vol.Optional(CONF_API_KEY): selector.TextSelector(
-                    selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
-                ),
-            }),
-            description_placeholders={
-                "public_key": self._generated_public_key,
-                "qweather_console": "https://console.qweather.com"
-            }
+            data_schema=vol.Schema(schema_fields),
+            description_placeholders=placeholders,
         )
 
     async def _async_search_location(self, config_data: dict[str, Any]) -> FlowResult:
@@ -203,6 +244,7 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 project_id=config_data.get(CONF_PROJECT_ID),
                 key_id=config_data.get(CONF_KEY_ID),
                 private_key=config_data.get(CONF_PRIVATE_KEY),
+                iss=config_data.get(CONF_ISS),
                 host=user_host
             )
 
@@ -213,6 +255,11 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 
                 res = await api.city_lookup(raw_loc, lang=qweather_lang)
                 api_code = res.get("code") # 获取 API 状态码
+                if api_code != "200":
+                    LOGGER.error(
+                        "QWeather 城市校验未通过: code=%s | detail=%s",
+                        api_code, res.get("error_detail"),
+                    )
                 
                 if api_code == "200" and res.get("location"):
                     self._discovered_locations = res["location"]
@@ -323,16 +370,19 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._abort_if_unique_id_configured()
 
         # 创建集成条目
+        options = {
+            CONF_DAILYSTEPS: "7",
+            CONF_HOURLYSTEPS: "24",
+            CONF_CUSTOM_UI: False,
+            CONF_CUSTOM_MORE_INFO: False,
+        }
+        # API KEY 认证不写 update_interval：coordinator 强制 API_KEY_UPDATE_INTERVAL(100)，不可由用户更改
+        if self._temp_data.get(CONF_USE_TOKEN):
+            options[CONF_UPDATE_INTERVAL] = DEFAULT_UPDATE_INTERVAL
         return self.async_create_entry(
-            title=city_title, 
+            title=city_title,
             data=self._temp_data,
-            options={
-                CONF_UPDATE_INTERVAL: DEFAULT_UPDATE_INTERVAL,
-                CONF_DAILYSTEPS: "7",
-                CONF_HOURLYSTEPS: "24",
-                CONF_CUSTOM_UI: False,
-                CONF_CUSTOM_MORE_INFO: False,
-            }
+            options=options,
         )
 
     def _get_schema(self, data: dict) -> vol.Schema:
@@ -345,14 +395,12 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         
         # JWT 模式下的回显
         if data.get(CONF_USE_TOKEN):
-            return vol.Schema({
-                vol.Required(CONF_USE_TOKEN, default=True): selector.BooleanSelector(),
+            fields: dict = {
+                vol.Optional(CONF_ISS, default=data.get(CONF_ISS) or ""): selector.TextSelector(),
                 vol.Required(CONF_PROJECT_ID, default=data.get(CONF_PROJECT_ID)): selector.TextSelector(),
                 vol.Required(CONF_KEY_ID, default=data.get(CONF_KEY_ID)): selector.TextSelector(),
-                vol.Optional(CONF_API_KEY, default=data.get(CONF_API_KEY)): selector.TextSelector(
-                    selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
-                ),
-            })
+            }
+            return vol.Schema(fields)
 
         # 普通 setup 模式下的全量回显
         return vol.Schema({
@@ -371,11 +419,16 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             # 合并旧数据与新输入
             self._temp_data = {**entry.data, **user_input}
-            
-            # 如果勾选了使用 Token，跳转到 JWT 配置页
+
+            # 如果勾选了使用 Token，进入 JWT 重新配置分支选择
             if user_input.get(CONF_USE_TOKEN):
-                return await self.async_step_jwt_setup()
-            
+                # 切到 JWT：清理对侧冗余的 API KEY 凭据（JWT 模式不使用）
+                self._temp_data.pop(CONF_API_KEY, None)
+                return await self.async_step_reconfigure_jwt_choice()
+
+            # 切回 API KEY：清理对侧冗余的 JWT 凭据，避免旧私钥/ID 残留落库
+            for key in (CONF_ISS, CONF_PROJECT_ID, CONF_KEY_ID, CONF_PRIVATE_KEY):
+                self._temp_data.pop(key, None)
             # 否则直接走搜索校验逻辑
             return await self._async_search_location(self._temp_data)
 
@@ -390,6 +443,37 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
                 ),
             })
+        )
+
+    async def async_step_reconfigure_jwt_choice(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        """重新配置 JWT 分支选择：保留原配置（复用密钥，字段预填）或 重新生成 JWT（全新密钥对，清空字段）."""
+        # Key→JWT 迁移：原条目没有 JWT 私钥，无「保留原配置」可言。
+        # 两个选项行为完全一致（都生成新密钥对），无需让用户二选一，直接进入 jwt_setup 生成全新密钥对。
+        if user_input is None and not self._temp_data.get(CONF_PRIVATE_KEY):
+            return await self.async_step_jwt_setup()
+
+        if user_input is not None:
+            if user_input.get(CONF_JWT_RECONFIGURE_CHOICE) == "regenerate":
+                # 全新：清空 JWT 认证字段，jwt_setup 将以空表单 + 重新生成密钥对呈现
+                for key in (CONF_ISS, CONF_PROJECT_ID, CONF_KEY_ID, CONF_PRIVATE_KEY):
+                    self._temp_data.pop(key, None)
+            # keep_current：保留原 iss/project_id/key_id/private_key，jwt_setup 预填并复用密钥
+            return await self.async_step_jwt_setup()
+
+        return self.async_show_form(
+            step_id="reconfigure_jwt_choice",
+            data_schema=vol.Schema({
+                vol.Required(CONF_JWT_RECONFIGURE_CHOICE, default="keep_current"): selector.SelectSelector(
+                    selector.SelectSelectorConfig(
+                        options=[
+                            {"value": "keep_current", "label": "keep_current"},
+                            {"value": "regenerate", "label": "regenerate"},
+                        ],
+                        mode=selector.SelectSelectorMode.DROPDOWN,
+                        translation_key="jwt_reconfigure_choice",
+                    )
+                )
+            }),
         )
 
     async def async_step_reauth(self, user_input: dict[str, Any] | None = None) -> FlowResult:
@@ -416,29 +500,53 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="reauth_confirm",
             data_schema=self._reauth_schema(),
-            description_placeholders={
-                "qweather_console": "https://console.qweather.com"
-            },
         )
 
     async def async_step_reauth_jwt(self, user_input: dict[str, Any] | None = None) -> FlowResult:
-        """重认证：JWT 凭据 (Project ID / Key ID)."""
+        """重认证：JWT 凭据 (生成密钥对 + 展示公钥)."""
         if user_input is not None:
             self._temp_data.update(user_input)
             return await self._async_finish_reauth()
 
+        # 确保密钥对存在：API KEY 切 JWT 时无既有私钥，须本地生成；
+        # 既有 JWT 条目重认证则复用私钥并派生公钥供核对。
+        existing_private = self._temp_data.get(CONF_PRIVATE_KEY)
+        if not existing_private:
+            self._generated_private_key, self._generated_public_key = await self.hass.async_add_executor_job(
+                self._generate_key_pair_sync
+            )
+            self._temp_data[CONF_PRIVATE_KEY] = self._generated_private_key
+            is_reuse = False
+        else:
+            self._generated_private_key = existing_private
+            self._generated_public_key = await self.hass.async_add_executor_job(
+                self._derive_public_key_sync, existing_private
+            )
+            is_reuse = True
+
+        # 公钥 + SHA256 指纹代码块经 description 的 {key_block} 占位符注入。
+        # first_block/reuse_block 说明文本已内联进 translations 的 reauth_jwt.description。
+        if self._generated_public_key:
+            pub_sha256 = hashlib.sha256(self._generated_public_key.strip().encode("utf-8")).hexdigest()
+            key_block = (
+                "\r\n```text\r\n" + self._generated_public_key + "\r\n```\r\n"
+                + "SHA256: " + pub_sha256
+            )
+            placeholders = {"key_block": key_block}
+        else:
+            placeholders = {}
+
         return self.async_show_form(
             step_id="reauth_jwt",
             data_schema=self._reauth_schema(),
-            description_placeholders={
-                "qweather_console": "https://console.qweather.com"
-            },
+            description_placeholders=placeholders,
         )
 
     def _reauth_schema(self) -> vol.Schema:
         """重认证表单：按认证方式动态构造 (不包含地理位置字段)."""
         if self._temp_data.get(CONF_USE_TOKEN):
             return vol.Schema({
+                vol.Optional(CONF_ISS, default=self._temp_data.get(CONF_ISS, "")): selector.TextSelector(),
                 vol.Required(CONF_PROJECT_ID, default=self._temp_data.get(CONF_PROJECT_ID, "")): selector.TextSelector(),
                 vol.Required(CONF_KEY_ID, default=self._temp_data.get(CONF_KEY_ID, "")): selector.TextSelector(),
             })
@@ -484,6 +592,7 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             project_id=self._temp_data.get(CONF_PROJECT_ID),
             key_id=self._temp_data.get(CONF_KEY_ID),
             private_key=self._temp_data.get(CONF_PRIVATE_KEY),
+            iss=self._temp_data.get(CONF_ISS),
             host=self._temp_data.get(CONF_HOST),
         )
 
@@ -517,36 +626,40 @@ class QWeatherOptionsFlow(config_entries.OptionsFlow):
             return self.async_create_entry(title="", data=user_input)
 
         options = self.config_entry.options
+        use_token = self.config_entry.data.get(CONF_USE_TOKEN)
+
+        fields: dict = {}
+        # API KEY 认证下轮询间隔强制为 100 分钟（coordinator 强制），不在条目配置中暴露，用户不可更改
+        if use_token:
+            fields[vol.Required(
+                CONF_UPDATE_INTERVAL,
+                default=options.get(CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL)
+            )] = selector.NumberSelector(
+                selector.NumberSelectorConfig(min=5, max=1440, step=1, mode=selector.NumberSelectorMode.BOX)
+            )
+        fields[vol.Required(
+            CONF_DAILYSTEPS,
+            default=str(options.get(CONF_DAILYSTEPS, 7))
+        )] = selector.SelectSelector(
+            selector.SelectSelectorConfig(
+                # V1 每日预报仅支持 1-10 天
+                options=["3", "7", "10"],
+                mode=selector.SelectSelectorMode.DROPDOWN
+            )
+        )
+        fields[vol.Required(
+            CONF_HOURLYSTEPS,
+            default=str(options.get(CONF_HOURLYSTEPS, 24))
+        )] = selector.SelectSelector(
+            selector.SelectSelectorConfig(
+                options=["24", "72", "168"],
+                mode=selector.SelectSelectorMode.DROPDOWN
+            )
+        )
+        fields[vol.Required(CONF_CUSTOM_UI, default=options.get(CONF_CUSTOM_UI, False))] = selector.BooleanSelector()
+        fields[vol.Required(CONF_CUSTOM_MORE_INFO, default=options.get(CONF_CUSTOM_MORE_INFO, False))] = selector.BooleanSelector()
 
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema({
-                vol.Required(
-                    CONF_UPDATE_INTERVAL, 
-                    default=options.get(CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL)
-                ): selector.NumberSelector(
-                    selector.NumberSelectorConfig(min=5, max=1440, step=1, mode=selector.NumberSelectorMode.BOX)
-                ),
-                vol.Required(
-                    CONF_DAILYSTEPS, 
-                    default=str(options.get(CONF_DAILYSTEPS, 7))
-                ): selector.SelectSelector(
-                    selector.SelectSelectorConfig(
-                        # V1 每日预报仅支持 1-10 天
-                        options=["3", "7", "10"],
-                        mode=selector.SelectSelectorMode.DROPDOWN
-                    )
-                ),
-                vol.Required(
-                    CONF_HOURLYSTEPS, 
-                    default=str(options.get(CONF_HOURLYSTEPS, 24))
-                ): selector.SelectSelector(
-                    selector.SelectSelectorConfig(
-                        options=["24", "72", "168"],
-                        mode=selector.SelectSelectorMode.DROPDOWN
-                    )
-                ),
-                vol.Required(CONF_CUSTOM_UI, default=options.get(CONF_CUSTOM_UI, False)): selector.BooleanSelector(),
-                vol.Required(CONF_CUSTOM_MORE_INFO, default=options.get(CONF_CUSTOM_MORE_INFO, False)): selector.BooleanSelector(),
-            }),
+            data_schema=vol.Schema(fields),
         )

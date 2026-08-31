@@ -65,12 +65,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: QWeatherConfigEntry) -> 
 
     coordinator = QWeatherUpdateCoordinator(hass, entry, version)
     await coordinator.async_load_cache()
+    # 存量引导：仍用 API KEY 的用户推送 Repairs 条目，引导迁移 JWT。
+    await _async_refresh_api_key_issue(hass, entry)
     await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
-    # 存量引导：仍用 API KEY 的用户推送 Repairs 条目，引导迁移 JWT
-    await _async_refresh_api_key_issue(hass, entry)
     return True
 
 async def _async_refresh_api_key_issue(hass: HomeAssistant, entry: QWeatherConfigEntry) -> None:
@@ -84,6 +84,7 @@ async def _async_refresh_api_key_issue(hass: HomeAssistant, entry: QWeatherConfi
         ISSUE_API_KEY_QUOTA,
         is_fixable=False,
         severity=IssueSeverity.WARNING,
+        is_persistent=True,
         translation_key="api_key_quota",
     )
 
@@ -92,6 +93,33 @@ async def async_reload_entry(hass: HomeAssistant, entry: QWeatherConfigEntry) ->
     await hass.config_entries.async_reload(entry.entry_id)
 
 async def async_unload_entry(hass: HomeAssistant, entry: QWeatherConfigEntry) -> bool:
-    """卸载集成实例."""
+    """卸载集成实例；自定义 UI 为注入到整个前端的全局资源，仅当无其他实例启用时聚合注销。"""
+    # 自定义 UI / 详情覆盖 是注入到整个 HA 前端的全局资源（add_extra_js_url 幂等注册）。
+    # 本实例卸载时，若没有其他实例仍启用这些资源，则主动清理，避免全局资源残留污染所有前端。
+    other_entries = [e for e in hass.config_entries.async_entries(DOMAIN) if e.entry_id != entry.entry_id]
+    still_ui = any(
+        e.options.get(CONF_CUSTOM_UI) or e.options.get(CONF_CUSTOM_MORE_INFO)
+        for e in other_entries
+    )
+    if not still_ui:
+        names: list[str] = []
+        if entry.options.get(CONF_CUSTOM_UI):
+            names += ["qweather-pro-card.js", "qweather-pro-i18n.js"]
+        if entry.options.get(CONF_CUSTOM_MORE_INFO):
+            names += ["qweather-pro-more-info.js", "qweather-pro-i18n.js"]
+        if names:
+            integration = await async_get_integration(hass, DOMAIN)
+            version = str(integration.version) if integration.version else "1.0.0"
+            # 2026.1.0 仅暴露同步 remove_extra_js_url（无 async 变体）；优先 async 若存在以兼容未来版本。
+            for name in dict.fromkeys(names):
+                url = f"/qweather_pro-local/{name}?v={version}"
+                try:
+                    if hasattr(frontend, "async_remove_extra_js_url"):
+                        await frontend.async_remove_extra_js_url(hass, url)
+                    else:
+                        frontend.remove_extra_js_url(hass, url)
+                except Exception:  # noqa: BLE001 - 资源已不存在/未注册等情况可忽略
+                    LOGGER.debug("清理前端资源失败(可忽略): %s", name)
+            LOGGER.info("QWeather 全局前端资源已聚合注销: %s", ", ".join(dict.fromkeys(names)))
     # 卸载所有平台 (sensor, weather)
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)

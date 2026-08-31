@@ -21,8 +21,9 @@
       },
       "jwt_setup": {
         "title": "JWT-Sicherheitsauthentifizierung konfigurieren",
-        "description": "Ein öffentlicher Schlüssel wurde automatisch für Sie generiert.\r\n**Schritte:**\r\n1. Kopieren Sie den **öffentlichen Schlüssel** im folgenden Feld.\r\n2. Gehen Sie zur [QWeather-Konsole]({qweather_console}), fügen Sie Ihrem Projekt eine Anmeldeinformation hinzu, wählen Sie **JSON Web Token** und fügen Sie den öffentlichen Schlüssel ein.\r\n```text\n{public_key}\n```\r\nNach Abschluss tragen Sie unten die **Projekt-ID** und die **Schlüssel-ID** ein.\r\n#### Hinweis: Die JWT-Authentifizierung kann nur einmal hinzugefügt werden. Wenn Sie die Integration erneut hinzufügen, wird die ursprüngliche JWT-Anmeldeinformation ungültig.",
+        "description": "**Entwickler-ID**, **Projekt-ID** und **Schlüssel-ID** identifizieren Ihre JWT-Anmeldedaten.\r\nFür Sie wurde ein Schlüsselpaar zur Signierung von Anfragen generiert.\r\n**Schritte:**\r\n1. Geben Sie **Entwickler-ID**, **Projekt-ID** und **Schlüssel-ID** ein.\r\n2. Kopieren Sie den **öffentlichen Schlüssel** unten und laden Sie ihn in der QWeather-Konsole unter den JWT-Anmeldedaten Ihres Projekts hoch.\r\n\r\nSie verwenden das vorhandene Schlüsselpaar wieder; Sie müssen den öffentlichen Schlüssel nicht erneut hochladen. Der oben angezeigte öffentliche Schlüssel dient nur zur Überprüfung.\r\n\r\n{key_block}\r\n#### Hinweis: JWT-Authentifizierung kann pro Anmeldedaten nur einmal hinzugefügt werden. Wenn Sie die Integration erneut hinzufügen, werden die ursprünglichen JWT-Anmeldedaten ungültig.",
         "data": {
+          "iss": "Entwickler-ID",
           "project_id": "Projekt-ID",
           "key_id": "Schlüssel-ID"
         }
@@ -53,7 +54,7 @@
       },
       "reauth_confirm": {
         "title": "Erneute Authentifizierung erforderlich",
-        "description": "Ihre QWeather-Zugangsdaten sind nicht mehr gültig. Bitte aktualisieren Sie unten den **API Host** und die Zugangsdaten. Ihre Standorteinstellungen bleiben erhalten.\r\n**Öffnen Sie die [QWeather-Konsole]({qweather_console})**, um Projekte und Zugangsdaten zu prüfen.",
+        "description": "Ihre QWeather-Zugangsdaten sind nicht mehr gültig. Bitte aktualisieren Sie unten den **API Host** und die Zugangsdaten. Ihre Standorteinstellungen bleiben erhalten.\r\n**Öffnen Sie die QWeather-Konsole**, um Projekte und Zugangsdaten zu prüfen.",
         "data": {
           "host": "API Host",
           "use_token": "JWT-Authentifizierung verwenden",
@@ -62,10 +63,18 @@
       },
       "reauth_jwt": {
         "title": "JWT-Zugangsdaten aktualisieren",
-        "description": "Bitte geben Sie die neue **Projekt-ID** und **Schlüssel-ID** für die JWT-Authentifizierung ein. Ihre Standorteinstellungen bleiben erhalten.\r\n**Öffnen Sie die [QWeather-Konsole]({qweather_console})**, um Projekte und Zugangsdaten zu prüfen.",
+        "description": "Geben Sie für die JWT-Authentifizierung **Entwickler-ID**, **Projekt-ID** und **Schlüssel-ID** ein. Ihre Standorteinstellungen bleiben erhalten.\r\n**Gehen Sie zur QWeather-Konsole**, um Ihr Projekt und Ihre Anmeldedaten zu prüfen.\r\n**Schritte:**\r\n1. Geben Sie **Entwickler-ID**, **Projekt-ID** und **Schlüssel-ID** ein.\r\n2. Kopieren Sie den **öffentlichen Schlüssel** unten und laden Sie ihn in der QWeather-Konsole unter den JWT-Anmeldedaten Ihres Projekts hoch.\r\n\r\nSie verwenden das vorhandene Schlüsselpaar wieder; Sie müssen den öffentlichen Schlüssel nicht erneut hochladen. Der oben angezeigte öffentliche Schlüssel dient nur zur Überprüfung.\r\n\r\n{key_block}",
         "data": {
+          "iss": "Entwickler-ID",
           "project_id": "Projekt-ID",
           "key_id": "Schlüssel-ID"
+        }
+      },
+      "reconfigure_jwt_choice": {
+        "title": "JWT neu konfigurieren",
+        "description": "Wählen Sie, wie die JWT-Authentifizierung neu konfiguriert werden soll:/r/n- **Aktuelle Konfiguration beibehalten**: Das vorhandene Schlüsselpaar wird wiederverwendet; Ihre Developer-ID, Projekt-ID und Key-ID sind vorausgefüllt und können bearbeitet werden.\r\n- **JWT neu generieren**: Das aktuelle Schlüsselpaar verwerfen und ein neues erzeugen (bei Wechsel des QWeather-Kontos).",
+        "data": {
+          "jwt_reconfigure_choice": "Konfigurationsmodus"
         }
       }
     },
@@ -99,19 +108,25 @@
       "options": {
         "new_account": "Neues Konto / neue Anmeldeinformationen"
       }
+    },
+    "jwt_reconfigure_choice": {
+      "options": {
+        "keep_current": "Aktuelle Konfiguration beibehalten (Schlüsselpaar wiederverwenden)",
+        "regenerate": "JWT neu generieren (neues Schlüsselpaar)"
+      }
     }
   },
   "options": {
     "step": {
       "init": {
         "title": "Integrationsoptionen",
-        "description": "### Nutzungshinweise\r\nDie tägliche Wettervorhersage kann auf **3/7/10** Tage eingestellt werden (V1-API unterstützt maximal 10 Tage).\r\n- Die stündliche Vorhersage kann auf **24/72/168** Stunden eingestellt werden.",
+        "description": "### Nutzungshinweise\r\nDie tägliche Wettervorhersage kann auf **3/7/10** Tage eingestellt werden (V1-API unterstützt maximal 10 Tage).\r\n- Die stündliche Vorhersage kann auf **24/72/168** Stunden eingestellt werden.\r\n- **Benutzerdefinierte UI** ist eine globale Ressource: Sie für eine beliebige Instanz zu aktivieren, gilt für alle Instanzen. Die Detail-Popup-Überschreibung ist instanzbezogen.",
         "data": {
           "update_interval": "Aktualisierungsintervall (Minuten)",
           "dailysteps": "Tägliche Vorhersagetage (3-10)",
           "hourlysteps": "Stündliche Vorhersagestunden (24–168)",
-          "custom_ui": "Unterstützung für benutzerdefinierte UI aktivieren",
-                "custom_more_info": "Native Detail-Karte überschreiben"
+          "custom_ui": "Benutzerdefinierte UI aktivieren (global)",
+          "custom_more_info": "Native Detail-Karte überschreiben"
         }
       }
     }
@@ -294,7 +309,7 @@
               "moderate": "Gute Luft",
               "unhealthy": "Mäßige Luftqualität",
               "very_unhealthy": "Schlechte Luft",
-              "extazardous": "Gefährliche Luft"
+              "hazardous": "Gefährliche Luft"
             }
           },
           "tonight_text": {
@@ -518,7 +533,7 @@
   "issues": {
     "api_key_quota": {
       "title": "QWeather API KEY Tageskontingent",
-      "description": "Ihre QWeather Pro-Integration verwendet noch die API KEY-Authentifizierung.\r\nHinweis: Die Authentifizierung mit API KEY bietet keine ausreichende Sicherheit. Ab dem 01.01.2027 wird QWeather die täglichen Anfragen mit API KEY begrenzen (genaue Zahl noch nicht bekannt), und SDK 5+ wird API KEY nicht mehr unterstützen; JWT ist unbegrenzt und wird empfohlen. Wenn Sie API KEY behalten, beträgt das Abfrageintervall standardmäßig 100 Minuten; wechseln Sie in „Neu konfigurieren“ zu JWT für unbegrenzte, schnellere Updates."
+      "description": "Ihre QWeather Pro-Integration verwendet noch die API KEY-Authentifizierung.\r\nHinweis: Die Authentifizierung mit API KEY bietet keine ausreichende Sicherheit. Ab dem 01.01.2027 wird QWeather die täglichen Anfragen mit API KEY begrenzen (genaue Zahl noch nicht bekannt), und SDK 5+ wird API KEY nicht mehr unterstützen; JWT ist unbegrenzt und wird empfohlen. Wenn Sie API KEY behalten, ist das Abfrageintervall fest auf 100 Minuten gesperrt und kann in den Eintrags-Optionen nicht geändert werden; wechseln Sie in „Neu konfigurieren“ zu JWT für unbegrenzte, schnellere Updates."
     }
   }
 }

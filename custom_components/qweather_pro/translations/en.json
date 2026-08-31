@@ -21,8 +21,9 @@
       },
       "jwt_setup": {
         "title": "Configure JWT Security Authentication",
-        "description": "A public key has been automatically generated for you.\r\n**Steps:**\r\n1. Copy the **public key** in the box below.\r\n2. Go to the [QWeather Console]({qweather_console}), add a credential to your project, select **JSON Web Token**, and paste the public key.\r\n```text\n{public_key}\n```\r\nAfter completing this, fill in the **Project ID** and **Key ID** below.\r\n#### Note: JWT authentication can only be added once. If you re-add the integration, the original JWT credential will no longer be valid.",
+        "description": "**Developer ID**, **Project ID** and **Key ID** identify your JWT credential.\r\nA key pair has been generated for you to sign requests.\r\n**Steps:**\r\n1. Fill in **Developer ID**, **Project ID** and **Key ID**.\r\n2. Copy the **public key** below and upload it to the QWeather Console.\r\n\r\nYou are reusing the existing key pair; you do NOT need to re-upload the public key. The public key shown above is for verification only.\r\n\r\n{key_block}\r\n#### Note: JWT authentication can only be added once per credential. If you re-add the integration, the original JWT credential will no longer be valid.",
         "data": {
+          "iss": "Developer ID",
           "project_id": "Project ID",
           "key_id": "Key ID"
         }
@@ -53,7 +54,7 @@
       },
       "reauth_confirm": {
         "title": "Re-authentication Required",
-        "description": "Your QWeather credentials are no longer valid. Please update your **API Host** and credential below. Your location settings will be preserved.\r\n**Go to the [QWeather Console]({qweather_console})** to check your project and credentials.",
+        "description": "Your QWeather credentials are no longer valid. Please update your **API Host** and credential below. Your location settings will be preserved.\r\n**Go to the QWeather Console** to check your project and credentials.",
         "data": {
           "host": "API Host",
           "use_token": "Use JWT Authentication",
@@ -62,10 +63,18 @@
       },
       "reauth_jwt": {
         "title": "Update JWT Credentials",
-        "description": "Please fill in the new **Project ID** and **Key ID** for JWT authentication. Your location settings will be preserved.\r\n**Go to the [QWeather Console]({qweather_console})** to check your project and credentials.",
+        "description": "Please fill in the **Developer ID**, **Project ID** and **Key ID** for JWT authentication. Your location settings will be preserved.\r\n**Go to the QWeather Console** to check your project and credentials.\r\n**Steps:**\r\n1. Fill in **Developer ID**, **Project ID** and **Key ID**.\r\n2. Copy the **public key** below and upload it to the QWeather Console.\r\n\r\nYou are reusing the existing key pair; you do NOT need to re-upload the public key. The public key shown above is for verification only.\r\n\r\n{key_block}",
         "data": {
+          "iss": "Developer ID",
           "project_id": "Project ID",
           "key_id": "Key ID"
+        }
+      },
+      "reconfigure_jwt_choice": {
+        "title": "Reconfigure JWT",
+        "description": "Choose how to reconfigure JWT authentication:/r/n- **Keep current configuration**: reuse the existing key pair; your Developer ID, Project ID and Key ID are prefilled and can be edited.\r\n- **Regenerate JWT**: discard the current key pair and generate a new one (use this when switching to a different QWeather account).",
+        "data": {
+          "jwt_reconfigure_choice": "Reconfiguration mode"
         }
       }
     },
@@ -99,19 +108,25 @@
       "options": {
         "new_account": "New Account/Credentials"
       }
+    },
+    "jwt_reconfigure_choice": {
+      "options": {
+        "keep_current": "Keep current configuration (reuse key pair)",
+        "regenerate": "Regenerate JWT (new key pair)"
+      }
     }
   },
   "options": {
     "step": {
       "init": {
         "title": "Integration Options",
-        "description": "### Instructions for Use\r\n- The daily forecast can be set to **3/7/10** days (V1 API supports up to 10 days).\r\n- The hourly forecast can be set to **24/72/168** hours.",
+        "description": "### Instructions for Use\r\n- The daily forecast can be set to **3/7/10** days (V1 API supports up to 10 days).\r\n- The hourly forecast can be set to **24/72/168** hours.\r\n- **Custom UI** is a global resource: enabling it in any one instance applies to all instances. The detail popup override is per-instance.",
         "data": {
           "update_interval": "Update Interval (minutes)",
           "dailysteps": "Daily Forecast Days (3-10)",
           "hourlysteps": "Hourly Forecast Hours (24-168)",
-          "custom_ui": "Enable Custom UI Support",
-                "custom_more_info": "Replace native detail popup"
+          "custom_ui": "Enable Custom UI Support (global)",
+          "custom_more_info": "Replace native detail popup"
         }
       }
     }
@@ -297,7 +312,7 @@
               "moderate": "Air is good",
               "unhealthy": "Air is average",
               "very_unhealthy": "Air is poor",
-              "extazardous": "Air is hazardous"
+              "hazardous": "Air is hazardous"
             }
           }
         }
@@ -518,7 +533,7 @@
   "issues": {
     "api_key_quota": {
       "title": "QWeather API KEY daily quota",
-      "description": "Your QWeather Pro integration is still using API KEY authentication.\r\nNote: API KEY authentication does not provide sufficient security. Starting 2027-01-01, QWeather will limit daily requests for API KEY authentication (exact amount TBD), and SDK 5+ will drop API KEY support; JWT is unlimited and recommended. If you keep API KEY, polling defaults to 100 minutes; switch to JWT in \"Reconfigure\" for unlimited, faster updates."
+      "description": "Your QWeather Pro integration is still using API KEY authentication.\r\nNote: API KEY authentication does not provide sufficient security. Starting 2027-01-01, QWeather will limit daily requests for API KEY authentication (exact amount TBD), and SDK 5+ will drop API KEY support; JWT is unlimited and recommended. If you keep API KEY, polling is locked to 100 minutes and cannot be changed in the entry configuration; switch to JWT in \"Reconfigure\" for unlimited, faster updates."
     }
   }
 }

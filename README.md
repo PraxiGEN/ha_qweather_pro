@@ -25,7 +25,7 @@ Rebuilt using the latest 2026 development standards, delivering not only highly 
 - 📊 **Deep Data**
   - **Minutely precipitation:** Native API-driven minute-level precipitation summary (e.g., “No precipitation in the next two hours”).
   - **Weather summary:** Logically synthesized hourly weather trend summary.
-  - **Rich sensors:** AQI (with detailed components), today’s temperature range, alert count, weather summary, and more.
+  - **Rich sensors:** AQI (with detailed components), today’s temperature range, active weather alert (title text), weather summary, and more.
 
 - 🎨 **Professional Visuals**
   - **Dashboard card:** Faithfully recreates the look of premium weather apps, supporting 7-day and 24-hour forecast switching.

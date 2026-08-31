@@ -23,6 +23,7 @@ class QWeatherAPI:
         project_id: str | None = None,
         key_id: str | None = None,
         private_key: str | None = None,
+        iss: str | None = None,
         host: str | None = None
     ) -> None:
         self.session = session
@@ -31,6 +32,8 @@ class QWeatherAPI:
         self.project_id = project_id
         self.key_id = key_id
         self.private_key = private_key
+        self.iss = iss
+        self._private_key_obj = None  # 缓存解析后的私钥对象，避免每次请求在事件循环上重解析 PEM
         self.host = self._normalize_host(host)
 
     @staticmethod
@@ -48,17 +51,22 @@ class QWeatherAPI:
         try:
             if not self.private_key:
                 return None
-            
-            private_key_obj = serialization.load_pem_private_key(
-                self.private_key.encode('utf-8'), password=None
-            )
-            
+
+            if self._private_key_obj is None:
+                self._private_key_obj = serialization.load_pem_private_key(
+                    self.private_key.encode('utf-8'), password=None
+                )
+            private_key_obj = self._private_key_obj
+
             now_ts = int(time.time())
             payload = {
                 'sub': self.project_id,
                 'iat': now_ts - 30,   # 解决服务器时钟不同步
                 'exp': now_ts + 900    # 有效期 15 分钟
             }
+
+            if self.iss and self.iss.strip():
+                payload['iss'] = self.iss.strip()
             headers = {'kid': self.key_id}
             
             return jwt.encode(
@@ -111,11 +119,19 @@ class QWeatherAPI:
 
                 # 如果不是 200，则在返回字典中强制注入 http_status
                 if resp.status != 200:
-                    LOGGER.error("QWeather API Error: %s (URL: %s)", resp.status, url)
+                    # 打印和风返回的真实错误体（code/title/detail），用于定位 401 等鉴权失败的根因
+                    err_obj = data.get("error", {}) if isinstance(data, dict) else {}
+                    qw_code = data.get("code") if isinstance(data, dict) else None
+                    title = err_obj.get("title", "Unknown Error") if isinstance(err_obj, dict) else "Unknown Error"
+                    detail = err_obj.get("detail", "") if isinstance(err_obj, dict) else ""
+                    LOGGER.error(
+                        "QWeather API Error: %s (URL: %s) | qweather_code=%s | title=%s | detail=%s",
+                        resp.status, url, qw_code, title, detail,
+                    )
                     return {
                         "code": str(resp.status),
                         "http_status": resp.status,
-                        "error_detail": data.get("error", {}).get("title", "Unknown Error")
+                        "error_detail": f"{title} {detail}".strip() or "Unknown Error",
                     }
                 
                 return data 

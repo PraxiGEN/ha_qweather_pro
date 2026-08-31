@@ -13,7 +13,7 @@
         "title": "配置和风天气Pro",
         "description": "### 添加步骤\r\n**前往[和风天气控制台]({qweather_console}):**\r\n1. 在设置中复制 **API Host** 填写下方的 **API Host**。\r\n2. 项目管理 → 创建项目, 在项目中添加凭据: 可选 **JSON Web Token** 和 **API KEY**。\r\n3. 地理位置建议输入 经纬度(高德坐标) 或者 城市名称，可选：城市ID。\n4. 地理位置默认为HA经纬度。\n#### 注意: API KEY 认证方式无法提供足够的安全性, 使用 API KEY 认证方式都将受请求量的限制, 推荐使用 JSON Web Token(JWT) 的认证方式！",
         "data": {
-          "host": "API 服务器地址(API Host)",
+          "host": "API 服务器地址",
           "location_id": "地理位置 支持城市名称、城市ID、经纬度(经度在前)。",
           "use_token": "使用 JWT 认证 (推荐，更安全)",
           "api_key": "普通 API Key (使用 JWT 则留空)"
@@ -21,10 +21,11 @@
       },
       "jwt_setup": {
         "title": "配置 JWT 安全认证",
-        "description": "系统已为您自动生成公钥。\r\n **操作步骤：** \r\n1. 复制下方框中的 **公钥**。\r\n2. 前往[和风天气控制台]({qweather_console}),在项目中添加凭据，选择 **JSON Web Token** 并粘贴公钥。\r\n```text\n{public_key}\n```\r\n完成后,填写下方的 **项目ID** 和 **凭据ID**。\r\n #### 注意：JWT方式，只能添加一次，重新添加集成，原有JWT凭据将无法使用。",
+        "description": "**开发者 ID**、**项目 ID** 与**密钥 ID** 用于标识你的 JWT 凭据。\r\n系统已为你生成用于签名请求的密钥对。\r\n**步骤：**\r\n1. 填写**开发者 ID**、**项目 ID** 与**密钥 ID**。\r\n2. 复制下方**公钥**并上传到和风天气控制台项目的 JWT 凭据中。\r\n\r\n你正在复用现有的密钥对，无需重新上传公钥。上方展示的公钥仅供核对。\r\n\r\n{key_block}\r\n#### 注意：每个凭据仅能添加一次 JWT 认证。若重新添加集成，原 JWT 凭据将失效。",
         "data": {
-          "project_id": "项目 ID (Project ID)",
-          "key_id": "凭据 ID (Key ID)"
+          "iss": "开发者 ID",
+          "project_id": "项目 ID",
+          "key_id": "凭据 ID"
         }
       },
       "reuse_location": {
@@ -48,24 +49,32 @@
           "host": "API Host",
           "location_id": "地理位置",
           "use_token": "使用 JWT 认证",
-          "api_key": "API 密钥 (Key)"
+          "api_key": "API 密钥"
         }
       },
       "reauth_confirm": {
         "title": "需要重新认证",
-        "description": "您的和风天气凭据已失效。请更新下方的 **API Host** 与凭据，您的位置设置将保持不变。\r\n**前往[和风天气控制台]({qweather_console})** 检查您的项目与凭据。",
+        "description": "您的和风天气凭据已失效。请更新下方的 **API Host** 与凭据，您的位置设置将保持不变。\r\n**前往和风天气控制台** 检查您的项目与凭据。",
         "data": {
           "host": "API Host",
           "use_token": "使用 JWT 认证",
-          "api_key": "API 密钥 (Key)"
+          "api_key": "API 密钥"
         }
       },
       "reauth_jwt": {
         "title": "更新 JWT 凭据",
-        "description": "请填写 JWT 认证新的 **项目 ID** 与 **凭据 ID**，您的位置设置将保持不变。\r\n**前往[和风天气控制台]({qweather_console})** 检查您的项目与凭据。",
+        "description": "请填写 JWT 认证的 **开发者 ID**、**项目 ID** 与 **凭据 ID**，您的位置设置将保持不变。\r\n**前往和风天气控制台** 检查您的项目与凭据。\r\n**步骤：**\r\n1. 填写**开发者 ID**、**项目 ID** 与**密钥 ID**。\r\n2. 复制下方**公钥**并上传到和风天气控制台项目的 JWT 凭据中。\r\n\r\n你正在复用现有的密钥对，无需重新上传公钥。上方展示的公钥仅供核对。\r\n\r\n{key_block}",
         "data": {
-          "project_id": "项目 ID (Project ID)",
-          "key_id": "凭据 ID (Key ID)"
+          "iss": "开发者 ID",
+          "project_id": "项目 ID",
+          "key_id": "凭据 ID"
+        }
+      },
+      "reconfigure_jwt_choice": {
+        "title": "重新配置 JWT",
+        "description": "选择如何重新配置 JWT 认证：\r\n- **保留原配置**：复用现有密钥对；开发者 ID、项目 ID、凭据 ID 已预填，可修改。\r\n- **重新生成 JWT**：丢弃现有密钥对并生成新的（切换和风账户时使用）。",
+        "data": {
+          "jwt_reconfigure_choice": "重新配置方式"
         }
       }
     },
@@ -99,19 +108,25 @@
       "options": {
         "new_account": "使用新账号/凭据"
       }
+    },
+    "jwt_reconfigure_choice": {
+      "options": {
+        "keep_current": "保留原配置（复用密钥对）",
+        "regenerate": "重新生成 JWT（新密钥对）"
+      }
     }
   },
   "options": {
     "step": {
       "init": {
         "title": "配置选项",
-        "description": "### 使用说明\r\n- 每日天气预报可选择 **3/7/10** 天（V1 API 最长支持 10 天）。\r\n- 逐小时预报可选择 **24/72/168** 小时。",
+        "description": "### 使用说明\r\n- 每日天气预报可选择 **3/7/10** 天（V1 API 最长支持 10 天）。\r\n- 逐小时预报可选择 **24/72/168** 小时。\r\n- **自定义前端 UI** 为全局资源：任一集成实例启用即对所有实例生效；详情弹窗覆盖为按实例独立设置。",
         "data": {
           "update_interval": "数据更新频率 (分钟)",
           "dailysteps": "逐日预报天数 (3-10)",
           "hourlysteps": "逐小时预报小时数 (24-168)",
-          "custom_ui": "启用自定义前端 UI 支持",
-                "custom_more_info": "覆盖原生详情弹窗"
+          "custom_ui": "启用自定义前端 UI 支持（全局）",
+          "custom_more_info": "覆盖原生详情弹窗"
         }
       }
     }
@@ -297,7 +312,7 @@
               "moderate": "空气不错",
               "unhealthy": "空气一般",
               "very_unhealthy": "空气差",
-              "extazardous": "空气危险"
+              "hazardous": "空气危险"
             }
           }
         }
@@ -518,7 +533,7 @@
   "issues": {
     "api_key_quota": {
       "title": "QWeather API KEY 即将限额",
-      "description": "您的 QWeather Pro 集成仍在使用 API KEY 鉴权。\r\n注意: API KEY 认证方式无法提供足够的安全性, 使用 API KEY 认证方式自 2027-01-01 起将限制每日请求量（具体数值未公布），且 SDK 5+ 不再支持 API KEY；JWT 无限制，推荐使用。若继续使用 API KEY，轮询默认放慢至 100 分钟；在「重新配置」中切换到 JWT 即可获得无限额、更快的更新。"
+      "description": "您的 QWeather Pro 集成仍在使用 API KEY 鉴权。\r\n注意: API KEY 认证方式无法提供足够的安全性, 使用 API KEY 认证方式自 2027-01-01 起将限制每日请求量（具体数值未公布），且 SDK 5+ 不再支持 API KEY；JWT 无限制，推荐使用。若继续使用 API KEY，轮询将强制锁定为 100 分钟，且不可在条目配置中更改；在「重新配置」中切换到 JWT 即可获得无限额、更快的更新。"
     }
   }
 }

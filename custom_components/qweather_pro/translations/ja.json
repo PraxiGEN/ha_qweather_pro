@@ -21,8 +21,9 @@
       },
       "jwt_setup": {
         "title": "JWT セキュリティ認証の設定",
-        "description": "公開鍵が自動的に生成されました。\r\n**手順:**\r\n1. 下のボックスにある **公開鍵** をコピーします。\r\n2. [QWeather コンソール]({qweather_console}) にアクセスし、プロジェクトに認証情報を追加、**JSON Web Token** を選択し公開鍵を貼り付けます。\r\n```text\n{public_key}\n```\r\n完了後、**Project ID** と **Key ID** を入力してください。\r\n#### 注意: JWT 認証は一度しか追加できません。統合を再追加すると、以前の JWT 認証情報は無効になります。",
+        "description": "**開発者 ID**、**プロジェクト ID**、**キー ID** は JWT 認証情報を識別します。\r\n署名用のキーペアが生成されました。\r\n**手順：**\r\n1. **開発者 ID**、**プロジェクト ID**、**キー ID** を入力します。\r\n2. 下の**公開キー**をコピーし、QWeather コンソールのプロジェクトの JWT 認証情報にアップロードします。\r\n\r\n既存のキーペアを再利用しています。公開キーを再アップロードする必要はありません。上記の公開キーは確認用のみです。\r\n\r\n{key_block}\r\n#### 注意：JWT 認証は認証情報ごとに一度しか追加できません。統合を再追加すると、元の JWT 認証情報は無効になります。",
         "data": {
+          "iss": "開発者 ID",
           "project_id": "Project ID",
           "key_id": "Key ID"
         }
@@ -53,7 +54,7 @@
       },
       "reauth_confirm": {
         "title": "再認証が必要です",
-        "description": "QWeather の認証情報が無効になりました。下記の **API Host** と認証情報を更新してください。位置情報の設定は保持されます。\r\n[QWeather コンソール]({qweather_console}) でプロジェクトと認証情報を確認してください。",
+        "description": "QWeather の認証情報が無効になりました。下記の **API Host** と認証情報を更新してください。位置情報の設定は保持されます。\r\nQWeather コンソール でプロジェクトと認証情報を確認してください。",
         "data": {
           "host": "API Host",
           "use_token": "JWT 認証を使用",
@@ -62,10 +63,18 @@
       },
       "reauth_jwt": {
         "title": "JWT 認証情報の更新",
-        "description": "JWT 認証用の新しい**プロジェクト ID**と**キー ID**を入力してください。位置情報の設定は保持されます。\r\n[QWeather コンソール]({qweather_console}) でプロジェクトと認証情報を確認してください。",
+        "description": "JWT 認証のために **開発者 ID**、**プロジェクト ID**、**キー ID** を入力してください。場所の設定は保持されます。\r\n**プロジェクトと認証情報を確認するには QWeather コンソール を開いてください。**\r\n**手順：**\r\n1. **開発者 ID**、**プロジェクト ID**、**キー ID** を入力します。\r\n2. 下の**公開キー**をコピーし、QWeather コンソールのプロジェクトの JWT 認証情報にアップロードします。\r\n\r\n既存のキーペアを再利用しています。公開キーを再アップロードする必要はありません。上記の公開キーは確認用のみです。\r\n\r\n{key_block}",
         "data": {
-          "project_id": "プロジェクト ID",
-          "key_id": "キー ID"
+          "iss": "開発者 ID",
+          "project_id": "Project ID",
+          "key_id": "Key ID"
+        }
+      },
+      "reconfigure_jwt_choice": {
+        "title": "JWT を再設定",
+        "description": "JWT 認証の再設定方法を選択してください：\r\n- **現在の設定を保持**：既存のキーペアを再利用します。デベロッパー ID、プロジェクト ID、キー ID は事前入力されており編集可能です。\r\n- **JWT を再生成**：現在のキーペアを破棄して新しいものを生成します（QWeather アカウントの切り替え時に使用）。",
+        "data": {
+          "jwt_reconfigure_choice": "再設定モード"
         }
       }
     },
@@ -99,19 +108,25 @@
       "options": {
         "new_account": "新しいアカウント／認証情報"
       }
+    },
+    "jwt_reconfigure_choice": {
+      "options": {
+        "keep_current": "現在の設定を保持（キーペアを再利用）",
+        "regenerate": "JWT を再生成（新しいキーペア）"
+      }
     }
   },
   "options": {
     "step": {
       "init": {
         "title": "統合オプション",
-        "description": "### 使用説明\r\n日次予報は **3/7/10** 日から選択できます（V1 API は最大 10 日に対応）。\r\n- 時間予報は **24/72/168** 時間から選択できます。",
+        "description": "### 使用説明\r\n日次予報は **3/7/10** 日から選択できます（V1 API は最大 10 日に対応）。\r\n- 時間予報は **24/72/168** 時間から選択できます。\r\n- **カスタム UI** は全体リソースです。いずれかのインスタンスで有効にするとすべてのインスタンスに適用されます。詳細ポップアップの上書きはインスタンスごとです。",
         "data": {
           "update_interval": "更新間隔（分）",
           "dailysteps": "日次予報（日数 3-10）",
           "hourlysteps": "時間予報（24–168 時間）",
-          "custom_ui": "カスタム UI サポートを有効化",
-                "custom_more_info": "ネイティブ詳細カードを置換"
+          "custom_ui": "カスタム UI サポートを有効化（全体）",
+          "custom_more_info": "ネイティブ詳細カードを置換"
         }
       }
     }
@@ -294,7 +309,7 @@
               "moderate": "空気は良い",
               "unhealthy": "空気は普通",
               "very_unhealthy": "空気は悪い",
-              "extazardous": "空気は危険"
+              "hazardous": "空気は危険"
             }
           },
           "tonight_text": {
@@ -518,7 +533,7 @@
   "issues": {
     "api_key_quota": {
       "title": "QWeather API KEY の1日あたり割り当て",
-      "description": "お使いの QWeather Pro 統合はまだ API KEY 認証を使用しています。\r\n注意: API KEY 認証は十分なセキュリティを提供しません。2027-01-01 以降、QWeather は API KEY で認証された1日あたりのリクエスト数を制限します（正確な数値は未定）、また SDK 5+ は API KEY をサポートしなくなります。JWT は無制限で推奨されます。API KEY を使い続ける場合、ポーリング間隔はデフォルトで 100 分です。「再設定」で JWT に切り替えると、無制限でより高速な更新が得られます。"
+      "description": "お使いの QWeather Pro 統合はまだ API KEY 認証を使用しています。\r\n注意: API KEY 認証は十分なセキュリティを提供しません。2027-01-01 以降、QWeather は API KEY で認証された1日あたりのリクエスト数を制限します（正確な数値は未定）、また SDK 5+ は API KEY をサポートしなくなります。JWT は無制限で推奨されます。API KEY を使い続ける場合、ポーリング間隔は強制的に 100 分に固定され、エントリの設定では変更できません。「再設定」で JWT に切り替えると、無制限でより高速な更新が得られます。"
     }
   }
 }
