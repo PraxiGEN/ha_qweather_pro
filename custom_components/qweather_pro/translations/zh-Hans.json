@@ -27,9 +27,11 @@
           "project_id": "项目 ID",
           "key_id": "凭据 ID"
         },
-        "first_block": "**步骤：**\r\n1. 填写**开发者 ID**、**项目 ID** 与**密钥 ID**。\r\n2. 复制下方**公钥**并上传到和风天气控制台项目的 JWT 凭据中。",
-        "reuse_block": "你正在复用现有的密钥对，无需重新上传公钥。上方展示的公钥仅供核对。",
-        "sha256_label": "SHA256: "
+        "description_placeholders": {
+          "first_block": "**步骤：**\r\n1. 填写**开发者 ID**、**项目 ID** 与**密钥 ID**。\r\n2. 复制下方**公钥**并上传到和风天气控制台项目的 JWT 凭据中。",
+          "reuse_block": "你正在复用现有的密钥对，无需重新上传公钥。上方展示的公钥仅供核对。",
+          "sha256_label": "SHA256: "
+        }
       },
       "reuse_location": {
         "title": "添加新城市",

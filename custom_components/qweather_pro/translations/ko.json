@@ -27,9 +27,11 @@
           "project_id": "Project ID",
           "key_id": "Key ID"
         },
-        "first_block": "**단계:**\r\n1. **개발자 ID**, **프로젝트 ID**, **키 ID**를 입력하세요.\r\n2. 아래 **공개 키**를 복사하여 QWeather 콘솔의 프로젝트 JWT 자격 증명에 업로드하세요.",
-        "reuse_block": "기존 키 쌍을 재사용하고 있습니다. 공개 키를 다시 업로드할 필요가 없습니다. 위에 표시된 공개 키는 확인용입니다.",
-        "sha256_label": "SHA256: "
+        "description_placeholders": {
+          "first_block": "**단계:**\r\n1. **개발자 ID**, **프로젝트 ID**, **키 ID**를 입력하세요.\r\n2. 아래 **공개 키**를 복사하여 QWeather 콘솔의 프로젝트 JWT 자격 증명에 업로드하세요.",
+          "reuse_block": "기존 키 쌍을 재사용하고 있습니다. 공개 키를 다시 업로드할 필요가 없습니다. 위에 표시된 공개 키는 확인용입니다.",
+          "sha256_label": "SHA256: "
+        }
       },
       "reuse_location": {
         "title": "새 도시 추가",

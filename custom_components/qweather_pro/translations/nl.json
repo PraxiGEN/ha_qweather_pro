@@ -27,9 +27,11 @@
           "project_id": "Project-ID",
           "key_id": "Key-ID"
         },
-        "first_block": "**Stappen:**\r\n1. Vul **Ontwikkelaars-ID**, **Project-ID** en **Sleutel-ID** in.\r\n2. Kopieer de **openbare sleutel** hieronder en upload deze naar de QWeather-console onder de JWT-referenties van uw project.",
-        "reuse_block": "U gebruikt het bestaande sleutelpaar opnieuw; u hoeft de openbare sleutel niet opnieuw te uploaden. De hierboven getoonde openbare sleutel dient alleen ter verificatie.",
-        "sha256_label": "SHA256: "
+        "description_placeholders": {
+          "first_block": "**Stappen:**\r\n1. Vul **Ontwikkelaars-ID**, **Project-ID** en **Sleutel-ID** in.\r\n2. Kopieer de **openbare sleutel** hieronder en upload deze naar de QWeather-console onder de JWT-referenties van uw project.",
+          "reuse_block": "U gebruikt het bestaande sleutelpaar opnieuw; u hoeft de openbare sleutel niet opnieuw te uploaden. De hierboven getoonde openbare sleutel dient alleen ter verificatie.",
+          "sha256_label": "SHA256: "
+        }
       },
       "reuse_location": {
         "title": "Nieuwe stad toevoegen",

@@ -27,9 +27,11 @@
           "project_id": "Project ID",
           "key_id": "Key ID"
         },
-        "first_block": "**Steps:**\r\n1. Fill in **Developer ID**, **Project ID** and **Key ID**.\r\n2. Copy the **public key** below and upload it to the QWeather Console.",
-        "reuse_block": "You are reusing the existing key pair; you do NOT need to re-upload the public key. The public key shown above is for verification only.",
-        "sha256_label": "SHA256: "
+        "description_placeholders": {
+          "first_block": "**Steps:**\r\n1. Fill in **Developer ID**, **Project ID** and **Key ID**.\r\n2. Copy the **public key** below and upload it to the QWeather Console.",
+          "reuse_block": "You are reusing the existing key pair; you do NOT need to re-upload the public key. The public key shown above is for verification only.",
+          "sha256_label": "SHA256: "
+        }
       },
       "reuse_location": {
         "title": "Add New City",

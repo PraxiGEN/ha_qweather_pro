@@ -27,9 +27,11 @@
           "project_id": "ID del proyecto",
           "key_id": "ID de la clave"
         },
-        "first_block": "**Pasos:**\r\n1. Rellene el **ID de desarrollador**, **ID de proyecto** y **ID de clave**.\r\n2. Copie la **clave pública** a continuación y súbala a la Consola de QWeather en las credenciales JWT de su proyecto.",
-        "reuse_block": "Está reutilizando el par de claves existente; no necesita volver a subir la clave pública. La clave pública mostrada arriba es solo para verificación.",
-        "sha256_label": "SHA256: "
+        "description_placeholders": {
+          "first_block": "**Pasos:**\r\n1. Rellene el **ID de desarrollador**, **ID de proyecto** y **ID de clave**.\r\n2. Copie la **clave pública** a continuación y súbala a la Consola de QWeather en las credenciales JWT de su proyecto.",
+          "reuse_block": "Está reutilizando el par de claves existente; no necesita volver a subir la clave pública. La clave pública mostrada arriba es solo para verificación.",
+          "sha256_label": "SHA256: "
+        }
       },
       "reuse_location": {
         "title": "Agregar nueva ciudad",

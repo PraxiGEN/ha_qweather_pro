@@ -204,17 +204,17 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         }
 
         # 取翻译：首次/重新生成模式展示「步骤 + 公钥代码块」，保留模式展示「原公钥 + 复用提示」。
+        # 注意：first_block/reuse_block/sha256_label 位于 config.step.jwt_setup.description_placeholders
+        # （HA 配置流翻译 schema 禁止在 step 顶层出现自定义键，否则 hassfest 报 not a valid option）。
         translations = await async_get_translations(self.hass, self.hass.config.language, "config", [DOMAIN])
-        first_block = translations.get(f"component.{DOMAIN}.config.step.jwt_setup.first_block", "")
-        reuse_block = translations.get(f"component.{DOMAIN}.config.step.jwt_setup.reuse_block", "")
+        jwt_dp = translations.get(f"component.{DOMAIN}.config.step.jwt_setup.description_placeholders", {})
+        first_block = jwt_dp.get("first_block", "")
+        reuse_block = jwt_dp.get("reuse_block", "")
         if self._generated_public_key:
             pub_pem = self._generated_public_key
             # 公钥 SHA256 指纹：供用户去和风控制台比对「本地私钥 ↔ 控制台公钥」是否同一把，
             pub_sha256 = hashlib.sha256(pub_pem.strip().encode("utf-8")).hexdigest()
-            sha256_label = translations.get(
-                f"component.{DOMAIN}.config.step.jwt_setup.sha256_label",
-                "SHA256: ",
-            )
+            sha256_label = jwt_dp.get("sha256_label", "SHA256: ")
             key_block = (
                 "\r\n```text\r\n" + pub_pem + "\r\n```\r\n"
                 + sha256_label + pub_sha256
@@ -532,13 +532,12 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             is_reuse = True
 
         translations = await async_get_translations(self.hass, self.hass.config.language, "config", [DOMAIN])
-        first_block = translations.get(f"component.{DOMAIN}.config.step.jwt_setup.first_block", "")
-        reuse_block = translations.get(f"component.{DOMAIN}.config.step.jwt_setup.reuse_block", "")
+        jwt_dp = translations.get(f"component.{DOMAIN}.config.step.jwt_setup.description_placeholders", {})
+        first_block = jwt_dp.get("first_block", "")
+        reuse_block = jwt_dp.get("reuse_block", "")
         if self._generated_public_key:
             pub_sha256 = hashlib.sha256(self._generated_public_key.strip().encode("utf-8")).hexdigest()
-            sha256_label = translations.get(
-                f"component.{DOMAIN}.config.step.jwt_setup.sha256_label", "SHA256: "
-            )
+            sha256_label = jwt_dp.get("sha256_label", "SHA256: ")
             key_block = (
                 "\r\n```text\r\n" + self._generated_public_key + "\r\n```\r\n"
                 + sha256_label + pub_sha256

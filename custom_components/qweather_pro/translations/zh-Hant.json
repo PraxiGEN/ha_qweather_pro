@@ -27,9 +27,11 @@
           "project_id": "Project ID",
           "key_id": "Key ID"
         },
-        "first_block": "**步驟：**\r\n1. 填寫**開發者 ID**、**專案 ID** 與**金鑰 ID**。\r\n2. 複製下方**公鑰**並上傳到和風天氣控制台專案的 JWT 憑證中。",
-        "reuse_block": "你正在復用現有的金鑰對，無需重新上傳公鑰。上方展示的公鑰僅供核對。",
-        "sha256_label": "SHA256: "
+        "description_placeholders": {
+          "first_block": "**步驟：**\r\n1. 填寫**開發者 ID**、**專案 ID** 與**金鑰 ID**。\r\n2. 複製下方**公鑰**並上傳到和風天氣控制台專案的 JWT 憑證中。",
+          "reuse_block": "你正在復用現有的金鑰對，無需重新上傳公鑰。上方展示的公鑰僅供核對。",
+          "sha256_label": "SHA256: "
+        }
       },
       "reuse_location": {
         "title": "新增城市",
