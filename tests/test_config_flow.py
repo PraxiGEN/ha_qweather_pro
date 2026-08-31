@@ -139,10 +139,11 @@ async def test_reconfigure_can_switch_to_jwt(hass, _patch_citylookup):
         },
     )
     entry.add_to_hass(hass)
+    # reconfigure 流程靠 context["entry_id"] 经 _get_reconfigure_entry() 载入原条目数据，
+    # async_init 绝不能传 data（data 会被当作第一步 user_input 直接提交表单，导致初始化即结束流程）。
     result = await hass.config_entries.flow.async_init(
         DOMAIN,
         context={"source": SOURCE_RECONFIGURE, "entry_id": entry.entry_id},
-        data=entry.data,
     )
     # 重新配置表单提交勾选 use_token
     result = await hass.config_entries.flow.async_configure(
