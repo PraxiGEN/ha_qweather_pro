@@ -2,23 +2,57 @@
 
 ### 🛠 [1.2.6] - 2026-08-31
 
-First stable release built on the 1.2.0-beta series.
+First stable release built on the 1.2.0-beta series. This release resolves all blockers raised in the HACS review (coordinator stale-data, missing reauth, global JS injection) and introduces JWT auth plus a fully rewritten zero-dependency SVG card.
 
-### ✨ Highlights
-- **Zero-dependency native SVG card:** The frontend card was fully rewritten from ApexCharts (~871 KB) into a dependency-free native SVG implementation (~32 KB). This removes the previous global JavaScript injection that conflicted with other frontend resources; the card now runs without any third-party chart library.
-- **SVG forecast charts:** Hourly and daily forecasts render as native SVG with both curve and list styles, plus mouse-wheel zoom and pan.
+### 📣 User-Facing Changes (Setup & Reconfigure)
+- **New JWT (Ed25519) authentication:** Alongside the API Key, JWT auth is now supported. During setup you must provide your **Project ID (project_id)** and **Key ID (key_id)**, then generate or paste an Ed25519 private key. The **Issuer (iss)** is optional but recommended to match your QWeather console configuration.
+- **Reconfigure can now switch auth & complete developer fields:** The integration's "Reconfigure" option now lets you switch between API Key and JWT, and fill in / complete developer fields (project_id, key_id, iss). Existing API-Key users can upgrade to JWT without re-adding the integration.
+- **Frontend UI is now opt-in (see Breaking Changes below):** if you previously used the custom card or more-info popup, enable the two new option switches after upgrading, otherwise the UI falls back to native.
 
-### 🔐 Authentication & Stability
-- Hardened JWT auth and coordinator stability: the coordinator now raises `UpdateFailed` on failure instead of silently returning stale cached data, so repair/retry behaves correctly; JWT re-authentication is more robust.
-- Declared `tenacity>=9.1.2` in `manifest.json` `requirements` for the retry/backoff dependency.
-- Inlined JWT setup instructions into the config-flow UI for clearer guidance.
+### ⚠️ Breaking Changes (Action Required for Users)
+1. **Lovelace resource injection is now Opt-in (dual switches):** The integration no longer unconditionally injects card/more-info/i18n JS resources into the HA frontend. Two new independent toggles have been added to the integration options:
+- **Enable Custom Frontend UI Support (custom_ui):** Registers the custom main card. Default is OFF.
+- **Override Native More-Info Dialog (custom_more_info):** Replaces the native popup with a custom detailed card. Default is OFF.
+- **Note:** Existing users of custom cards/popups **must manually enable** these switches after upgrading, otherwise the frontend will revert to the native UI.
+2. **Real-time temperature sensor renaming:** The `temp_range` sensor has been renamed to the numerical `current_temperature` (entity registry will be rebuilt).
 
-### 🐛 Bug Fixes
-- Fixed the config-flow reconfigure step so it no longer aborts with an `UnknownFlow` error and reports the correct `reconfigure_successful` result.
+### ✨ Core New Features
+- **Frontend card rewritten with zero-dependency native SVG:** (Major change, `qweather-pro-card.js` +814 lines, reduced from an 871KB ApexCharts global bundle to ~32KB native SVG):
+- Completely eliminates global JS conflicts with other ecosystem cards like `apexcharts-card` (root cause of issue #61).
+- Supports both **List** and **Chart** styles; hourly forecast charts now support mouse-wheel zooming and horizontal panning with a reset redraw button.
+- Synchronized rewrite of `qweather-pro-i18n.js` and `qweather-pro-more-info.js` (dynamic i18n reading, eliminated loading race conditions).
+- **JWT (Ed25519) Authentication System:** `config_flow.py` adds `jwt_setup`, `reauth_jwt`, and `reconfigure` flows. Key pairs are generated once with the private key stored in the database. Public keys are deterministically derived for display with SHA256 fingerprint verification.
+- **Reauth flow implemented:** The coordinator now throws `ConfigEntryAuthFailed` on 401/403 errors → automatically triggers re-authentication instead of silently serving stale data.
+- **Enhanced Data Entities:** Added `current_humidity` real-time sensor; weather entities now expose `wind_gust`, `precip_type`, `precip_intensity`, etc.; daily forecasts now include `precipitation_type`.
+- **New Service:** Added `qweather_pro.get_weather` service (`services.py` +168, `services.yaml` +31).
+- **Diagnostics Redaction:** (`diagnostics.py` +37) API Keys, Private Keys, and Project IDs are now masked in diagnostic exports.
 
-### 📄 Docs & License
-- Corrected README/DOCS factual errors and cleaned up brand names / technical abbreviations.
-- Added attribution to the original author **dscao/qweather** under the MIT license in `LICENSE` (integration code remains Copyright (c) 2026 PraxiGEN).
+### 🐛 Coordinator Hardening (HACS Review Blocker Fixes)
+- **Coordinator rewrite (+596):** Correctly raises `UpdateFailed` when all fetches fail → sets `last_update_success=False` and marks entities as `unavailable`. It no longer returns or perpetually serves "yesterday's data." `update_time` is only updated on successful paths to avoid "stale data looking healthy."
+- **API KEY Enforcement:** Strictly locks the refresh interval to 100 minutes in API KEY mode, ignoring manual user overrides to ensure compliance.
+
+### 🔧 Config Flow / Compliance Fixes
+- **Translation Schema Compliance:** JWT help text is now inlined into descriptions; dynamic public key blocks use the `{key_block}` runtime placeholder (fixes `hassfest` "not a valid option" errors).
+- **Manifest Updates:** Correctly declared `tenacity>=9.1.2` (as `tenacity` was removed from HA Core dependencies in 2026.1); added `after_dependencies: ["frontend"]`.
+- **Flow Logic Fixes:** Corrected `reconfigure` termination reason to `reconfigure_successful`; `async_init` no longer erroneously passes `entry.data`, which previously caused flows to end prematurely.
+- **Cleanup:** Removed unused `async_get_translations` dead import in `config_flow.py` (PR #86).
+
+### 🌐 Translations & Documentation (HACS Review Response)
+- **Comprehensive Translation Coverage:** 12 languages updated (+400 lines per language) covering JWT keys, SVG style keys, humidity, and alert field orders.
+- **README/DOCS Corrections:** Fact-checked SVG claims; corrected card type to `custom:qweather-pro-card` (the previously documented `qweather-card` did not exist); aligned entity tables for `warning_info` with actual code.
+- **LICENSE Update:** Added MIT attribution for original author `dscao` (Main copyright line remains `Copyright (c) 2026 PraxiGEN`, added `Based on dscao/qweather ... used under MIT`, PR #86). The LICENSE file format was also corrected so GitHub detects it as `MIT` (it had briefly shown `NOASSERTION` due to an inserted attribution line breaking Licensee's match).
+- **Brand Cleanup:** Deleted non-ASCII backup file `logo备.png` (183KB).
+
+### 🧪 Testing & CI
+- **Test Relocation:** Moved tests to the repository root `/tests` (following the `ludeeus` layout) to ensure they are not packaged by HACS.
+- **New CI Workflows:** Added `pytest` workflow (`tests.yml`), `pr-validate`, and `hassfest` validation; `stale.yml` added to automatically close inactive issues.
+- **Expanded Coverage:** Added 11 new test modules (`config_flow`, `weather`, `sensor`, `coordinator`, `services`, `diagnostics`, etc.) covering JWT, reconfigure logic, the coordinator, and sensors.
+
+### 📊 File Statistics
+49 file changes, +7903 / −1788:
+- **Major Rewrites:** `coordinator.py` (+596), `config_flow.py` (+374), `www/qweather-pro-card.js` (+814), `weather.py` (+313), `translations/*` (12×~404).
+- **New Files:** `services.py`, `services.yaml`, `diagnostics.py`, `tests/*` (11), `pytest.ini`, `conftest.py`.
+- **Cleanups:** Deleted `brand/logo备.png`, significantly reduced card bundle size.
 
 ### 🛠 [1.2.0-beta.5] - 2026-08-24
 
