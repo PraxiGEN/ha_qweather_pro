@@ -15,7 +15,6 @@ from homeassistant.const import CONF_HOST, CONF_API_KEY
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
-from homeassistant.helpers.translation import async_get_translations
 
 from .api import QWeatherAPI
 from .const import (
@@ -202,7 +201,6 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Required(CONF_PROJECT_ID, default=self._temp_data.get(CONF_PROJECT_ID, "")): selector.TextSelector(),
             vol.Required(CONF_KEY_ID, default=self._temp_data.get(CONF_KEY_ID, "")): selector.TextSelector(),
         }
-
         # 公钥 + SHA256 指纹代码块经 description 的 {key_block} 占位符注入。
         # first_block/reuse_block 说明文本已内联进 translations 的 jwt_setup.description
         # （HA 配置流翻译 schema 的 step 级不含 description_placeholders 键，自定义键会被 hassfest 拒绝）。
