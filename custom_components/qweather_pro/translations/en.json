@@ -21,16 +21,11 @@
       },
       "jwt_setup": {
         "title": "Configure JWT Security Authentication",
-        "description": "**Developer ID**, **Project ID** and **Key ID** identify your JWT credential.\r\nA key pair has been generated for you to sign requests.\r\n{upload_block}\r\n#### Note: JWT authentication can only be added once per credential. If you re-add the integration, the original JWT credential will no longer be valid.",
+        "description": "**Developer ID**, **Project ID** and **Key ID** identify your JWT credential.\r\nA key pair has been generated for you to sign requests.\r\n**Steps:**\r\n1. Fill in **Developer ID**, **Project ID** and **Key ID**.\r\n2. Copy the **public key** below and upload it to the QWeather Console.\r\n\r\nYou are reusing the existing key pair; you do NOT need to re-upload the public key. The public key shown above is for verification only.\r\n\r\n{key_block}\r\n#### Note: JWT authentication can only be added once per credential. If you re-add the integration, the original JWT credential will no longer be valid.",
         "data": {
           "iss": "Developer ID",
           "project_id": "Project ID",
           "key_id": "Key ID"
-        },
-        "description_placeholders": {
-          "first_block": "**Steps:**\r\n1. Fill in **Developer ID**, **Project ID** and **Key ID**.\r\n2. Copy the **public key** below and upload it to the QWeather Console.",
-          "reuse_block": "You are reusing the existing key pair; you do NOT need to re-upload the public key. The public key shown above is for verification only.",
-          "sha256_label": "SHA256: "
         }
       },
       "reuse_location": {
@@ -68,7 +63,7 @@
       },
       "reauth_jwt": {
         "title": "Update JWT Credentials",
-        "description": "Please fill in the **Developer ID**, **Project ID** and **Key ID** for JWT authentication. Your location settings will be preserved.\r\n**Go to the QWeather Console** to check your project and credentials.\r\n{upload_block}",
+        "description": "Please fill in the **Developer ID**, **Project ID** and **Key ID** for JWT authentication. Your location settings will be preserved.\r\n**Go to the QWeather Console** to check your project and credentials.\r\n**Steps:**\r\n1. Fill in **Developer ID**, **Project ID** and **Key ID**.\r\n2. Copy the **public key** below and upload it to the QWeather Console.\r\n\r\nYou are reusing the existing key pair; you do NOT need to re-upload the public key. The public key shown above is for verification only.\r\n\r\n{key_block}",
         "data": {
           "iss": "Developer ID",
           "project_id": "Project ID",

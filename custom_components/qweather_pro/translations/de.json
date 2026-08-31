@@ -21,16 +21,11 @@
       },
       "jwt_setup": {
         "title": "JWT-Sicherheitsauthentifizierung konfigurieren",
-        "description": "**Entwickler-ID**, **Projekt-ID** und **Schlüssel-ID** identifizieren Ihre JWT-Anmeldedaten.\r\nFür Sie wurde ein Schlüsselpaar zur Signierung von Anfragen generiert.\r\n{upload_block}\r\n#### Hinweis: JWT-Authentifizierung kann pro Anmeldedaten nur einmal hinzugefügt werden. Wenn Sie die Integration erneut hinzufügen, werden die ursprünglichen JWT-Anmeldedaten ungültig.",
+        "description": "**Entwickler-ID**, **Projekt-ID** und **Schlüssel-ID** identifizieren Ihre JWT-Anmeldedaten.\r\nFür Sie wurde ein Schlüsselpaar zur Signierung von Anfragen generiert.\r\n**Schritte:**\r\n1. Geben Sie **Entwickler-ID**, **Projekt-ID** und **Schlüssel-ID** ein.\r\n2. Kopieren Sie den **öffentlichen Schlüssel** unten und laden Sie ihn in der QWeather-Konsole unter den JWT-Anmeldedaten Ihres Projekts hoch.\r\n\r\nSie verwenden das vorhandene Schlüsselpaar wieder; Sie müssen den öffentlichen Schlüssel nicht erneut hochladen. Der oben angezeigte öffentliche Schlüssel dient nur zur Überprüfung.\r\n\r\n{key_block}\r\n#### Hinweis: JWT-Authentifizierung kann pro Anmeldedaten nur einmal hinzugefügt werden. Wenn Sie die Integration erneut hinzufügen, werden die ursprünglichen JWT-Anmeldedaten ungültig.",
         "data": {
           "iss": "Entwickler-ID",
           "project_id": "Projekt-ID",
           "key_id": "Schlüssel-ID"
-        },
-        "description_placeholders": {
-          "first_block": "**Schritte:**\r\n1. Geben Sie **Entwickler-ID**, **Projekt-ID** und **Schlüssel-ID** ein.\r\n2. Kopieren Sie den **öffentlichen Schlüssel** unten und laden Sie ihn in der QWeather-Konsole unter den JWT-Anmeldedaten Ihres Projekts hoch.",
-          "reuse_block": "Sie verwenden das vorhandene Schlüsselpaar wieder; Sie müssen den öffentlichen Schlüssel nicht erneut hochladen. Der oben angezeigte öffentliche Schlüssel dient nur zur Überprüfung.",
-          "sha256_label": "SHA256: "
         }
       },
       "reuse_location": {
@@ -68,7 +63,7 @@
       },
       "reauth_jwt": {
         "title": "JWT-Zugangsdaten aktualisieren",
-        "description": "Geben Sie für die JWT-Authentifizierung **Entwickler-ID**, **Projekt-ID** und **Schlüssel-ID** ein. Ihre Standorteinstellungen bleiben erhalten.\r\n**Gehen Sie zur QWeather-Konsole**, um Ihr Projekt und Ihre Anmeldedaten zu prüfen.\r\n{upload_block}",
+        "description": "Geben Sie für die JWT-Authentifizierung **Entwickler-ID**, **Projekt-ID** und **Schlüssel-ID** ein. Ihre Standorteinstellungen bleiben erhalten.\r\n**Gehen Sie zur QWeather-Konsole**, um Ihr Projekt und Ihre Anmeldedaten zu prüfen.\r\n**Schritte:**\r\n1. Geben Sie **Entwickler-ID**, **Projekt-ID** und **Schlüssel-ID** ein.\r\n2. Kopieren Sie den **öffentlichen Schlüssel** unten und laden Sie ihn in der QWeather-Konsole unter den JWT-Anmeldedaten Ihres Projekts hoch.\r\n\r\nSie verwenden das vorhandene Schlüsselpaar wieder; Sie müssen den öffentlichen Schlüssel nicht erneut hochladen. Der oben angezeigte öffentliche Schlüssel dient nur zur Überprüfung.\r\n\r\n{key_block}",
         "data": {
           "iss": "Entwickler-ID",
           "project_id": "Projekt-ID",

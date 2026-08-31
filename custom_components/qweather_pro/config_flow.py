@@ -203,26 +203,19 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Required(CONF_KEY_ID, default=self._temp_data.get(CONF_KEY_ID, "")): selector.TextSelector(),
         }
 
-        # 取翻译：首次/重新生成模式展示「步骤 + 公钥代码块」，保留模式展示「原公钥 + 复用提示」。
-        # 注意：first_block/reuse_block/sha256_label 位于 config.step.jwt_setup.description_placeholders
-        # （HA 配置流翻译 schema 禁止在 step 顶层出现自定义键，否则 hassfest 报 not a valid option）。
-        translations = await async_get_translations(self.hass, self.hass.config.language, "config", [DOMAIN])
-        jwt_dp = translations.get(f"component.{DOMAIN}.config.step.jwt_setup.description_placeholders", {})
-        first_block = jwt_dp.get("first_block", "")
-        reuse_block = jwt_dp.get("reuse_block", "")
+        # 公钥 + SHA256 指纹代码块经 description 的 {key_block} 占位符注入。
+        # first_block/reuse_block 说明文本已内联进 translations 的 jwt_setup.description
+        # （HA 配置流翻译 schema 的 step 级不含 description_placeholders 键，自定义键会被 hassfest 拒绝）。
         if self._generated_public_key:
             pub_pem = self._generated_public_key
-            # 公钥 SHA256 指纹：供用户去和风控制台比对「本地私钥 ↔ 控制台公钥」是否同一把，
             pub_sha256 = hashlib.sha256(pub_pem.strip().encode("utf-8")).hexdigest()
-            sha256_label = jwt_dp.get("sha256_label", "SHA256: ")
             key_block = (
                 "\r\n```text\r\n" + pub_pem + "\r\n```\r\n"
-                + sha256_label + pub_sha256
+                + "SHA256: " + pub_sha256
             )
-            # 保留模式展示原公钥 + 复用提示；首次/重新生成模式展示步骤 + 新公钥
-            placeholders = {"upload_block": (reuse_block if is_reuse else first_block) + key_block}
+            placeholders: dict[str, str] = {"key_block": key_block}
         else:
-            placeholders = {"upload_block": reuse_block}
+            placeholders = {}
 
         return self.async_show_form(
             step_id="jwt_setup",
@@ -531,20 +524,17 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
             is_reuse = True
 
-        translations = await async_get_translations(self.hass, self.hass.config.language, "config", [DOMAIN])
-        jwt_dp = translations.get(f"component.{DOMAIN}.config.step.jwt_setup.description_placeholders", {})
-        first_block = jwt_dp.get("first_block", "")
-        reuse_block = jwt_dp.get("reuse_block", "")
+        # 公钥 + SHA256 指纹代码块经 description 的 {key_block} 占位符注入。
+        # first_block/reuse_block 说明文本已内联进 translations 的 reauth_jwt.description。
         if self._generated_public_key:
             pub_sha256 = hashlib.sha256(self._generated_public_key.strip().encode("utf-8")).hexdigest()
-            sha256_label = jwt_dp.get("sha256_label", "SHA256: ")
             key_block = (
                 "\r\n```text\r\n" + self._generated_public_key + "\r\n```\r\n"
-                + sha256_label + pub_sha256
+                + "SHA256: " + pub_sha256
             )
-            placeholders = {"upload_block": (reuse_block if is_reuse else first_block) + key_block}
+            placeholders = {"key_block": key_block}
         else:
-            placeholders = {"upload_block": reuse_block}
+            placeholders = {}
 
         return self.async_show_form(
             step_id="reauth_jwt",

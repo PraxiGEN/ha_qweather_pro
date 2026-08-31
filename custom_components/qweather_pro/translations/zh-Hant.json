@@ -21,16 +21,11 @@
       },
       "jwt_setup": {
         "title": "設定 JWT 安全驗證",
-        "description": "**開發者 ID**、**專案 ID** 與**金鑰 ID** 用於標識你的 JWT 憑證。\r\n系統已為你產生用於簽署請求的金鑰對。\r\n{upload_block}\r\n#### 注意：每個憑證僅能新增一次 JWT 認證。若重新新增整合，原 JWT 憑證將失效。",
+        "description": "**開發者 ID**、**專案 ID** 與**金鑰 ID** 用於標識你的 JWT 憑證。\r\n系統已為你產生用於簽署請求的金鑰對。\r\n**步驟：**\r\n1. 填寫**開發者 ID**、**專案 ID** 與**金鑰 ID**。\r\n2. 複製下方**公鑰**並上傳到和風天氣控制台專案的 JWT 憑證中。\r\n\r\n你正在復用現有的金鑰對，無需重新上傳公鑰。上方展示的公鑰僅供核對。\r\n\r\n{key_block}\r\n#### 注意：每個憑證僅能新增一次 JWT 認證。若重新新增整合，原 JWT 憑證將失效。",
         "data": {
           "iss": "開發者 ID",
           "project_id": "Project ID",
           "key_id": "Key ID"
-        },
-        "description_placeholders": {
-          "first_block": "**步驟：**\r\n1. 填寫**開發者 ID**、**專案 ID** 與**金鑰 ID**。\r\n2. 複製下方**公鑰**並上傳到和風天氣控制台專案的 JWT 憑證中。",
-          "reuse_block": "你正在復用現有的金鑰對，無需重新上傳公鑰。上方展示的公鑰僅供核對。",
-          "sha256_label": "SHA256: "
         }
       },
       "reuse_location": {
@@ -68,7 +63,7 @@
       },
       "reauth_jwt": {
         "title": "更新 JWT 憑證",
-        "description": "請填寫 JWT 認證的 **開發者 ID**、**專案 ID** 與 **憑證 ID**，您的位置設定將保持不變。\r\n**前往和風天氣控制台** 檢查您的專案與憑證。\r\n{upload_block}",
+        "description": "請填寫 JWT 認證的 **開發者 ID**、**專案 ID** 與 **憑證 ID**，您的位置設定將保持不變。\r\n**前往和風天氣控制台** 檢查您的專案與憑證。\r\n**步驟：**\r\n1. 填寫**開發者 ID**、**專案 ID** 與**金鑰 ID**。\r\n2. 複製下方**公鑰**並上傳到和風天氣控制台專案的 JWT 憑證中。\r\n\r\n你正在復用現有的金鑰對，無需重新上傳公鑰。上方展示的公鑰僅供核對。\r\n\r\n{key_block}",
         "data": {
           "iss": "開發者 ID",
           "project_id": "Project ID",

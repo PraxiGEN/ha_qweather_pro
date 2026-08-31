@@ -21,16 +21,11 @@
       },
       "jwt_setup": {
         "title": "JWT-beveiligingsauthenticatie configureren",
-        "description": "**Ontwikkelaars-ID**, **Project-ID** en **Sleutel-ID** identificeren uw JWT-referenties.\r\nEr is een sleutelpaar voor u gegenereerd om verzoeken te ondertekenen.\r\n{upload_block}\r\n#### Opmerking: JWT-authenticatie kan slechts één keer per referentie worden toegevoegd. Als u de integratie opnieuw toevoegt, zijn de oorspronkelijke JWT-referenties niet meer geldig.",
+        "description": "**Ontwikkelaars-ID**, **Project-ID** en **Sleutel-ID** identificeren uw JWT-referenties.\r\nEr is een sleutelpaar voor u gegenereerd om verzoeken te ondertekenen.\r\n**Stappen:**\r\n1. Vul **Ontwikkelaars-ID**, **Project-ID** en **Sleutel-ID** in.\r\n2. Kopieer de **openbare sleutel** hieronder en upload deze naar de QWeather-console onder de JWT-referenties van uw project.\r\n\r\nU gebruikt het bestaande sleutelpaar opnieuw; u hoeft de openbare sleutel niet opnieuw te uploaden. De hierboven getoonde openbare sleutel dient alleen ter verificatie.\r\n\r\n{key_block}\r\n#### Opmerking: JWT-authenticatie kan slechts één keer per referentie worden toegevoegd. Als u de integratie opnieuw toevoegt, zijn de oorspronkelijke JWT-referenties niet meer geldig.",
         "data": {
           "iss": "Ontwikkelaars-ID",
           "project_id": "Project-ID",
           "key_id": "Key-ID"
-        },
-        "description_placeholders": {
-          "first_block": "**Stappen:**\r\n1. Vul **Ontwikkelaars-ID**, **Project-ID** en **Sleutel-ID** in.\r\n2. Kopieer de **openbare sleutel** hieronder en upload deze naar de QWeather-console onder de JWT-referenties van uw project.",
-          "reuse_block": "U gebruikt het bestaande sleutelpaar opnieuw; u hoeft de openbare sleutel niet opnieuw te uploaden. De hierboven getoonde openbare sleutel dient alleen ter verificatie.",
-          "sha256_label": "SHA256: "
         }
       },
       "reuse_location": {
@@ -68,7 +63,7 @@
       },
       "reauth_jwt": {
         "title": "JWT-inloggegevens bijwerken",
-        "description": "Vul voor JWT-authenticatie **Ontwikkelaars-ID**, **Project-ID** en **Sleutel-ID** in. Uw locatie-instellingen blijven behouden.\r\n**Ga naar de QWeather-console** om uw project en referenties te controleren.\r\n{upload_block}",
+        "description": "Vul voor JWT-authenticatie **Ontwikkelaars-ID**, **Project-ID** en **Sleutel-ID** in. Uw locatie-instellingen blijven behouden.\r\n**Ga naar de QWeather-console** om uw project en referenties te controleren.\r\n**Stappen:**\r\n1. Vul **Ontwikkelaars-ID**, **Project-ID** en **Sleutel-ID** in.\r\n2. Kopieer de **openbare sleutel** hieronder en upload deze naar de QWeather-console onder de JWT-referenties van uw project.\r\n\r\nU gebruikt het bestaande sleutelpaar opnieuw; u hoeft de openbare sleutel niet opnieuw te uploaden. De hierboven getoonde openbare sleutel dient alleen ter verificatie.\r\n\r\n{key_block}",
         "data": {
           "iss": "Ontwikkelaars-ID",
           "project_id": "Project-ID",

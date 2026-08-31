@@ -21,16 +21,11 @@
       },
       "jwt_setup": {
         "title": "Configurar autenticação JWT",
-        "description": "O **ID do desenvolvedor**, **ID do projeto** e **ID da chave** identificam suas credenciais JWT.\r\nUm par de chaves foi gerado para você assinar as solicitações.\r\n{upload_block}\r\n#### Observação: a autenticação JWT só pode ser adicionada uma vez por credencial. Se você readicionar a integração, as credenciais JWT originais não serão mais válidas.",
+        "description": "O **ID do desenvolvedor**, **ID do projeto** e **ID da chave** identificam suas credenciais JWT.\r\nUm par de chaves foi gerado para você assinar as solicitações.\r\n**Passos:**\r\n1. Preencha o **ID do desenvolvedor**, **ID do projeto** e **ID da chave**.\r\n2. Copie a **chave pública** abaixo e envie-a para o Console QWeather nas credenciais JWT do seu projeto.\r\n\r\nVocê está reutilizando o par de chaves existente; não é necessário reenviar a chave pública. A chave pública exibida acima é apenas para verificação.\r\n\r\n{key_block}\r\n#### Observação: a autenticação JWT só pode ser adicionada uma vez por credencial. Se você readicionar a integração, as credenciais JWT originais não serão mais válidas.",
         "data": {
           "iss": "ID do desenvolvedor",
           "project_id": "ID do Projeto",
           "key_id": "ID da Chave"
-        },
-        "description_placeholders": {
-          "first_block": "**Passos:**\r\n1. Preencha o **ID do desenvolvedor**, **ID do projeto** e **ID da chave**.\r\n2. Copie a **chave pública** abaixo e envie-a para o Console QWeather nas credenciais JWT do seu projeto.",
-          "reuse_block": "Você está reutilizando o par de chaves existente; não é necessário reenviar a chave pública. A chave pública exibida acima é apenas para verificação.",
-          "sha256_label": "SHA256: "
         }
       },
       "reuse_location": {
@@ -68,7 +63,7 @@
       },
       "reauth_jwt": {
         "title": "Atualizar credenciais JWT",
-        "description": "Preencha o **ID do desenvolvedor**, **ID do projeto** e **ID da chave** para a autenticação JWT. Suas configurações de localização serão preservadas.\r\n**Vá para o Console QWeather** para verificar seu projeto e credenciais.\r\n{upload_block}",
+        "description": "Preencha o **ID do desenvolvedor**, **ID do projeto** e **ID da chave** para a autenticação JWT. Suas configurações de localização serão preservadas.\r\n**Vá para o Console QWeather** para verificar seu projeto e credenciais.\r\n**Passos:**\r\n1. Preencha o **ID do desenvolvedor**, **ID do projeto** e **ID da chave**.\r\n2. Copie a **chave pública** abaixo e envie-a para o Console QWeather nas credenciais JWT do seu projeto.\r\n\r\nVocê está reutilizando o par de chaves existente; não é necessário reenviar a chave pública. A chave pública exibida acima é apenas para verificação.\r\n\r\n{key_block}",
         "data": {
           "iss": "ID do desenvolvedor",
           "project_id": "ID do Projeto",
