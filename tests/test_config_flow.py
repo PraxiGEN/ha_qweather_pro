@@ -21,8 +21,10 @@ try:
         CONF_LOCATION_ID,
         CONF_PROJECT_ID,
         CONF_KEY_ID,
+        CONF_PRIVATE_KEY,
         CONF_UPDATE_INTERVAL,
     )
+    from pytest_homeassistant_custom_component.common import MockConfigEntry
 
     _HA_OK = True
 except Exception:  # pragma: no cover - 本地缺依赖时跳过
@@ -47,6 +49,11 @@ CITY_OK = {
         }
     ],
 }
+
+# 2026-06-01 起和风公共域名(api.qweather.com/devapi/geoapi)已停止服务，
+# 真实用户须使用专属 API Host(形如 *.qweatherapi.com)。测试须用专属 Host，
+# 否则会被 config_flow 的 deprecated_domains 校验拦截，永远到不了 create_entry。
+HOST_OK = "https://mockhost.qweatherapi.com"
 
 
 @pytest.fixture
@@ -81,7 +88,7 @@ async def test_full_jwt_setup_creates_entry(hass, _patch_citylookup):
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"],
         {
-            CONF_HOST: "https://api.qweather.com",
+            CONF_HOST: HOST_OK,
             CONF_LOCATION_ID: "120,30",
             CONF_USE_TOKEN: True,
             CONF_API_KEY: "k",
@@ -108,7 +115,7 @@ async def test_api_key_setup_creates_entry(hass, _patch_citylookup):
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"],
         {
-            CONF_HOST: "https://api.qweather.com",
+            CONF_HOST: HOST_OK,
             CONF_LOCATION_ID: "120,30",
             CONF_USE_TOKEN: False,
             CONF_API_KEY: "k",
@@ -119,19 +126,29 @@ async def test_api_key_setup_creates_entry(hass, _patch_citylookup):
     assert result["data"][CONF_USE_TOKEN] is False
 
 
-async def test_reconfigure_can_switch_to_jwt(hass, mock_config_entry, _patch_citylookup):
-    mock_config_entry.data[CONF_USE_TOKEN] = False
-    mock_config_entry.add_to_hass(hass)
+async def test_reconfigure_can_switch_to_jwt(hass, _patch_citylookup):
+    # HA 2026.9 的 ConfigEntry.data 为只读 mappingproxy，只能在构造时传入 data，
+    # 不能在测试里对 entry.data[...] 做 item 赋值。
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        data={
+            CONF_USE_TOKEN: False,
+            CONF_HOST: HOST_OK,
+            CONF_LOCATION_ID: "120,30",
+            CONF_API_KEY: "k",
+        },
+    )
+    entry.add_to_hass(hass)
     result = await hass.config_entries.flow.async_init(
         DOMAIN,
-        context={"source": SOURCE_RECONFIGURE, "entry_id": mock_config_entry.entry_id},
-        data=mock_config_entry.data,
+        context={"source": SOURCE_RECONFIGURE, "entry_id": entry.entry_id},
+        data=entry.data,
     )
     # 重新配置表单提交勾选 use_token
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"],
         {
-            CONF_HOST: "https://api.qweather.com",
+            CONF_HOST: HOST_OK,
             CONF_LOCATION_ID: "120,30",
             CONF_USE_TOKEN: True,
             CONF_API_KEY: "k",
