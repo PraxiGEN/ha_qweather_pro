@@ -1,5 +1,103 @@
 ## Release Notes: QWeather Pro 2026
 
+### 🛠 [1.2.6] - 2026-08-31
+
+First stable release built on the 1.2.0-beta series.
+
+### ✨ Highlights
+- **Zero-dependency native SVG card:** The frontend card was fully rewritten from ApexCharts (~871 KB) into a dependency-free native SVG implementation (~32 KB). This removes the previous global JavaScript injection that conflicted with other frontend resources; the card now runs without any third-party chart library.
+- **SVG forecast charts:** Hourly and daily forecasts render as native SVG with both curve and list styles, plus mouse-wheel zoom and pan.
+
+### 🔐 Authentication & Stability
+- Hardened JWT auth and coordinator stability: the coordinator now raises `UpdateFailed` on failure instead of silently returning stale cached data, so repair/retry behaves correctly; JWT re-authentication is more robust.
+- Declared `tenacity>=9.1.2` in `manifest.json` `requirements` for the retry/backoff dependency.
+- Inlined JWT setup instructions into the config-flow UI for clearer guidance.
+
+### 🐛 Bug Fixes
+- Fixed the config-flow reconfigure step so it no longer aborts with an `UnknownFlow` error and reports the correct `reconfigure_successful` result.
+
+### 📄 Docs & License
+- Corrected README/DOCS factual errors and cleaned up brand names / technical abbreviations.
+- Added attribution to the original author **dscao/qweather** under the MIT license in `LICENSE` (integration code remains Copyright (c) 2026 PraxiGEN).
+
+### 🛠 [1.2.0-beta.5] - 2026-08-24
+
+### ⚠️ Breaking Changes
+- **Lovelace resource injection is now opt-in:** The integration no longer registers its frontend resources (card / more-info / i18n) into every Home Assistant frontend unconditionally. Two independent switches were added under the integration options:
+  - `启用自定义前端 UI 支持` (custom_ui): registers the custom main card. **Off by default.**
+  - `覆盖原生详情弹窗` (custom_more_info): replaces the native entity detail popup with the custom more-info card. **Off by default.**
+  - Any user already relying on the custom card or custom more-info popup must enable the corresponding switch after upgrading, otherwise the frontend falls back to the native UI.
+
+### ✨ New Features
+- Added a new `current_humidity` sensor entity reporting the current relative humidity (%).
+
+### 🐛 Bug Fixes
+- Translated the `precip_type` state values (rain / snow / ice / mixed / none / unknown) in all 12 languages, so the weather entity's precipitation-type attribute now shows a localized label instead of the raw code.
+- Fixed the custom card occasionally rendering raw translation keys instead of localized text. The card now reads the i18n bundle dynamically and repaints once ready, removing the load-order race.
+- Fixed the chart reset button switching the X axis to numeric indices (0,1,2…) instead of weekday/time labels; reset now rebuilds the chart.
+- Fixed the forecast chart not filling the card width with few data points by switching to a numeric axis so data always spans edge to edge.
+
+### 🔧 Card / Chart Enhancements
+- Hourly forecast chart now supports mouse-wheel zoom and left/right pan, with a default 10-hour window and a custom reset button.
+
+### 🛠 [1.2.0-beta.4] - 2026-08-23
+
+### 🐛 Bug Fixes
+- Fixed a `TypeError: async_update_listeners() missing 1 required positional argument: 'forecast_types'` that was raised on every coordinator update. The call now passes `None` (refresh all forecast types), as required by Home Assistant since 2024.4.
+
+### ✨ Newly Exposed Entity Attributes
+- Weather entity now exposes previously unexposed current-condition fields: `wind_gust` (gust wind speed, km/h), `precip_type` (rain/snow/none), and `precip_intensity` (precipitation intensity).
+- Daily forecast entries now include `precipitation_type`, matching the hourly forecast.
+- Added 14 astronomical/lunar time fields to the weather entity attributes (all in local HH:MM): `sunrise`, `sunset`, `astronomical_dawn`, `nautical_dawn`, `civil_dawn`, `astronomical_dusk`, `nautical_dusk`, `civil_dusk`, `solar_noon`, `solar_midnight`, `moonrise`, `moonset`, `moon_transit`, `moon_underfoot`.
+- The `current_temperature` sensor now exposes `temp_avg` (daily average temperature).
+
+### 🌐 Translations
+- Added i18n name keys for all newly exposed fields across the 12 supported languages.
+
+### 🛠 [1.2.0-beta.3] - 2026-08-19
+
+### 🐛 Bug Fixes
+- Fixed humidity (and other percentage fields) showing long floating-point artifacts such as `57.99999999999999%`. Percent values are now rounded to integers.
+- Removed the invalid `color_name` field from severe-weather-warning attributes, as the V1 API does not return it.
+- Slimmed `manifest.json` requirements to only `tenacity>=9.1.4` (minimum version constraint). `aiohttp` / `cryptography` / `PyJWT` are built into Home Assistant core and no longer need explicit declaration.
+
+### 🛠 [1.2.0-beta.2] - 2026-08-16
+
+### ⚠️ Breaking Changes
+- **API migration (V7 → V1):** The data layer has been fully migrated from QWeather V7 API to the **V1 API**. The coordinator parsers were rewritten around V1’s `daytime` / `nighttime` nested structure, with a new primary/backup data‑source fallback. Any custom template or automation that relied on the old V7 field mapping must be re‑checked.
+- **Weather entity attribute changes:** Forecast and current‑condition attributes were reorganized to match the V1 schema.
+  - Daily forecast is now day/night nested: new keys such as `wind_scale_day` / `wind_dir_day` / `wind_scale_night` / `wind_dir_night`, `icon_night` / `text_night` / `condition_night`, and `wind_360_*`; wind direction is now expressed as `wind_degree` (degrees) / `wind_compass` (cardinal).
+  - Current‑condition extra attributes were reshuffled per V1: `wind_dir`, `wind_scale`, `forecast_cloud`, `moon_phase`, etc.; the legacy `obsTime` observation timestamp was removed and is now covered by `update_time`.
+  - Any template/automation/third‑party card that referenced the old (V7 flat) attribute keys will now read `unknown` — please switch to the new keys.
+- **Temperature sensor entity renamed:** `sensor.qweather_today_temp_range` → `sensor.qweather_current_temperature`. It is now a **numeric** temperature sensor (`device_class: temperature`, `state_class: measurement`, unit °C) instead of a string. The old string state `12°C/25°C` is replaced by a numeric state plus attributes `temp_range` (today’s high/low), `max_temp`, `min_temp`, `feels_like`, and `dew_point`. Any template/automation referencing the old entity id or the old string state must be updated.
+
+### 🔐 Authentication & Quota Strategy
+- JWT by default: New setups and re‑configurations now default to JWT, which has no request limit. API KEY stays available but becomes optional.
+- API KEY will be capped: From 2027‑01‑01 QWeather limits daily requests for API KEY auth (exact number not yet announced), and SDK 5+ drops API KEY support. JWT is the recommended path.
+- Smart migration prompt: If you are still on API KEY, a Repairs (修复) notice appears, guiding you to switch to JWT for unlimited, faster updates.
+- Gentler polling on API KEY: When using API KEY, the default refresh interval is slowed to 100 minutes (was 15) to stay safely under the coming limit.
+
+### 💾 Cache That Survives Restarts
+- Now uses Home Assistant’s native storage to cache weather data. After a restart the last known data is restored instantly instead of waiting for the next refresh.
+
+### 🔧 On‑Demand Weather Service
+- Added a `get_weather` service so the card (and you) can fetch fresh weather data any time. The card already uses it to read AQI and severe weather warnings.
+
+### 🃏 Card Improvements (V1)
+- The card now reads AQI and severe weather warnings through the `get_weather` service.
+- The more‑info panel shows more V1 fields, including separate day/night conditions.
+- Brand names and technical abbreviations are no longer pushed into the translation files — only localizable text is translated.
+
+### 🌐 Translations
+- Added the API KEY quota notice to all 12 supported languages.
+- Updated all 12 languages for the V1 API changes and new UI strings.
+
+### 🧰 Other
+- Added a diagnostics page that exports integration data for troubleshooting.
+- Added a re‑authentication flow for credential renewal.
+- Rebuilt sensors to adapt to the V1 daily nested structure.
+- More‑info dialog now shows wind direction and moon phase with localization.
+
 ### 🛠 [1.1.0] - 2026-06-02 (Milestone)
 
 ### 🌍 Full‑chain Internationalization (I18N)

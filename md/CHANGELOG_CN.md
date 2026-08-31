@@ -1,5 +1,102 @@
 ## 更新说明：和风天气 Pro 2026
 
+### 🛠 [1.2.6] - 2026-08-31
+
+基于 1.2.0-beta 系列构建的首个稳定版。
+
+### ✨ 亮点
+- **零依赖原生 SVG 卡片：** 前端卡片已从 ApexCharts（约 871 KB）全面重写为零依赖的原生 SVG 实现（约 32 KB）。这移除了此前会与其他前端资源冲突的全局 JavaScript 注入；卡片现在不再依赖任何第三方图表库即可运行。
+- **SVG 预报图表：** 逐小时与每日预报以原生 SVG 呈现，支持曲线与列表两种风格，并支持鼠标滚轮缩放与左右划动。
+
+### 🔐 认证与稳定性
+- 强化 JWT 认证与 coordinator 稳定性：更新失败时 coordinator 现在抛出 `UpdateFailed`，而非静默返回陈旧缓存数据，使修复/重试行为正确；JWT 重新认证更稳健。
+- 在 `manifest.json` 的 `requirements` 中声明 `tenacity>=9.1.2`（重试/退避依赖）。
+- 将 JWT 配置说明内联到配置流界面，指引更清晰。
+
+### 🐛 问题修复
+- 修复配置流重新配置步骤：不再以 `UnknownFlow` 错误中断，并返回正确的 `reconfigure_successful` 结果。
+
+### 📄 文档与许可
+- 修正 README/DOCS 中的事实错误，清理品牌名与技术缩写。
+- 在 `LICENSE` 中新增对原作者 **dscao/qweather** 的 MIT 许可署名（集成代码仍版权归 Copyright (c) 2026 PraxiGEN 所有）。
+
+### 🛠 [1.2.0-beta.5] - 2026-08-24
+
+### ⚠️ 破坏性变更
+- **前端资源注册改为默认关闭：** 集成不再无条件向所有 Home Assistant 前端注入其前端资源（主卡 / 详情弹窗 / i18n）。集成选项中新增两个相互独立的总开关：
+  - `启用自定义前端 UI 支持`（custom_ui）：注册自定义主卡。**默认关闭。**
+  - `覆盖原生详情弹窗`（custom_more_info）：用自定义详情卡片替换原生实体详情弹窗。**默认关闭。**
+  - 已在使用自定义主卡或自定义详情弹窗的用户，升级后需在集成选项中手动打开对应开关，否则前端回退为原生 UI。
+
+### ✨ 新功能
+- 新增 `current_humidity` 实时湿度传感器实体，报告当前相对湿度（%）。
+
+### 🐛 问题修复
+- 为全部 12 种语言翻译 `precip_type` 状态值（雨 / 雪 / 冰粒或冻雨 / 混合降水 / 无降水 / 未知），天气实体的降水类型属性现在显示本地化文案而非原始代码。
+- 修复自定义卡片偶显翻译键（而非本地化文本）的问题。卡片现动态读取 i18n 包，并在其就绪后重绘，消除加载时序竞争。
+- 修复图表重置按钮将 X 轴变成数字索引（0,1,2…）而非星期/时间标签的问题；重置现在重建图表。
+- 修复数据点数较少时预报图表未占满卡片宽度的问题，改用数值轴使数据始终贴边铺满。
+
+### 🔧 卡片 / 图表优化
+- 逐小时预报图表现支持鼠标滚轮缩放与左右划动，默认 10 小时视窗并带自定义重置按钮。
+
+### 🛠 [1.2.0-beta.4] - 2026-08-23
+
+### 🐛 问题修复
+- 修复每次 coordinator 更新都会抛出的 `TypeError: async_update_listeners() missing 1 required positional argument: 'forecast_types'` 报错。现已传入 `None`（刷新全部预报类型），符合 Home Assistant 2024.4 起的必填要求。
+
+### ✨ 新增暴露的实体属性
+- 天气实体新增暴露原先未输出的实况字段：`wind_gust`（阵风风速，km/h）、`precip_type`（降水类型：雨/雪/无）、`precip_intensity`（降水强度）。
+- 每日预报条目新增 `precipitation_type`，与逐小时预报保持一致。
+- 天气实体属性新增 14 个天文/月相时间字段（均为本地时间 HH:MM）：`sunrise`（日出）、`sunset`（日落）、`astronomical_dawn`（天文晨光）、`nautical_dawn`（航海晨光）、`civil_dawn`（民用晨光）、`astronomical_dusk`（天文暮光）、`nautical_dusk`（航海暮光）、`civil_dusk`（民用暮光）、`solar_noon`（正午太阳时）、`solar_midnight`（子夜太阳时）、`moonrise`（月出）、`moonset`（月落）、`moon_transit`（月上中天）、`moon_underfoot`（月下中天）。
+- `current_temperature` 温度传感器新增暴露 `temp_avg`（日均温）。
+
+### 🌐 翻译
+- 为全部 12 种语言新增上述新字段的本地化名称键。
+
+### 🛠 [1.2.0-beta.3] - 2026-08-19
+
+### 🐛 问题修复
+- 修复湿度（及其他百分比字段）显示 `57.99999999999999%` 这类长浮点伪影的问题，百分比现取整显示。
+- 移除气象预警属性中无效的 `color_name` 字段（V1 API 不返回该字段）。
+- 精简 `manifest.json` 依赖声明：仅保留 `tenacity>=9.1.4`（下限约束，环境已满足则不强制升级）。`aiohttp` / `cryptography` / `PyJWT` 为 Home Assistant 核心内置依赖，无需再显式声明。
+
+### 🛠 [1.2.0-beta.2] - 2026-08-16
+
+### ⚠️ 破坏性变更（Breaking Changes）
+- **API 迁移（V7 → V1）**：数据层已从和风天气 V7 API 全面切换到 **V1 API**。coordinator 解析器已按 V1 的 `daytime` / `nighttime` 嵌套结构重写，并新增主备数据源回退（primary/backup fallback）。依赖旧 V7 字段映射的自定义模板/自动化需重新核对。
+- **天气实体属性变更**：预报与实况属性已按 V1 结构重组。
+  - 每日预报改为昼夜嵌套：新增 `wind_scale_day` / `wind_dir_day` / `wind_scale_night` / `wind_dir_night`、`icon_night` / `text_night` / `condition_night`、`wind_360_*` 等键；风向改用 `wind_degree`（角度）/ `wind_compass`（方位）表达。
+  - 实况扩展属性按 V1 重排：`wind_dir`、`wind_scale`、`forecast_cloud`、`moon_phase` 等键名/取值有调整；旧的 `obsTime` 观测时间戳已移除，由 `update_time` 兜底。
+  - 任何直接引用旧（V7 扁平）属性键的模板/自动化/第三方卡片，现在都会取到 `unknown`，请改用新键。
+- **温度传感器实体重命名**：`sensor.qweather_today_temp_range` → `sensor.qweather_current_temperature`。由字符串实体改为**数值型**温度传感器（`device_class: temperature`、`state_class: measurement`、单位 °C）。原字符串状态 `12°C/25°C` 改为数值状态 + 属性 `temp_range`（今日温度范围）、`max_temp`、`min_temp`、`feels_like`（体感温度）、`dew_point`（露点温度）。引用旧实体 id 或旧字符串状态的模板/自动化需相应更新。
+
+### 🔐 认证与额度策略
+- 默认使用 JWT：新接入和重新配置默认采用 JWT 认证，无请求限制；API KEY 仍可用，但改为可选。
+- API KEY 即将受限：自 2027-01-01 起，和风天气将对 API KEY 认证设置每日请求上限（具体数值未公布），且 SDK 5+ 不再支持 API KEY，推荐使用 JWT。
+- 智能迁移提示：若你仍在使用 API KEY，系统会在“修复”中弹出提示，引导你切换到 JWT，以获得无限额、更频繁的更新。
+- API KEY 轮询更慢：使用 API KEY 时，默认刷新间隔放宽到 100 分钟（原为 15 分钟），从容应对即将到来的限制。
+
+### 💾 重启不丢数据
+- 改用 Home Assistant 原生存储缓存天气数据。重启后，上一次的数据会立即恢复，无需等待下一次刷新。
+
+### 🔧 按需天气服务
+- 新增 `get_weather` 服务，可随时主动拉取最新天气；卡片已改用它读取空气质量（AQI）与恶劣天气预警。
+
+### 🃏 卡片升级（V1）
+- 卡片通过 `get_weather` 服务读取空气质量（AQI）与恶劣天气预警。
+- 详情面板补充了更多 V1 字段，含独立的白天/夜间天气状况。
+- 品牌名与技术缩写不再塞进翻译文件，仅可本地化文案参与翻译。
+
+### 🌐 翻译
+- 已将 API KEY 额度提示同步至全部 12 种语言；同时更新了 V1 API 相关文案与新界面字符串。
+
+### 🧰 其他
+- 新增诊断页（diagnostics），可导出集成数据用于排障。
+- 新增凭证过期后的重新认证流程（re‑auth flow）。
+- 重构传感器以适配 V1 每日嵌套结构。
+- 详情面板补齐风向、月相等字段与本地化。
+
 ### 🛠 [1.1.0] - 2026-06-02 (里程碑)
 
 ### 🌍 全链路国际化 (Internationalization)

@@ -11,7 +11,7 @@
       },
       "setup": {
         "title": "Configurer QWeather Pro",
-        "description": "### Étapes de configuration\r\n**Accédez à la [Console QWeather]({qweather_console}) :**\r\n1. Dans Paramètres, copiez le **API Host** et remplissez-le dans le champ **API Host** ci‑dessous.\r\n2. Gestion de projet → Créer un projet, puis ajoutez des identifiants : **JSON Web Token** et **API KEY** (optionnels).\r\n3. L’emplacement ne prend en charge que la latitude et la longitude (WGS‑84), par exemple : 116.40,39.90.\r\nL’emplacement par défaut est celui défini dans Home Assistant.\r\n#### Remarque : L’authentification par API KEY n’offre pas une sécurité suffisante. Toutes les requêtes utilisant API KEY sont soumises à des limites strictes. Il est recommandé d’utiliser l’authentification JWT.",
+        "description": "### Étapes de configuration\r\n**Accédez à la [Console QWeather]({qweather_console}):**\r\n1. Dans Paramètres, copiez le **API Host** et renseignez-le dans le champ **API Host** ci-dessous.\r\n2. Gestion de projet → Créez un projet, puis ajoutez des identifiants au projet : **JSON Web Token** et **API KEY** (optionnels).\r\n3. L'emplacement peut être une latitude et une longitude (WGS-84) ou un nom de ville.\r\n4. L'emplacement par défaut est la latitude et la longitude de HA.\r\n#### Note : L'authentification par API KEY n'offre pas une sécurité suffisante. Les requêtes par API KEY sont soumises à des limites. JSON Web Token (JWT) est recommandé.",
         "data": {
           "host": "API Host",
           "location_id": "Emplacement géographique. Uniquement longitude et latitude (longitude d’abord).",
@@ -21,8 +21,9 @@
       },
       "jwt_setup": {
         "title": "Configurer l’authentification JWT",
-        "description": "Une clé publique a été générée automatiquement pour vous.\r\n**Étapes :**\r\n1. Copiez la **clé publique** dans la zone ci‑dessous.\r\n2. Accédez à la [Console QWeather]({qweather_console}), ajoutez un identifiant au projet, sélectionnez **JSON Web Token**, puis collez la clé publique.\r\n```text\n{public_key}\n```\r\nAprès cela, renseignez ci‑dessous l’**ID du projet** et l’**ID de la clé**.\r\n#### Remarque : L’authentification JWT ne peut être ajoutée qu’une seule fois. Si vous réinstallez l’intégration, l’identifiant JWT précédent deviendra invalide.",
+        "description": "L'**ID du développeur**, l'**ID du projet** et l'**ID de clé** identifient vos identifiants JWT.\r\nUne paire de clés a été générée pour signer les requêtes.\r\n**Étapes :**\r\n1. Renseignez l'**ID du développeur**, l'**ID du projet** et l'**ID de clé**.\r\n2. Copiez la **clé publique** ci-dessous et téléversez-la vers la Console QWeather dans les identifiants JWT de votre projet.\r\n\r\nVous réutilisez la paire de clés existante ; vous n'avez pas besoin de re-téléverser la clé publique. La clé publique affichée ci-dessus est fournie à titre de vérification.\r\n\r\n{key_block}\r\n#### Remarque : l'authentification JWT ne peut être ajoutée qu'une seule fois par identifiant. Si vous réajoutez l'intégration, les identifiants JWT d'origine ne seront plus valides.",
         "data": {
+          "iss": "ID du développeur",
           "project_id": "ID du projet",
           "key_id": "ID de la clé"
         }
@@ -50,6 +51,31 @@
           "use_token": "Utiliser l’authentification JWT",
           "api_key": "Clé API"
         }
+      },
+      "reauth_confirm": {
+        "title": "Nouvelle authentification requise",
+        "description": "Vos identifiants QWeather ne sont plus valides. Veuillez mettre à jour l'**API Host** et vos identifiants ci-dessous. Vos paramètres de localisation seront conservés.\r\n**Accédez à la console QWeather** pour vérifier votre projet et vos identifiants.",
+        "data": {
+          "host": "API Host",
+          "use_token": "Utiliser l'authentification JWT",
+          "api_key": "Clé API"
+        }
+      },
+      "reauth_jwt": {
+        "title": "Mettre à jour les identifiants JWT",
+        "description": "Renseignez l'**ID du développeur**, l'**ID du projet** et l'**ID de clé** pour l'authentification JWT. Vos paramètres de localisation seront conservés.\r\n**Rendez-vous sur la Console QWeather** pour vérifier votre projet et vos identifiants.\r\n**Étapes :**\r\n1. Renseignez l'**ID du développeur**, l'**ID du projet** et l'**ID de clé**.\r\n2. Copiez la **clé publique** ci-dessous et téléversez-la vers la Console QWeather dans les identifiants JWT de votre projet.\r\n\r\nVous réutilisez la paire de clés existante ; vous n'avez pas besoin de re-téléverser la clé publique. La clé publique affichée ci-dessus est fournie à titre de vérification.\r\n\r\n{key_block}",
+        "data": {
+          "iss": "ID du développeur",
+          "project_id": "ID du projet",
+          "key_id": "ID de la clé"
+        }
+      },
+      "reconfigure_jwt_choice": {
+        "title": "Reconfigurer JWT",
+        "description": "Choisissez comment reconfigurer l'authentification JWT :\r\n- **Conserver la configuration actuelle** : réutilise la paire de clés existante ; votre ID de développeur, ID de projet et ID de clé sont préremplis et modifiables.\r\n- **Régénérer JWT** : abandonne la paire de clés actuelle et en génère une nouvelle (à utiliser lors du changement de compte QWeather).",
+        "data": {
+          "jwt_reconfigure_choice": "Mode de reconfiguration"
+        }
       }
     },
     "error": {
@@ -72,7 +98,9 @@
     },
     "abort": {
       "already_configured": "Cet emplacement est déjà configuré",
-      "reconfigure_successful": "Configuration mise à jour avec succès !"
+      "reconfigure_successful": "Configuration mise à jour avec succès !",
+      "reauth_successful": "Authentification mise à jour avec succès !",
+      "reauth_failed_entry_not_found": "Entrée de configuration introuvable. Veuillez ajouter à nouveau l'intégration."
     }
   },
   "selector": {
@@ -80,24 +108,29 @@
       "options": {
         "new_account": "Nouveau compte / nouveaux identifiants"
       }
+    },
+    "jwt_reconfigure_choice": {
+      "options": {
+        "keep_current": "Conserver la configuration actuelle (réutiliser la paire de clés)",
+        "regenerate": "Régénérer JWT (nouvelle paire de clés)"
+      }
     }
   },
   "options": {
     "step": {
       "init": {
         "title": "Options d’intégration",
-        "description": "### Instructions d’utilisation\r\nLa prévision quotidienne peut être réglée sur **3/7/15/30** jours, tandis que la prévision quotidienne par grille ne prend en charge que **3/7** jours.\r\n- La prévision horaire peut être réglée sur **24/72/168** heures, tandis que la prévision horaire par grille ne prend en charge que **24/72** heures.\r\n- **Météo par grille** : Après avoir activé l’API de grille haute précision, certaines données observées (comme la **visibilité**) ne seront plus disponibles et apparaîtront comme `--` dans la carte.",
+        "description": "### Instructions d’utilisation\r\nLa prévision quotidienne peut être réglée sur **3/7/10** jours (l’API V1 prend en charge jusqu’à 10 jours).\r\n- La prévision horaire peut être réglée sur **24/72/168** heures.\r\n- L'**interface personnalisée** est une ressource globale : l'activer sur une seule instance s'applique à toutes. Le remplacement de la fenêtre de détails est par instance.",
         "data": {
           "update_interval": "Intervalle de mise à jour (minutes)",
-          "dailysteps": "Jours de prévision quotidienne (3–30)",
+          "dailysteps": "Jours de prévision quotidienne (3-10)",
           "hourlysteps": "Heures de prévision horaire (24–168)",
-          "gird": "Utiliser l’API de grille (haute précision)",
-          "custom_ui": "Activer la prise en charge de l’interface personnalisée"
+          "custom_ui": "Activer l'interface personnalisée (globale)",
+          "custom_more_info": "Remplacer la fenêtre de détails native"
         }
       }
     }
   },
-
   "entity": {
     "sensor": {
       "aqi": {
@@ -106,27 +139,45 @@
           "unknown": "Inconnu"
         },
         "state_attributes": {
-          "aqi_value": { "name": "Valeur AQI" },
-          "aqi_level": { "name": "Niveau de qualité de l’air" },
+          "aqi_value": {
+            "name": "Valeur AQI"
+          },
+          "aqi_level": {
+            "name": "Niveau de qualité de l’air"
+          },
           "primary_pollutant": {
             "name": "Polluant principal",
             "state": {
               "none": "Aucun"
             }
           },
-          "pm2p5": { "name": "PM2.5" },
-          "pm10": { "name": "PM10" },
-          "no2": { "name": "Dioxyde d’azote (NO₂)" },
-          "so2": { "name": "Dioxyde de soufre (SO₂)" },
-          "o3": { "name": "Ozone (O₃)" },
-          "co": { "name": "Monoxyde de carbone (CO)" },
+          "pm2p5": {
+            "name": "PM2.5"
+          },
+          "pm10": {
+            "name": "PM10"
+          },
+          "no2": {
+            "name": "Dioxyde d’azote (NO₂)"
+          },
+          "so2": {
+            "name": "Dioxyde de soufre (SO₂)"
+          },
+          "o3": {
+            "name": "Ozone (O₃)"
+          },
+          "co": {
+            "name": "Monoxyde de carbone (CO)"
+          },
           "health_effect": {
             "name": "Impact sur la santé",
             "state": {
               "no_data_available": "Aucune donnée disponible"
             }
           },
-          "health_advice": { "name": "Conseils de santé" },
+          "health_advice": {
+            "name": "Conseils de santé"
+          },
           "stations": {
             "name": "Stations de mesure",
             "state": {
@@ -135,19 +186,27 @@
           }
         }
       },
-
       "warning_info": {
         "name": "Alerte météorologique",
         "state": {
           "without_warning": "Aucune alerte"
         },
         "state_attributes": {
-          "id": { "name": "ID de l’alerte" },
-          "sender": { "name": "Émetteur de l’alerte" },
-          "issued": { "name": "Heure de publication" },
-          "title": { "name": "Titre de l’alerte" },
-          "text": { "name": "Contenu de l’alerte" },
-          "instruction": { "name": "Consignes de sécurité" },
+          "id": {
+            "name": "ID de l’alerte"
+          },
+          "sender": {
+            "name": "Émetteur de l’alerte"
+          },
+          "issued": {
+            "name": "Heure de publication"
+          },
+          "type_code": {
+            "name": "Code du type"
+          },
+          "type_name": {
+            "name": "Type d’alerte"
+          },
           "level": {
             "name": "Niveau d’alerte",
             "state": {
@@ -173,29 +232,46 @@
               "black": "Noir"
             }
           },
-          "type_name": { "name": "Type d’alerte" }
+          "title": {
+            "name": "Titre de l’alerte"
+          },
+          "text": {
+            "name": "Contenu de l’alerte"
+          },
+          "instruction": {
+            "name": "Consignes de sécurité"
+          }
         }
       },
-
-      "today_temp_range": {
-        "name": "Plage de température du jour",
-        "state": {
-          "unknown": "Inconnu"
-        },
+      "current_temperature": {
+        "name": "Temperature en Temps Reel",
         "state_attributes": {
-          "max_temp": { "name": "Température maximale" },
-          "min_temp": { "name": "Température minimale" }
+          "temp_range": {
+            "name": "Plage de Temperature du Jour"
+          },
+          "max_temp": {
+            "name": "Temperature Maximale"
+          },
+          "min_temp": {
+            "name": "Temperature Minimale"
+          },
+          "temp_avg": {
+            "name": "Température moyenne quotidienne"
+          },
+          "feels_like": {
+            "name": "Temperature Ressentie"
+          },
+          "dew_point": {
+            "name": "Temperature du Point de Rosee"
+          }
         }
       },
-
       "precipitation_summary": {
         "name": "Résumé des précipitations"
       },
-
       "weather_summary": {
         "name": "Résumé météo",
         "state_attributes": {
-          "display_state": { "name": "État d’affichage" },
           "period": {
             "name": "Période actuelle",
             "state": {
@@ -215,8 +291,10 @@
               "cold_snap": "Chute brutale"
             }
           },
-          "current_temp": { "name": "Température Actuelle" },
-          "wind_status": { 
+          "current_temp": {
+            "name": "Température Actuelle"
+          },
+          "wind_status": {
             "name": "Force du Vent",
             "state": {
               "no_wind": "Pas de vent",
@@ -224,58 +302,238 @@
               "calm": "Brise légère"
             }
           },
-          "aqi_level": { 
+          "aqi_level": {
             "name": "Qualité de l’Air",
             "state": {
               "good": "Air excellent",
               "moderate": "Air bon",
               "unhealthy": "Air moyen",
               "very_unhealthy": "Air mauvais",
-              "extazardous": "Air dangereux"
+              "hazardous": "Air dangereux"
             }
+          },
+          "tonight_text": {
+            "name": "Météo de la nuit prochaine"
           }
         }
+      },
+      "current_humidity": {
+        "name": "Humidité actuelle"
       }
     },
-
     "weather": {
       "weather": {
         "name": "Météo",
         "state_attributes": {
-          "qweather_icon": { "name": "Icône météo" },
-          "update_time": { "name": "Heure de mise à jour des données" },
-          "obs_time": { "name": "Heure d’observation" },
-          "condition_cn": { "name": "Condition météo (chinois)" },
-          "wind_dir": { "name": "Direction du vent" },
-          "cloud": { "name": "Nébulosité" },
-          "dew": { "name": "Point de rosée" },
-          "precip": { "name": "Précipitations" },
-          "precip_probability": { "name": "Probabilité de précipitations" },
-          "feels_like": { "name": "Température ressentie" },
-          "wind_scale": { "name": "Force du vent" },
-          "sunrise": { "name": "Lever du soleil" },
-          "sunset": { "name": "Coucher du soleil" },
-          "moon_phase": { "name": "Phase lunaire" },
-          "moonrise": { "name": "Lever de la lune" },
-          "moonset": { "name": "Coucher de la lune" },
-          "minutely_summary": { "name": "Résumé météo minute par minute" },
-          "moon_phase_icon": { "name": "Icône de phase lunaire" },
-          "text_night": { "name": "Conditions nocturnes" },
-          "icon_night": { "name": "Icône nocturne" },
-          "wind_scale_day": { "name": "Force du vent (jour)" },
-          "wind_scale_night": { "name": "Force du vent (nuit)" },
-          "wind_dir_day": { "name": "Direction du vent (jour)" },
-          "wind_dir_night": { "name": "Direction du vent (nuit)" },
-          "forecast_pressure": { "name": "Pression atmosphérique future" },
-          "forecast_vis": { "name": "Visibilité future" },
-          "forecast_cloud": { "name": "Nébulosité future" },
-          "aqi": { "name": "Indice de qualité de l’air" },
-          "weather_abstract": { "name": "Résumé météo abstract" },
-          "city": { "name": "Ville" },
-          "warning": { "name": "Informations d’alerte" },
-          "suggestion": { "name": "Conseils d’indice de vie" }
+          "qweather_icon": {
+            "name": "Icône météo"
+          },
+          "update_time": {
+            "name": "Heure de mise à jour des données"
+          },
+          "condition_cn": {
+            "name": "Condition météo (chinois)"
+          },
+          "wind_dir": {
+            "name": "Direction du vent",
+            "state": {
+              "n": "Nord",
+              "nne": "Nord-nord-est",
+              "ne": "Nord-est",
+              "ene": "Est-nord-est",
+              "e": "Est",
+              "ese": "Est-sud-est",
+              "se": "Sud-est",
+              "sse": "Sud-sud-est",
+              "s": "Sud",
+              "ssw": "Sud-sud-ouest",
+              "sw": "Sud-ouest",
+              "wsw": "Ouest-sud-ouest",
+              "w": "Ouest",
+              "wnw": "Ouest-nord-ouest",
+              "nw": "Nord-ouest",
+              "nnw": "Nord-nord-ouest",
+              "none": "Sans vent",
+              "vrb": "Variable"
+            }
+          },
+          "cloud": {
+            "name": "Nébulosité"
+          },
+          "dew": {
+            "name": "Point de rosée"
+          },
+          "precip": {
+            "name": "Précipitations"
+          },
+          "precip_probability": {
+            "name": "Probabilité de précipitations"
+          },
+          "feels_like": {
+            "name": "Température ressentie"
+          },
+          "wind_gust": {
+            "name": "Vitesse du vent en rafales"
+          },
+          "precip_type": {
+            "name": "Type de précipitation",
+            "state": {
+              "rain": "Pluie",
+              "snow": "Neige",
+              "ice": "Glace",
+              "mixed": "Mixte",
+              "none": "Aucune",
+              "unknown": "Inconnu"
+            }
+          },
+          "precip_intensity": {
+            "name": "Intensité des précipitations"
+          },
+          "wind_scale": {
+            "name": "Force du vent"
+          },
+          "sunrise": {
+            "name": "Lever du soleil"
+          },
+          "sunset": {
+            "name": "Coucher du soleil"
+          },
+          "astronomical_dawn": {
+            "name": "Aube astronomique"
+          },
+          "nautical_dawn": {
+            "name": "Aube nautique"
+          },
+          "civil_dawn": {
+            "name": "Aube civile"
+          },
+          "astronomical_dusk": {
+            "name": "Crépuscule astronomique"
+          },
+          "nautical_dusk": {
+            "name": "Crépuscule nautique"
+          },
+          "civil_dusk": {
+            "name": "Crépuscule civil"
+          },
+          "solar_noon": {
+            "name": "Midi solaire"
+          },
+          "solar_midnight": {
+            "name": "Minuit solaire"
+          },
+          "moon_transit": {
+            "name": "Passage lunaire au méridien"
+          },
+          "moon_underfoot": {
+            "name": "Lune au nadir"
+          },
+          "moon_phase": {
+            "name": "Phase lunaire",
+            "state": {
+              "new-moon": "Nouvelle lune",
+              "waxing-crescent": "Premier croissant",
+              "first-quarter": "Premier quartier",
+              "waxing-gibbous": "Gibbeuse croissante",
+              "full-moon": "Pleine lune",
+              "waning-gibbous": "Gibbeuse décroissante",
+              "last-quarter": "Dernier quartier",
+              "waning-crescent": "Dernier croissant"
+            }
+          },
+          "moonrise": {
+            "name": "Lever de la lune"
+          },
+          "moonset": {
+            "name": "Coucher de la lune"
+          },
+          "minutely_summary": {
+            "name": "Résumé météo minute par minute"
+          },
+          "text_night": {
+            "name": "Conditions nocturnes"
+          },
+          "icon_night": {
+            "name": "Icône nocturne"
+          },
+          "wind_scale_day": {
+            "name": "Force du vent (jour)"
+          },
+          "wind_scale_night": {
+            "name": "Force du vent (nuit)"
+          },
+          "wind_dir_day": {
+            "name": "Direction du vent (jour)",
+            "state": {
+              "n": "Nord",
+              "nne": "Nord-nord-est",
+              "ne": "Nord-est",
+              "ene": "Est-nord-est",
+              "e": "Est",
+              "ese": "Est-sud-est",
+              "se": "Sud-est",
+              "sse": "Sud-sud-est",
+              "s": "Sud",
+              "ssw": "Sud-sud-ouest",
+              "sw": "Sud-ouest",
+              "wsw": "Ouest-sud-ouest",
+              "w": "Ouest",
+              "wnw": "Ouest-nord-ouest",
+              "nw": "Nord-ouest",
+              "nnw": "Nord-nord-ouest",
+              "none": "Sans vent",
+              "vrb": "Variable"
+            }
+          },
+          "wind_dir_night": {
+            "name": "Direction du vent (nuit)",
+            "state": {
+              "n": "Nord",
+              "nne": "Nord-nord-est",
+              "ne": "Nord-est",
+              "ene": "Est-nord-est",
+              "e": "Est",
+              "ese": "Est-sud-est",
+              "se": "Sud-est",
+              "sse": "Sud-sud-est",
+              "s": "Sud",
+              "ssw": "Sud-sud-ouest",
+              "sw": "Sud-ouest",
+              "wsw": "Ouest-sud-ouest",
+              "w": "Ouest",
+              "wnw": "Ouest-nord-ouest",
+              "nw": "Nord-ouest",
+              "nnw": "Nord-nord-ouest",
+              "none": "Sans vent",
+              "vrb": "Variable"
+            }
+          },
+          "forecast_cloud": {
+            "name": "Nébulosité future"
+          },
+          "city": {
+            "name": "Ville"
+          }
         }
       }
+    }
+  },
+  "services": {
+    "get_weather": {
+      "name": "Obtenir les données météo",
+      "description": "Renvoie l'ensemble complet des données météo d'une entité météo QWeather Pro, y compris les conditions actuelles, les prévisions quotidiennes/horaires, la qualité de l'air, les alertes, les indices de vie et le résumé météo intelligent. Vous pouvez éventuellement limiter la réponse à certains blocs de données via 'keys'.",
+      "fields": {
+        "keys": {
+          "name": "Clés",
+          "description": "Liste facultative de blocs de données de premier niveau à renvoyer. Omettre pour renvoyer l'ensemble des données."
+        }
+      }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "Quota quotidien de QWeather API KEY",
+      "description": "Votre intégration QWeather Pro utilise encore l'authentification par API KEY.\r\nNote : L'authentification par API KEY n'offre pas une sécurité suffisante. À partir du 01-01-2027, QWeather limitera les requêtes quotidiennes authentifiées par API KEY (montant exact à déterminer), et SDK 5+ abandonnera la prise en charge d'API KEY ; JWT est illimité et recommandé. Si vous conservez API KEY, l'intervalle d'interrogation est verrouillé de façon fixe à 100 minutes et ne peut pas être modifié dans les options de l'entrée ; passez à JWT dans « Reconfigurer » pour des mises à jour illimitées et plus rapides."
     }
   }
 }

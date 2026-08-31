@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Final
+from typing import Any, Final, Mapping
 from homeassistant.const import (
     Platform,
     CONF_API_KEY,
@@ -28,13 +28,15 @@ CONF_USE_TOKEN: Final = "use_token"
 CONF_PROJECT_ID: Final = "project_id"
 CONF_KEY_ID: Final = "key_id"
 CONF_PRIVATE_KEY: Final = "private_key"
+CONF_ISS: Final = "iss"
+CONF_JWT_RECONFIGURE_CHOICE: Final = "jwt_reconfigure_choice"
 CONF_ACCOUNT_SELECT: Final = "account_selection"
 
 CONF_UPDATE_INTERVAL: Final = "update_interval"
 CONF_HOURLYSTEPS: Final = "hourlysteps"
 CONF_DAILYSTEPS: Final = "dailysteps"
-CONF_GIRD: Final = "gird"
 CONF_CUSTOM_UI: Final = "custom_ui"
+CONF_CUSTOM_MORE_INFO: Final = "custom_more_info"
 
 # --- 属性扩展键名 ---
 ATTR_UPDATE_TIME: Final = "update_time"
@@ -44,6 +46,29 @@ ATTR_SUGGESTION: Final = "suggestion"
 # --- 默认值 ---
 DEFAULT_NAME: Final = "和风天气Pro"
 DEFAULT_UPDATE_INTERVAL: Final = 15
+API_KEY_UPDATE_INTERVAL: Final = 100
+
+
+def resolve_update_interval(
+    options: "Mapping[str, Any] | None", use_token: bool
+) -> int:
+    """选择轮询间隔（分钟）。
+
+    API KEY 认证强制使用 ``API_KEY_UPDATE_INTERVAL``（100 分钟）——和风免费配额限制，
+    不可由用户更改（条目选项流也不暴露该控件）。JWT 认证使用用户配置值，未配置则回退默认 15 分钟。
+    """
+    if not use_token:
+        # API KEY：强制 100 分钟，忽略任何用户/残留配置
+        return API_KEY_UPDATE_INTERVAL
+    if options and CONF_UPDATE_INTERVAL in options:
+        try:
+            value = int(options[CONF_UPDATE_INTERVAL])  # type: ignore[arg-type]
+        except (TypeError, ValueError):
+            pass
+        else:
+            if value > 0:
+                return value
+    return DEFAULT_UPDATE_INTERVAL
 
 # --- 生活指数类型映射 (QWeather API v7) ---
 SUGGESTION_TYPE_MAP: Final[dict[str, str]] = {

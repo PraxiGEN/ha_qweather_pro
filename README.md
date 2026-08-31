@@ -20,19 +20,19 @@ Rebuilt using the latest 2026 development standards, delivering not only highly 
 
 - ⚡ **Extreme Performance**
   - **Backend:** Powered by DataUpdateCoordinator with concurrent requests and smart caching to minimize API usage.
-  - **Frontend:** Removes heavy libraries like Chart.js; uses native SVG to render temperature trend curves with 10× faster performance.
+  - **Frontend:** Renders temperature trend curves with native SVG for fast, dependency-free charts.
 
 - 📊 **Deep Data**
   - **Minutely precipitation:** Native API-driven minute-level precipitation summary (e.g., “No precipitation in the next two hours”).
   - **Weather summary:** Logically synthesized hourly weather trend summary.
-  - **Rich sensors:** AQI (with detailed components), today’s temperature range, alert count, weather summary, and more.
+  - **Rich sensors:** AQI (with detailed components), today’s temperature range, active weather alert (title text), weather summary, and more.
 
 - 🎨 **Professional Visuals**
   - **Dashboard card:** Faithfully recreates the look of premium weather apps, supporting 7-day and 24-hour forecast switching.
   - **Custom detail popup:** When enabled, replaces HA’s default popup with lifestyle indices, alert details, and more.
 
 - 🔄 **Latest Standards**  
-  - Fully compatible with HA 2024.3+ WebSocket forecast subscription for long-term smooth operation.
+  - Fully compatible with HA 2026.1+ WebSocket forecast subscription for long-term smooth operation.
 
 ## 🌍 Internationalization & Multi-language Support (i18n)
 
@@ -108,8 +108,6 @@ If this project helps you, please consider giving it a ⭐!
 - **Home Assistant 2026.1+**
 
   The minimum supported version of this integration is Home Assistant 2026.1 or later.
-
-- **To ensure the integration’s brand images display correctly, please use Home Assistant 2026.3 or later.**
 
   To ensure brand icons display correctly, it is recommended to use Home Assistant 2026.3 or later.
   Starting from 2026.3, Home Assistant introduced the custom_integrations directory and the Brands Proxy API, allowing custom integrations to include brand images directly within their own component folders.
