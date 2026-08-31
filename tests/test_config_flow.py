@@ -11,13 +11,13 @@ import pytest
 
 try:
     from homeassistant.config_entries import SOURCE_USER, SOURCE_RECONFIGURE
+    from homeassistant.const import CONF_HOST
 
     from custom_components.qweather_pro.config_flow import QWeatherAPI
     from custom_components.qweather_pro.const import (  # noqa: E402
         DOMAIN,
         CONF_USE_TOKEN,
         CONF_API_KEY,
-        CONF_HOST,
         CONF_LOCATION_ID,
         CONF_PROJECT_ID,
         CONF_KEY_ID,
@@ -91,7 +91,7 @@ async def test_full_jwt_setup_creates_entry(hass, _patch_citylookup):
     assert result["step_id"] == "jwt_setup"
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"],
-        {CONF_USE_TOKEN: True, CONF_PROJECT_ID: "p", CONF_KEY_ID: "k"},
+        {CONF_PROJECT_ID: "p", CONF_KEY_ID: "k"},
     )
     assert result["type"] == "create_entry"
     assert result["data"][CONF_USE_TOKEN] is True
@@ -141,7 +141,7 @@ async def test_reconfigure_can_switch_to_jwt(hass, mock_config_entry, _patch_cit
     assert result["step_id"] == "jwt_setup"
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"],
-        {CONF_USE_TOKEN: True, CONF_PROJECT_ID: "p", CONF_KEY_ID: "k"},
+        {CONF_PROJECT_ID: "p", CONF_KEY_ID: "k"},
     )
     assert result["type"] == "abort"
     assert result["reason"] == "reauth_successful"

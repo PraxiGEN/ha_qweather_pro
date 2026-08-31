@@ -16,7 +16,7 @@ from custom_components.qweather_pro.const import (  # noqa: E402
 
 
 class TestResolveUpdateInterval:
-    """API KEY→100min / JWT→15min / 用户显式设置优先."""
+    """API KEY→强制锁定 100min（忽略用户 options）/ JWT→默认 15min 且用户可覆盖."""
 
     def test_jwt_default_15min(self):
         assert resolve_update_interval({}, True) == DEFAULT_UPDATE_INTERVAL == 15
@@ -27,8 +27,11 @@ class TestResolveUpdateInterval:
     def test_user_override_wins_jwt(self):
         assert resolve_update_interval({CONF_UPDATE_INTERVAL: 30}, True) == 30
 
-    def test_user_override_wins_api_key(self):
-        assert resolve_update_interval({CONF_UPDATE_INTERVAL: 5}, False) == 5
+    def test_api_key_override_ignored_locked_to_100(self):
+        # API KEY 认证强制锁定 100 分钟，用户在选项里填的 update_interval 必须被忽略，
+        # 条目配置流也不暴露该控件（coordinator 强制 API_KEY_UPDATE_INTERVAL）。
+        assert resolve_update_interval({CONF_UPDATE_INTERVAL: 5}, False) == API_KEY_UPDATE_INTERVAL == 100
+        assert resolve_update_interval({CONF_UPDATE_INTERVAL: 1}, False) == API_KEY_UPDATE_INTERVAL
 
     def test_options_none_treated_as_default(self):
         assert resolve_update_interval(None, False) == API_KEY_UPDATE_INTERVAL
