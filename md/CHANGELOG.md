@@ -5,9 +5,9 @@
 First stable release built on the 1.2.0-beta series. This release resolves all blockers raised in the HACS review (coordinator stale-data, missing reauth, global JS injection) and introduces JWT auth plus a fully rewritten zero-dependency SVG card.
 
 ### 📣 User-Facing Changes (Setup & Reconfigure)
-- **New JWT (Ed25519) authentication:** Alongside the API Key, JWT auth is now supported. During setup you must provide your **Project ID (project_id)** and **Key ID (key_id)**, then generate or paste an Ed25519 private key. The **Issuer (iss)** is optional but recommended to match your QWeather console configuration.
-- **Reconfigure can now switch auth & complete developer fields:** The integration's "Reconfigure" option now lets you switch between API Key and JWT, and fill in / complete developer fields (project_id, key_id, iss). Existing API-Key users can upgrade to JWT without re-adding the integration.
-- **Frontend UI is now opt-in (see Breaking Changes below):** if you previously used the custom card or more-info popup, enable the two new option switches after upgrading, otherwise the UI falls back to native.
+- **JWT is now the default authentication:** New setups and reconfigures default to JWT (Ed25519). The API Key method now enforces a restricted request rate (locked refresh interval), and the integration raises a persistent Repairs issue to nudge API-Key users to migrate to JWT.
+- **JWT now has a Developer ID (Project ID / project_id) field:** Because QWeather's review is currently lenient, this field isn't strictly enforced server-side yet — but to avoid errors once enforcement tightens, please complete the Developer ID in "Reconfigure" (along with Key ID and Issuer).
+- **Weather entity attributes trimmed; new data query service:** Weather entity attributes have been streamlined. Use the new `qweather_pro.get_weather` service to fetch the full dataset (current conditions, hourly/daily forecasts, AQI, warnings, life indices, etc.), with optional `keys` filtering.
 
 ### ⚠️ Breaking Changes (Action Required for Users)
 1. **Lovelace resource injection is now Opt-in (dual switches):** The integration no longer unconditionally injects card/more-info/i18n JS resources into the HA frontend. Two new independent toggles have been added to the integration options:
