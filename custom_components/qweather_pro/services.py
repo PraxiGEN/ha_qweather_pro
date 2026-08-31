@@ -144,9 +144,11 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
         data = coordinator.data
 
-        # 按需筛选顶层数据块（schema 已保证 keys 均为合法成员）
+        # 按需筛选顶层数据块（schema 已保证 keys 均为合法成员；
+        # 此处再用 _as_list 归一化，兼容绕过 schema 直接调用的场景）
         requested = call.data.get("keys")
         if requested:
+            requested = _as_list(requested)
             payload = {k: data[k] for k in requested if k in data}
         else:
             payload = {

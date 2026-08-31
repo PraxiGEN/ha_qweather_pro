@@ -28,6 +28,8 @@ CONF_USE_TOKEN: Final = "use_token"
 CONF_PROJECT_ID: Final = "project_id"
 CONF_KEY_ID: Final = "key_id"
 CONF_PRIVATE_KEY: Final = "private_key"
+CONF_ISS: Final = "iss"
+CONF_JWT_RECONFIGURE_CHOICE: Final = "jwt_reconfigure_choice"
 CONF_ACCOUNT_SELECT: Final = "account_selection"
 
 CONF_UPDATE_INTERVAL: Final = "update_interval"
@@ -50,7 +52,14 @@ API_KEY_UPDATE_INTERVAL: Final = 100
 def resolve_update_interval(
     options: "Mapping[str, Any] | None", use_token: bool
 ) -> int:
-    """选择轮询间隔（分钟）。"""
+    """选择轮询间隔（分钟）。
+
+    API KEY 认证强制使用 ``API_KEY_UPDATE_INTERVAL``（100 分钟）——和风免费配额限制，
+    不可由用户更改（条目选项流也不暴露该控件）。JWT 认证使用用户配置值，未配置则回退默认 15 分钟。
+    """
+    if not use_token:
+        # API KEY：强制 100 分钟，忽略任何用户/残留配置
+        return API_KEY_UPDATE_INTERVAL
     if options and CONF_UPDATE_INTERVAL in options:
         try:
             value = int(options[CONF_UPDATE_INTERVAL])  # type: ignore[arg-type]
@@ -59,7 +68,7 @@ def resolve_update_interval(
         else:
             if value > 0:
                 return value
-    return DEFAULT_UPDATE_INTERVAL if use_token else API_KEY_UPDATE_INTERVAL
+    return DEFAULT_UPDATE_INTERVAL
 
 # --- 生活指数类型映射 (QWeather API v7) ---
 SUGGESTION_TYPE_MAP: Final[dict[str, str]] = {

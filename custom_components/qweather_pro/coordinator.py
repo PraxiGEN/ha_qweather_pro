@@ -18,7 +18,7 @@ import homeassistant.util.dt as dt_util
 from .api import QWeatherAPI
 from .const import (
     DOMAIN, CONF_API_KEY, CONF_LOCATION_ID, CONF_USE_TOKEN,
-    CONF_PROJECT_ID, CONF_KEY_ID, CONF_PRIVATE_KEY,
+    CONF_PROJECT_ID, CONF_KEY_ID, CONF_PRIVATE_KEY, CONF_ISS,
     SUGGESTION_TYPE_MAP, CONF_DAILYSTEPS, CONF_HOURLYSTEPS,
     resolve_update_interval, LANGUAGE_MAP, LOGGER
 )
@@ -50,7 +50,6 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             entry.options, bool(entry.data.get(CONF_USE_TOKEN))
         )
         self._base_interval = timedelta(minutes=update_min)
-
         # 跨重启持久化缓存（避免重启瞬间全端点重拉；纯缓存，不限制请求）
         self._store = Store(hass, CACHE_STORE_VERSION, f"{DOMAIN}_cache_{entry.entry_id}")
 
@@ -62,6 +61,7 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             project_id=entry.data.get(CONF_PROJECT_ID),
             key_id=entry.data.get(CONF_KEY_ID),
             private_key=entry.data.get(CONF_PRIVATE_KEY),
+            iss=entry.data.get(CONF_ISS),
             host=entry.data.get("host")
         )
 
@@ -335,9 +335,6 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
             for i, res in enumerate(results):
                 category = task_map[i]
-                if isinstance(res, ConfigEntryAuthFailed):
-                    # 认证异常直接上抛，触发 reauth 流程
-                    raise res
                 if isinstance(res, dict) and res.get("code") in ("401", "403"):
                     # API 明确返回认证/权限错误：凭据失效，进入 reauth
                     raise ConfigEntryAuthFailed(
@@ -461,7 +458,7 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "warning": parsed_warnings,
             "indices": self._parse_indices(indices_list),
             "city": self.city_name,
-            "minutely_summary": minutely_raw.get("summary", "No precipitation in the next two hours"),
+            "minutely_summary": minutely_raw.get("summary", ""),
             "minutely_detail": minutely_raw.get("minutely", []),
             "attributions": self._collect_attributions(c),
             "weather_abstract": self._generate_smart_abstract(merged_now, daily_list, now_dt),
@@ -548,7 +545,7 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         elif aqi_val <= 200:
             aqi_level = "very_unhealthy"
         else:
-            aqi_level = "extazardous"
+            aqi_level = "hazardous"
 
         # --- 组装逻辑包 (全部使用英文 Key) ---
         return {

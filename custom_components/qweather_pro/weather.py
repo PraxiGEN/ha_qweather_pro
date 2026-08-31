@@ -23,9 +23,9 @@ from . import QWeatherConfigEntry
 from .const import ATTRIBUTION, CONF_CUSTOM_UI, CONF_CUSTOM_MORE_INFO
 from .coordinator import QWeatherUpdateCoordinator
 
-# HA 自 2024.4 起重构天气预报系统，WeatherEntity.async_update_listeners 改为必填
-# forecast_types 参数（传 None 表示刷新 daily/hourly/twice_daily 全部类型）。
-# 本项目最低支持 2026.x，无需兼容旧签名，直接传 None。
+# HA 天气平台 WeatherEntity.async_update_listeners(forecast_types) 在 2026.1.0 的签名中
+# forecast_types 默认即为 None（传 None 表示刷新 daily/hourly/twice_daily 全部类型）。
+# 本项目最低支持 2026.1.0，调用处直接传 None 即可，无需兼容旧签名。
 
 # 定义天气描述符
 QWEATHER_WEATHER_DESCRIPTION = WeatherEntityDescription(

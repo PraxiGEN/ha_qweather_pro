@@ -21,11 +21,15 @@
       },
       "jwt_setup": {
         "title": "設定 JWT 安全驗證",
-        "description": "系統已自動為你產生一組公開金鑰。\r\n**步驟：**\r\n1. 複製下方框內的 **公開金鑰**。\r\n2. 前往 [QWeather 控制台]({qweather_console})，在專案中新增憑證，選擇 **JSON Web Token**，並貼上公開金鑰。\r\n```text\n{public_key}\n```\r\n完成後，請在下方填入 **Project ID** 與 **Key ID**。\r\n#### 注意：JWT 驗證只能新增一次。如果你重新新增整合，原本的 JWT 憑證將失效。",
+        "description": "**開發者 ID**、**專案 ID** 與**金鑰 ID** 用於標識你的 JWT 憑證。\r\n系統已為你產生用於簽署請求的金鑰對。\r\n{upload_block}\r\n#### 注意：每個憑證僅能新增一次 JWT 認證。若重新新增整合，原 JWT 憑證將失效。",
         "data": {
+          "iss": "開發者 ID",
           "project_id": "Project ID",
           "key_id": "Key ID"
-        }
+        },
+        "first_block": "**步驟：**\r\n1. 填寫**開發者 ID**、**專案 ID** 與**金鑰 ID**。\r\n2. 複製下方**公鑰**並上傳到和風天氣控制台專案的 JWT 憑證中。",
+        "reuse_block": "你正在復用現有的金鑰對，無需重新上傳公鑰。上方展示的公鑰僅供核對。",
+        "sha256_label": "SHA256: "
       },
       "reuse_location": {
         "title": "新增城市",
@@ -53,19 +57,27 @@
       },
       "reauth_confirm": {
         "title": "需要重新認證",
-        "description": "您的和風天氣憑證已失效。請更新下方的 **API Host** 與憑證，您的位置設定將保持不變。\r\n**前往[和風天氣控制台]({qweather_console})** 檢查您的專案與憑證。",
+        "description": "您的和風天氣憑證已失效。請更新下方的 **API Host** 與憑證，您的位置設定將保持不變。\r\n**前往和風天氣控制台** 檢查您的專案與憑證。",
         "data": {
           "host": "API Host",
           "use_token": "使用 JWT 認證",
-          "api_key": "API 金鑰 (Key)"
+          "api_key": "API 金鑰"
         }
       },
       "reauth_jwt": {
         "title": "更新 JWT 憑證",
-        "description": "請填寫 JWT 認證新的**專案 ID**與**憑證 ID**，您的位置設定將保持不變。\r\n**前往[和風天氣控制台]({qweather_console})** 檢查您的專案與憑證。",
+        "description": "請填寫 JWT 認證的 **開發者 ID**、**專案 ID** 與 **憑證 ID**，您的位置設定將保持不變。\r\n**前往和風天氣控制台** 檢查您的專案與憑證。\r\n{upload_block}",
         "data": {
-          "project_id": "專案 ID (Project ID)",
-          "key_id": "憑證 ID (Key ID)"
+          "iss": "開發者 ID",
+          "project_id": "Project ID",
+          "key_id": "Key ID"
+        }
+      },
+      "reconfigure_jwt_choice": {
+        "title": "重新設定 JWT",
+        "description": "選擇如何重新設定 JWT 認證：\r\n- **保留原設定**：復用現有金鑰對；開發者 ID、專案 ID、憑證 ID 已預填，可修改。\r\n- **重新產生 JWT**：捨棄現有金鑰對並產生新的（切換和風帳號時使用）。",
+        "data": {
+          "jwt_reconfigure_choice": "重新設定方式"
         }
       }
     },
@@ -99,19 +111,25 @@
       "options": {
         "new_account": "新增帳號／新增憑證"
       }
+    },
+    "jwt_reconfigure_choice": {
+      "options": {
+        "keep_current": "保留原設定（復用金鑰對）",
+        "regenerate": "重新產生 JWT（新金鑰對）"
+      }
     }
   },
   "options": {
     "step": {
       "init": {
         "title": "整合選項",
-        "description": "### 使用說明\r\n每日天氣預報可設定為 **3/7/10** 天（V1 API 最長支援 10 天）。\r\n- 每小時預報可設定為 **24/72/168** 小時。",
+        "description": "### 使用說明\r\n每日天氣預報可設定為 **3/7/10** 天（V1 API 最長支援 10 天）。\r\n- 每小時預報可設定為 **24/72/168** 小時。\r\n- **自訂前端 UI** 為全域資源：任一整合執行個體啟用即對所有執行個體生效；詳情彈窗覆蓋為依執行個體獨立設定。",
         "data": {
           "update_interval": "更新間隔（分鐘）",
           "dailysteps": "每日預報天數（3-10）",
           "hourlysteps": "每小時預報時數（24–168）",
-          "custom_ui": "啟用自訂 UI 支援",
-                "custom_more_info": "覆蓋原生詳情彈窗"
+          "custom_ui": "啟用自訂前端 UI 支援（全域）",
+          "custom_more_info": "覆蓋原生詳情彈窗"
         }
       }
     }
@@ -294,7 +312,7 @@
               "moderate": "空氣品質不错",
               "unhealthy": "空氣品質一般",
               "very_unhealthy": "空氣品質差",
-              "extazardous": "空氣品質有危险性"
+              "hazardous": "空氣品質有危险性"
             }
           },
           "tonight_text": {
@@ -518,7 +536,7 @@
   "issues": {
     "api_key_quota": {
       "title": "QWeather API KEY 即將限額",
-      "description": "您的和風天氣 Pro 整合仍在使用 API KEY 認證。\r\n注意: API KEY 認證方式無法提供足夠的安全性, 使用和風天氣自 2027-01-01 起將限制使用 API KEY 認證的每日請求數量（具體數值未公布），且 SDK 5+ 不再支援 API KEY；JWT 無限制，推薦使用。若繼續使用 API KEY，輪詢預設放慢至 100 分鐘；在「重新配置」中切換到 JWT 即可獲得無限制、更快的更新。"
+      "description": "您的和風天氣 Pro 整合仍在使用 API KEY 認證。\r\n注意: API KEY 認證方式無法提供足夠的安全性, 使用和風天氣自 2027-01-01 起將限制使用 API KEY 認證的每日請求數量（具體數值未公布），且 SDK 5+ 不再支援 API KEY；JWT 無限制，推薦使用。若繼續使用 API KEY，輪詢將強制鎖定為 100 分鐘，且不可在項目配置中更改；在「重新配置」中切換到 JWT 即可獲得無限制、更快的更新。"
     }
   }
 }
