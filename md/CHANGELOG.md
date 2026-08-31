@@ -1,5 +1,25 @@
 ## Release Notes: QWeather Pro 2026
 
+### 🛠 [1.2.6] - 2026-08-31
+
+First stable release built on the 1.2.0-beta series.
+
+### ✨ Highlights
+- **Zero-dependency native SVG card:** The frontend card was fully rewritten from ApexCharts (~871 KB) into a dependency-free native SVG implementation (~32 KB). This removes the previous global JavaScript injection that conflicted with other frontend resources; the card now runs without any third-party chart library.
+- **SVG forecast charts:** Hourly and daily forecasts render as native SVG with both curve and list styles, plus mouse-wheel zoom and pan.
+
+### 🔐 Authentication & Stability
+- Hardened JWT auth and coordinator stability: the coordinator now raises `UpdateFailed` on failure instead of silently returning stale cached data, so repair/retry behaves correctly; JWT re-authentication is more robust.
+- Declared `tenacity>=9.1.2` in `manifest.json` `requirements` for the retry/backoff dependency.
+- Inlined JWT setup instructions into the config-flow UI for clearer guidance.
+
+### 🐛 Bug Fixes
+- Fixed the config-flow reconfigure step so it no longer aborts with an `UnknownFlow` error and reports the correct `reconfigure_successful` result.
+
+### 📄 Docs & License
+- Corrected README/DOCS factual errors and cleaned up brand names / technical abbreviations.
+- Added attribution to the original author **dscao/qweather** under the MIT license in `LICENSE` (integration code remains Copyright (c) 2026 PraxiGEN).
+
 ### 🛠 [1.2.0-beta.5] - 2026-08-24
 
 ### ⚠️ Breaking Changes
