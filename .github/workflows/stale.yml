@@ -40,8 +40,7 @@ jobs:
           # === Exempt labels / 豁免标签 ===
           # Issues with any of these labels will not be processed
           # 带有以下标签的问题不会被处理
-          exempt-issue-labels: >-
-            pinned,security,enhancement,good first issue,help wanted,wontfix
+          exempt-issue-labels: bug
 
           # === Labels to apply / 要添加的标签 ===
           stale-issue-label: stale
