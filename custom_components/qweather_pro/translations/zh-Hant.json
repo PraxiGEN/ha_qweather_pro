@@ -539,6 +539,21 @@
   "exceptions": {
     "jwt_private_key_invalid": {
       "message": "Ed25519 私鑰缺失或無法解析，請在重新配置或重新認證中重新產生金鑰。"
+    },
+    "entity_id_required": {
+      "message": "必須提供 entity_id。請選擇 QWeather Pro 天氣實體，或指定其所屬裝置或區域。"
+    },
+    "entity_not_found": {
+      "message": "實體 {entity_id} 不存在。"
+    },
+    "entity_not_qweather": {
+      "message": "實體 {entity_id} 不是 QWeather Pro 實體。"
+    },
+    "coordinator_not_ready": {
+      "message": "{entity_id} 的天氣資料尚未就緒，請稍後再試。"
+    },
+    "auth_failed": {
+      "message": "和風天氣 API 認證失敗（{code}）：{detail}"
     }
   }
 }
