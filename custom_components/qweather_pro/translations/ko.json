@@ -539,6 +539,21 @@
   "exceptions": {
     "jwt_private_key_invalid": {
       "message": "Ed25519 개인 키가 없거나 분석할 수 없습니다. 재구성 또는 재인증에서 키를 다시 생성하세요."
+    },
+    "entity_id_required": {
+      "message": "entity_id는 필수입니다. QWeather Pro 날씨 엔티티를 선택하거나 해당 기기 또는 영역을 지정하세요."
+    },
+    "entity_not_found": {
+      "message": "엔티티 {entity_id}를 찾을 수 없습니다."
+    },
+    "entity_not_qweather": {
+      "message": "엔티티 {entity_id}는 QWeather Pro 엔티티가 아닙니다."
+    },
+    "coordinator_not_ready": {
+      "message": "{entity_id}의 날씨 데이터가 아직 준비되지 않았습니다. 나중에 다시 시도하세요."
+    },
+    "auth_failed": {
+      "message": "QWeather API 인증 실패({code}): {detail}"
     }
   }
 }

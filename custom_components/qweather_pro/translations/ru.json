@@ -539,6 +539,21 @@
   "exceptions": {
     "jwt_private_key_invalid": {
       "message": "Приватный ключ Ed25519 отсутствует или не может быть прочитан. Пересоздайте ключ через Перенастройку или Повторную аутентификацию."
+    },
+    "entity_id_required": {
+      "message": "Требуется entity_id. Выберите погодную сущность QWeather Pro или укажите её устройство или область."
+    },
+    "entity_not_found": {
+      "message": "Сущность {entity_id} не найдена."
+    },
+    "entity_not_qweather": {
+      "message": "Сущность {entity_id} не является сущностью QWeather Pro."
+    },
+    "coordinator_not_ready": {
+      "message": "Данные о погоде для {entity_id} ещё не готовы. Повторите попытку позже."
+    },
+    "auth_failed": {
+      "message": "Ошибка аутентификации API QWeather ({code}): {detail}"
     }
   }
 }

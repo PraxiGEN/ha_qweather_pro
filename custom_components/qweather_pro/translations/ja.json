@@ -539,6 +539,21 @@
   "exceptions": {
     "jwt_private_key_invalid": {
       "message": "Ed25519 秘密鍵が見つからないか、解析できません。再設定または再認証で鍵を再生成してください。"
+    },
+    "entity_id_required": {
+      "message": "entity_id は必須です。QWeather Pro の天気エンティティを選択するか、そのデバイスまたはエリアを指定してください。"
+    },
+    "entity_not_found": {
+      "message": "エンティティ {entity_id} が見つかりません。"
+    },
+    "entity_not_qweather": {
+      "message": "エンティティ {entity_id} は QWeather Pro のエンティティではありません。"
+    },
+    "coordinator_not_ready": {
+      "message": "{entity_id} の気象データはまだ準備ができていません。しばらくしてから再試行してください。"
+    },
+    "auth_failed": {
+      "message": "QWeather API の認証に失敗しました（{code}）：{detail}"
     }
   }
 }

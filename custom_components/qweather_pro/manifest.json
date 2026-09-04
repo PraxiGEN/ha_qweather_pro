@@ -10,5 +10,5 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/PraxiGEN/ha_qweather_pro/issues",
   "requirements": ["tenacity>=9.1.2"],
-  "version": "1.2.6"
+  "version": "1.2.7"
 }

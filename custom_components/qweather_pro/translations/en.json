@@ -539,6 +539,21 @@
   "exceptions": {
     "jwt_private_key_invalid": {
       "message": "The Ed25519 private key is missing or cannot be parsed. Re-generate the key via Reconfigure or Re-authentication."
+    },
+    "entity_id_required": {
+      "message": "entity_id is required. Select a QWeather Pro weather entity or specify its device or area."
+    },
+    "entity_not_found": {
+      "message": "Entity {entity_id} not found."
+    },
+    "entity_not_qweather": {
+      "message": "Entity {entity_id} is not a QWeather Pro entity."
+    },
+    "coordinator_not_ready": {
+      "message": "Weather data for {entity_id} is not ready yet. Please try again later."
+    },
+    "auth_failed": {
+      "message": "QWeather API authentication failed ({code}): {detail}"
     }
   }
 }
