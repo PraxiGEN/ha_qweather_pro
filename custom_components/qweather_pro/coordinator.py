@@ -335,6 +335,10 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
             for i, res in enumerate(results):
                 category = task_map[i]
+                if isinstance(res, ConfigEntryAuthFailed):
+                    # api 层本地判定认证失败（如私钥损坏无法生成 JWT）：
+                    # 与服务端 401/403 同样直接上抛触发 reauth，不得混入退避逻辑
+                    raise res
                 if isinstance(res, dict) and res.get("code") in ("401", "403"):
                     # API 明确返回认证/权限错误：凭据失效，进入 reauth
                     raise ConfigEntryAuthFailed(
