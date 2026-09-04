@@ -8,7 +8,8 @@ from typing import Any
 import jwt
 from aiohttp import ClientSession
 from cryptography.hazmat.primitives import serialization
-from tenacity import retry, stop_after_attempt, wait_exponential
+from homeassistant.exceptions import ConfigEntryAuthFailed
+from tenacity import retry, retry_if_not_exception_type, stop_after_attempt, wait_exponential
 
 from .const import DOMAIN, LOGGER
 
@@ -82,6 +83,7 @@ class QWeatherAPI:
     @retry(
         wait=wait_exponential(multiplier=2, min=2, max=10),
         stop=stop_after_attempt(3),
+        retry=retry_if_not_exception_type(ConfigEntryAuthFailed),
     )
     async def request(self, version_path: str, endpoint: str, params: dict[str, Any]) -> dict[str, Any]:
         """统一底层异步请求方法 (3 次重试后异常正常抛出，由调用方处理)."""
@@ -96,7 +98,7 @@ class QWeatherAPI:
             url_endpoint = endpoint
 
         url = f"https://{self.host}/{real_version}/{url_endpoint}"
-        
+
         headers = {
             "User-Agent": "HomeAssistant-QWeatherPro/2.0",
             "Accept-Encoding": "gzip"
@@ -104,8 +106,14 @@ class QWeatherAPI:
 
         if self.use_token:
             token = self._generate_jwt()
-            if token: headers["Authorization"] = f"Bearer {token}"
-        else:
+            if not token:
+
+                raise ConfigEntryAuthFailed(
+                    translation_domain=DOMAIN,
+                    translation_key="jwt_private_key_invalid",
+                )
+            headers["Authorization"] = f"Bearer {token}"
+        elif self.api_key:
             headers["X-QW-Api-Key"] = self.api_key
 
         try:
