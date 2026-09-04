@@ -1,8 +1,4 @@
-"""QWeather Pro 自定义服务.
-
-提供 `qweather_pro.get_weather`：返回实体的完整天气数据集（coordinator.data），
-支持通过 `keys` 按需筛选顶层数据块，承载 AQI / 预警 / 生活指数 / 摘要等非预报数据。
-"""
+"""QWeather Pro 自定义服务."""
 from __future__ import annotations
 
 import json
@@ -113,7 +109,9 @@ async def _resolve_entity_id(hass: HomeAssistant, call: ServiceCall) -> str | No
     return None
 
 async def async_setup_services(hass: HomeAssistant) -> None:
-    """注册集成自定义服务."""
+    """注册集成自定义服务（幂等：已注册则跳过，供 setup_entry 重入调用）."""
+    if hass.services.has_service(DOMAIN, "get_weather"):
+        return
 
     async def get_weather(call: ServiceCall) -> dict | None:
 
@@ -122,30 +120,38 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         entity_id = await _resolve_entity_id(hass, call)
         if not entity_id:
             raise ServiceValidationError(
-                "entity_id is required (select a QWeather Pro weather entity or its device/area)"
+                translation_domain=DOMAIN,
+                translation_key="entity_id_required",
             )
 
         registry = er.async_get(hass)
         entity = registry.async_get(entity_id)
         if entity is None or entity.config_entry_id is None:
-            raise ServiceValidationError(f"Entity {entity_id} not found")
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="entity_not_found",
+                translation_placeholders={"entity_id": entity_id},
+            )
 
         entry = hass.config_entries.async_get_entry(entity.config_entry_id)
         if entry is None or entry.domain != DOMAIN:
             raise ServiceValidationError(
-                f"Entity {entity_id} is not a {DOMAIN} entity"
+                translation_domain=DOMAIN,
+                translation_key="entity_not_qweather",
+                translation_placeholders={"entity_id": entity_id},
             )
 
         coordinator = entry.runtime_data
         if coordinator is None or not coordinator.data:
             raise ServiceValidationError(
-                f"Coordinator for {entity_id} is not ready"
+                translation_domain=DOMAIN,
+                translation_key="coordinator_not_ready",
+                translation_placeholders={"entity_id": entity_id},
             )
 
         data = coordinator.data
 
         # 按需筛选顶层数据块（schema 已保证 keys 均为合法成员；
-        # 此处再用 _as_list 归一化，兼容绕过 schema 直接调用的场景）
         requested = call.data.get("keys")
         if requested:
             requested = _as_list(requested)
