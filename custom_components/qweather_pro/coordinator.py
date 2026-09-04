@@ -128,13 +128,17 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         except (TypeError, ValueError):
             return default
 
+    def _steps(self, options_val: Any, default: int, lo: int, hi: int) -> int:
+        """选项步长安全解析：坏残留值回退默认，并钳制到 API 允许区间."""
+        try:
+            val = int(options_val)
+        except (TypeError, ValueError):
+            return default
+        return max(lo, min(hi, val))
+
     # --- V1 单位换算与本地化辅助 ---
     def _percent(self, val: Any, default: float | None = None) -> float | None:
-        """V1 比例字段 (0~1) → 百分数 (0-100). 湿度/云量/降水概率通用.
-
-        源值为浮点比例, 直接 ``v * 100`` 会产生 57.9999… 这类精度伪影,
-        故对结果取整 (百分比天然为整数粒度, 如 0.58 → 58).
-        """
+        """V1 比例字段 (0~1) → 百分数 (0-100). 湿度/云量/降水概率通用."""
         v = self._to_f(val, default)
         return round(v * 100) if v is not None else None
 
@@ -237,18 +241,20 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "temp": temp,
             # feelsLike: {value, unit}
             "feelsLike": self._to_f(now_raw.get("feelsLike", {}).get("value")),
-            # humidity: [0,1]
-            "humidity": self._percent(pick(now_raw.get("humidity"), seg.get("humidity")), 0.0),
+            # humidity: [0,1] → 百分数。未知时交 None（HA 显示 unknown），
+            # 绝不能默认 0——0% 湿度是错误数据而非"无数据"
+            "humidity": self._percent(pick(now_raw.get("humidity"), seg.get("humidity"))),
             # wind: {direction{degree,compass}, speed{value,unit}, scale}
+            # 同理：wind360 默认 0 恰是"正北风"，风速默认 0 是"无风"，均为语义错误
             "wind360": self._to_f(pick(
-                now_wind_dir.get("degree"), seg_wind_dir.get("degree")), 0.0),
+                now_wind_dir.get("degree"), seg_wind_dir.get("degree"))),
             "windDir": pick(now_wind_dir.get("compass"), seg_wind_dir.get("compass")),
             "windSpeed": self._speed_kmh(pick(
                 now_wind.get("speed", {}).get("value"),
-                seg_wind.get("speed", {}).get("value")), 0.0),
+                seg_wind.get("speed", {}).get("value"))),
             "windScale": pick(now_wind.get("scale"), seg_wind.get("scale")),
             # windGust: {value, unit} (m/s → km/h)
-            "windGust": self._speed_kmh(now_raw.get("windGust", {}).get("value"), 0.0),
+            "windGust": self._speed_kmh(now_raw.get("windGust", {}).get("value")),
             # precipitation: {amount{value,unit}, intensity{value,unit}, type}
             "precip": self._to_f(pick(
                 now_raw.get("precipitation", {}).get("amount", {}).get("value"),
@@ -261,8 +267,8 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "vis": self._vis_km(now_raw.get("visibility", {}).get("value")),
             # dewPoint: {value, unit}
             "dew": self._to_f(now_raw.get("dewPoint", {}).get("value")),
-            # cloudCover: [0,1]
-            "cloud": self._percent(pick(now_raw.get("cloudCover"), seg.get("cloudCover")), 0.0),
+            # cloudCover: [0,1] → 百分数（未知交 None，同 humidity 语义）
+            "cloud": self._percent(pick(now_raw.get("cloudCover"), seg.get("cloudCover"))),
             # uvIndex: [0,15]
             "uv_index": pick(now_raw.get("uvIndex"), daily_first.get("uvIndexMax")),
             # --- 集成自有字段 (非 API 返回) ---
@@ -298,13 +304,13 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         # 逐日预报 (带 TTL 保护；V1 仅支持 1-10 天，旧配置可能残留 15/30，需钳制)
         if self._should_update("daily", TTL_DAILY):
-            d_val = min(int(options.get(CONF_DAILYSTEPS, 7)), 10)
+            d_val = self._steps(options.get(CONF_DAILYSTEPS), 7, 1, 10)
             tasks.append(self.api.get_forecast(lat, lon, d_val, qweather_lang))
             task_map.append("daily")
 
-        # 逐小时预报 (带 TTL 保护)
+        # 逐小时预报 (带 TTL 保护；V1 上限 240 小时，旧配置可能残留越界值)
         if self._should_update("hourly", TTL_HOURLY):
-            h_val = int(options.get(CONF_HOURLYSTEPS, 24))
+            h_val = self._steps(options.get(CONF_HOURLYSTEPS), 24, 1, 240)
             tasks.append(self.api.get_hourly(lat, lon, h_val, qweather_lang))
             task_map.append("hourly")
 
@@ -342,8 +348,12 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 if isinstance(res, dict) and res.get("code") in ("401", "403"):
                     # API 明确返回认证/权限错误：凭据失效，进入 reauth
                     raise ConfigEntryAuthFailed(
-                        f"QWeather API 认证失败 ({res.get('code')}): "
-                        f"{res.get('error_detail', 'unauthorized')}"
+                        translation_domain=DOMAIN,
+                        translation_key="auth_failed",
+                        translation_placeholders={
+                            "code": str(res.get("code")),
+                            "detail": str(res.get("error_detail", "unauthorized")),
+                        },
                     ) from None
                 if isinstance(res, dict) and (res.get("code") == "200" or "metadata" in res):
                     self._cache_data[category] = res
@@ -474,7 +484,15 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 }
                 for cat, meta in self._cache_meta.items()
             },
-            "update_time": dt_util.now().strftime("%Y-%m-%d %H:%M:%S"),
+            # update_time 以 now 端点最近一次成功抓取为准：
+            # 部分成功（now 失败但其他端点成功）时不能刷新，否则"陈旧实况配新鲜时间戳"误导用户
+            "update_time": (
+                dt_util.as_local(
+                    dt_util.utc_from_timestamp(now_fetched_at)
+                ).strftime("%Y-%m-%d %H:%M:%S")
+                if (now_fetched_at := self._cache_meta.get("now", {}).get("fetched_at"))
+                else None
+            ),
         }
 
     def _generate_smart_abstract(self, now_merged: dict, daily: list, now_dt: datetime) -> dict[str, Any]:
@@ -537,10 +555,11 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             wind_status = "windy"
 
         # --- 空气质量等级 (AQI Level) ---
-        # 即使 category 是中文，我们也可以根据 aqi 数值输出逻辑 key
-        aqi_val = self._to_f(idx.get("aqi"), 0.0)
+        aqi_val = self._to_f(idx.get("aqi"))
 
-        if aqi_val <= 50:
+        if aqi_val is None:
+            aqi_level = None
+        elif aqi_val <= 50:
             aqi_level = "good"
         elif aqi_val <= 100:
             aqi_level = "moderate"
