@@ -539,6 +539,21 @@
   "exceptions": {
     "jwt_private_key_invalid": {
       "message": "La clé privée Ed25519 est absente ou illisible. Régénérez la clé via Reconfigurer ou Réauthentification."
+    },
+    "entity_id_required": {
+      "message": "entity_id est requis. Sélectionnez une entité météo QWeather Pro ou spécifiez son appareil ou sa zone."
+    },
+    "entity_not_found": {
+      "message": "Entité {entity_id} introuvable."
+    },
+    "entity_not_qweather": {
+      "message": "L'entité {entity_id} n'est pas une entité QWeather Pro."
+    },
+    "coordinator_not_ready": {
+      "message": "Les données météo de {entity_id} ne sont pas encore prêtes. Veuillez réessayer plus tard."
+    },
+    "auth_failed": {
+      "message": "Échec de l'authentification à l'API QWeather ({code}) : {detail}"
     }
   }
 }
