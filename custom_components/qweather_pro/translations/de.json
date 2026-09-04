@@ -539,6 +539,21 @@
   "exceptions": {
     "jwt_private_key_invalid": {
       "message": "Der Ed25519-Private-Key fehlt oder kann nicht gelesen werden. Bitte generiere den Schlüssel über „Neu konfigurieren“ oder „Erneut authentifizieren“ neu."
+    },
+    "entity_id_required": {
+      "message": "entity_id ist erforderlich. Wähle ein QWeather Pro-Wetterentity oder gib dessen Gerät oder Bereich an."
+    },
+    "entity_not_found": {
+      "message": "Entity {entity_id} nicht gefunden."
+    },
+    "entity_not_qweather": {
+      "message": "Das Entity {entity_id} ist kein QWeather Pro-Entity."
+    },
+    "coordinator_not_ready": {
+      "message": "Die Wetterdaten für {entity_id} sind noch nicht bereit. Bitte versuche es später erneut."
+    },
+    "auth_failed": {
+      "message": "QWeather-API-Authentifizierung fehlgeschlagen ({code}): {detail}"
     }
   }
 }
