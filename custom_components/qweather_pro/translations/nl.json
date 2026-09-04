@@ -539,6 +539,21 @@
   "exceptions": {
     "jwt_private_key_invalid": {
       "message": "De Ed25519 privésleutel ontbreekt of kan niet worden gelezen. Genereer de sleutel opnieuw via Herconfigureren of Hervalidatie."
+    },
+    "entity_id_required": {
+      "message": "entity_id is vereist. Selecteer een QWeather Pro-weerentity of geef het bijbehorende apparaat of de ruimte op."
+    },
+    "entity_not_found": {
+      "message": "Entity {entity_id} niet gevonden."
+    },
+    "entity_not_qweather": {
+      "message": "Entity {entity_id} is geen QWeather Pro-entity."
+    },
+    "coordinator_not_ready": {
+      "message": "De weergegevens van {entity_id} zijn nog niet gereed. Probeer het later opnieuw."
+    },
+    "auth_failed": {
+      "message": "QWeather API-authenticatie mislukt ({code}): {detail}"
     }
   }
 }
