@@ -535,5 +535,10 @@
       "title": "QWeather API KEY 即將限額",
       "description": "您的和風天氣 Pro 整合仍在使用 API KEY 認證。\r\n注意: API KEY 認證方式無法提供足夠的安全性, 使用和風天氣自 2027-01-01 起將限制使用 API KEY 認證的每日請求數量（具體數值未公布），且 SDK 5+ 不再支援 API KEY；JWT 無限制，推薦使用。若繼續使用 API KEY，輪詢將強制鎖定為 100 分鐘，且不可在項目配置中更改；在「重新配置」中切換到 JWT 即可獲得無限制、更快的更新。"
     }
+  },
+  "exceptions": {
+    "jwt_private_key_invalid": {
+      "message": "Ed25519 私鑰缺失或無法解析，請在重新配置或重新認證中重新產生金鑰。"
+    }
   }
 }

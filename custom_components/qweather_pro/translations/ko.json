@@ -535,5 +535,10 @@
       "title": "QWeather API KEY 일일 할당량",
       "description": "귀하의 QWeather Pro 통합은 여전히 API KEY 인증을 사용하고 있습니다.\r\n참고: API KEY 인증은 충분한 보안을 제공하지 않습니다. 2027-01-01부터 QWeather는 API KEY로 인증된 일일 요청 수를 제한합니다(정확한 수치는 미정), 또한 SDK 5+는 API KEY를 더 이상 지원하지 않습니다. JWT는 무제한이며 권장됩니다. API KEY를 계속 사용하면 폴링 간격은 강제로 100분으로 고정되며, 엔트리 설정에서 변경할 수 없습니다. «재구성»에서 JWT로 전환하면 무제한이고 더 빠른 업데이트를 얻을 수 있습니다."
     }
+  },
+  "exceptions": {
+    "jwt_private_key_invalid": {
+      "message": "Ed25519 개인 키가 없거나 분석할 수 없습니다. 재구성 또는 재인증에서 키를 다시 생성하세요."
+    }
   }
 }

@@ -535,5 +535,10 @@
       "title": "QWeather API KEY dagelijkse quota",
       "description": "Uw QWeather Pro-integratie gebruikt nog steeds API KEY-authenticatie.\r\nOpmerking: Authenticatie met API KEY biedt onvoldoende beveiliging. Vanaf 01-01-2027 zal QWeather de dagelijkse verzoeken met API KEY beperken (exact bedrag nog onbekend), en SDK 5+ zal API KEY niet langer ondersteunen; JWT is onbeperkt en aanbevolen. Als u API KEY behoudt, is het polsinterval vast vergrendeld op 100 minuten en kan niet worden gewijzigd in de entry-opties; schakel over naar JWT in «Opnieuw configureren» voor onbeperkte, snellere updates."
     }
+  },
+  "exceptions": {
+    "jwt_private_key_invalid": {
+      "message": "De Ed25519 privésleutel ontbreekt of kan niet worden gelezen. Genereer de sleutel opnieuw via Herconfigureren of Hervalidatie."
+    }
   }
 }

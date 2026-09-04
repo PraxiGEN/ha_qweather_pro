@@ -535,5 +535,10 @@
       "title": "QWeather API KEY 即将限额",
       "description": "您的 QWeather Pro 集成仍在使用 API KEY 鉴权。\r\n注意: API KEY 认证方式无法提供足够的安全性, 使用 API KEY 认证方式自 2027-01-01 起将限制每日请求量（具体数值未公布），且 SDK 5+ 不再支持 API KEY；JWT 无限制，推荐使用。若继续使用 API KEY，轮询将强制锁定为 100 分钟，且不可在条目配置中更改；在「重新配置」中切换到 JWT 即可获得无限额、更快的更新。"
     }
+  },
+  "exceptions": {
+    "jwt_private_key_invalid": {
+      "message": "Ed25519 私钥缺失或无法解析，请在重新配置或重认证中重新生成密钥。"
+    }
   }
 }
