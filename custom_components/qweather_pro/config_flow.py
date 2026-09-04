@@ -12,6 +12,7 @@ from cryptography.hazmat.primitives.asymmetric import ed25519
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.const import CONF_HOST, CONF_API_KEY
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
@@ -52,6 +53,8 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._generated_private_key: str | None = None
         self._generated_public_key: str | None = None
         self._reauth_entry: config_entries.ConfigEntry | None = None
+        # jwt_setup 表单回退时暂存的错误（经 async_step_jwt_setup 完整渲染时带入）
+        self._jwt_form_errors: dict[str, str] | None = None
 
     @staticmethod
     @callback
@@ -168,6 +171,7 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         is_reuse = bool(existing_private)
 
         if user_input is not None:
+            self._jwt_form_errors = None
             if not is_reuse:
                 # 首次 JWT /「重新生成 JWT」分支：复用展示阶段已生成的密钥对，
                 if not self._generated_private_key:
@@ -219,6 +223,7 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="jwt_setup",
             data_schema=vol.Schema(schema_fields),
             description_placeholders=placeholders,
+            errors=self._jwt_form_errors,
         )
 
     async def _async_search_location(self, config_data: dict[str, Any]) -> FlowResult:
@@ -293,6 +298,9 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 else:
                     errors["base"] = "cannot_connect"
                     
+            except ConfigEntryAuthFailed:
+                # api 层本地判定认证失败（私钥缺失/损坏无法生成 JWT）→ 归为鉴权错误
+                errors["base"] = "invalid_auth"
             except Exception as err:
                 LOGGER.error("无法连接至 API Host %s: %s", user_host, err)
                 errors["base"] = "cannot_connect"
@@ -305,14 +313,18 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         else:
             step_id = "setup"
 
-        # 如果是 JWT 模式且还在配置阶段，回退到 jwt_setup
-        if config_data.get(CONF_USE_TOKEN) and step_id != "reuse_location":
-            # 注意：如果 reconfigure 过程中 JWT 校验失败，通常也应该回退到 jwt_setup 重新输入 ID
-            step_id = "jwt_setup"
+        # 回退策略：仅鉴权类错误（JWT 凭据可能填错）才回退 jwt_setup 修正 project_id/key_id，
+        if (
+            config_data.get(CONF_USE_TOKEN)
+            and step_id != "reuse_location"
+            and errors.get("base") in ("invalid_auth", "forbidden", "no_credit")
+        ):
+            self._jwt_form_errors = errors
+            return await self.async_step_jwt_setup()
 
         return self.async_show_form(
-            step_id=step_id, 
-            data_schema=self._get_schema(config_data), 
+            step_id=step_id,
+            data_schema=self._get_schema(config_data),
             errors=errors
         )
 
@@ -384,23 +396,18 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     def _get_schema(self, data: dict) -> vol.Schema:
-        """获取带有当前数据的 Schema 用于错误回显."""
+        """获取带当前数据的全量 Schema（含 host）用于错误回显.
+
+        jwt_setup 的回退不经过这里：鉴权类错误直接 await async_step_jwt_setup()
+        复用其完整渲染（公钥代码块 + 预填 + 错误显示）。
+        """
         # 复用模式下的回显
         if "reuse_from" in self._temp_data:
             return vol.Schema({
                 vol.Required(CONF_LOCATION_ID, default=data.get(CONF_LOCATION_ID)): selector.TextSelector()
             })
-        
-        # JWT 模式下的回显
-        if data.get(CONF_USE_TOKEN):
-            fields: dict = {
-                vol.Optional(CONF_ISS, default=data.get(CONF_ISS) or ""): selector.TextSelector(),
-                vol.Required(CONF_PROJECT_ID, default=data.get(CONF_PROJECT_ID)): selector.TextSelector(),
-                vol.Required(CONF_KEY_ID, default=data.get(CONF_KEY_ID)): selector.TextSelector(),
-            }
-            return vol.Schema(fields)
 
-        # 普通 setup 模式下的全量回显
+        # setup / reconfigure 全量回显（必须含 host：host/连接类错误只有这里能改 host）
         return vol.Schema({
             vol.Required(CONF_HOST, default=data.get(CONF_HOST)): selector.TextSelector(),
             vol.Required(CONF_LOCATION_ID, default=data.get(CONF_LOCATION_ID)): selector.TextSelector(),
@@ -604,6 +611,9 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 await self.hass.config_entries.async_reload(entry.entry_id)
                 return self.async_abort(reason="reauth_successful")
             errors["base"] = self._reauth_error_key(api_code, res.get("error_detail", ""))
+        except ConfigEntryAuthFailed:
+            # api 层本地判定认证失败（私钥缺失/损坏无法生成 JWT）→ 归为鉴权错误
+            errors["base"] = "invalid_auth"
         except Exception as err:
             LOGGER.error("QWeather 重认证凭据校验失败: %s", err)
             errors["base"] = "cannot_connect"

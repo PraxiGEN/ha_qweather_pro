@@ -1,6 +1,7 @@
 """QWeather (和风天气) 集成入口."""
 from __future__ import annotations
 
+import asyncio
 import os
 
 from homeassistant.config_entries import ConfigEntry
@@ -42,12 +43,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: QWeatherConfigEntry) -> 
     local_path = hass.config.path("custom_components", DOMAIN, "www")
     path_exists = await hass.async_add_executor_job(os.path.exists, local_path)
 
-    # 静态资源路径只注册一次（重复注册会抛错），用独立标志，避免被「资源注入」
-    if path_exists and f"{DOMAIN}_static_path" not in hass.data:
-        await hass.http.async_register_static_paths([
-            StaticPathConfig("/qweather_pro-local", local_path, False)
-        ])
-        hass.data[f"{DOMAIN}_static_path"] = True
+    # 静态资源路径只注册一次（重复注册同一 URL 会抛错、条目加载失败）。
+    if path_exists:
+        lock = hass.data.setdefault(f"{DOMAIN}_static_path_lock", asyncio.Lock())
+        async with lock:
+            if f"{DOMAIN}_static_path" not in hass.data:
+                await hass.http.async_register_static_paths([
+                    StaticPathConfig("/qweather_pro-local", local_path, False)
+                ])
+                hass.data[f"{DOMAIN}_static_path"] = True
     # 按开关计算需要注入的前端 JS；add_extra_js_url 幂等（同 URL 不重复添加），
     names: list[str] = []
     if entry.options.get(CONF_CUSTOM_UI):

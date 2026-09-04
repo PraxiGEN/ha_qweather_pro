@@ -535,5 +535,10 @@
       "title": "QWeather API KEY Tageskontingent",
       "description": "Ihre QWeather Pro-Integration verwendet noch die API KEY-Authentifizierung.\r\nHinweis: Die Authentifizierung mit API KEY bietet keine ausreichende Sicherheit. Ab dem 01.01.2027 wird QWeather die täglichen Anfragen mit API KEY begrenzen (genaue Zahl noch nicht bekannt), und SDK 5+ wird API KEY nicht mehr unterstützen; JWT ist unbegrenzt und wird empfohlen. Wenn Sie API KEY behalten, ist das Abfrageintervall fest auf 100 Minuten gesperrt und kann in den Eintrags-Optionen nicht geändert werden; wechseln Sie in „Neu konfigurieren“ zu JWT für unbegrenzte, schnellere Updates."
     }
+  },
+  "exceptions": {
+    "jwt_private_key_invalid": {
+      "message": "Der Ed25519-Private-Key fehlt oder kann nicht gelesen werden. Bitte generiere den Schlüssel über „Neu konfigurieren“ oder „Erneut authentifizieren“ neu."
+    }
   }
 }

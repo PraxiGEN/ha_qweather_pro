@@ -535,5 +535,10 @@
       "title": "QWeather API KEY daily quota",
       "description": "Your QWeather Pro integration is still using API KEY authentication.\r\nNote: API KEY authentication does not provide sufficient security. Starting 2027-01-01, QWeather will limit daily requests for API KEY authentication (exact amount TBD), and SDK 5+ will drop API KEY support; JWT is unlimited and recommended. If you keep API KEY, polling is locked to 100 minutes and cannot be changed in the entry configuration; switch to JWT in \"Reconfigure\" for unlimited, faster updates."
     }
+  },
+  "exceptions": {
+    "jwt_private_key_invalid": {
+      "message": "The Ed25519 private key is missing or cannot be parsed. Re-generate the key via Reconfigure or Re-authentication."
+    }
   }
 }

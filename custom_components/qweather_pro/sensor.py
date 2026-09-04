@@ -16,7 +16,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import QWeatherConfigEntry
-from .const import ATTRIBUTION
+from .const import ATTRIBUTION, LOGGER
 from .coordinator import QWeatherUpdateCoordinator
 
 @dataclass(frozen=True, kw_only=True)
@@ -113,8 +113,11 @@ SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
         attr_fn=lambda data: {
             # 格式化时间为 HH:mm，作为属性名
             # 结果示例： "15:40": "0.08mm", "15:45": "0.11mm" ...
-            (item.get("fxTime").split("T")[1][:5]): f"{item.get('precip')} mm"
+            # fxTime 缺失的脏数据逐条跳过：单条坏数据不得炸掉整个属性构建
+            # （否则异常被上层静默吞掉，precipitation_summary 属性全部消失）
+            (fx_time.split("T")[1] if "T" in fx_time else fx_time)[:5]: f"{item.get('precip')} mm"
             for item in data.get("minutely_detail", [])
+            if (fx_time := item.get("fxTime"))
         } if data.get("minutely_detail") else {},
     ),
     QWeatherSensorEntityDescription(
@@ -171,6 +174,9 @@ class QWeatherSensor(CoordinatorEntity[QWeatherUpdateCoordinator], SensorEntity)
         if self.entity_description.attr_fn:
             try:
                 attrs.update(self.entity_description.attr_fn(self.coordinator.data))
-            except Exception:
-                pass
+            except Exception:  # noqa: BLE001 - 属性构建失败不影响传感器状态本身
+                # 静默吞异常掩盖数据问题：至少留 debug 日志定位
+                LOGGER.debug(
+                    "QWeather 传感器 %s 属性构建失败", self.entity_description.key, exc_info=True
+                )
         return attrs
