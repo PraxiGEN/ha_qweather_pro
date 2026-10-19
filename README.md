@@ -6,7 +6,7 @@
 
 [![Release](https://img.shields.io/github/v/release/PraxiGEN/ha_qweather_pro)](https://github.com/PraxiGEN/ha_qweather_pro/releases)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/PraxiGEN/ha_qweather_pro/blob/main/LICENSE)
-[![HACS Custom](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![HACS](https://img.shields.io/badge/HACS-Default-blue.svg)](https://github.com/hacs/integration)
 ![](https://komarev.com/ghpvc/?username=PraxiGEN&color=ff69b4)
 
 ## A deeply customized advanced QWeather (HeWeather) integration for Home Assistant.  
@@ -46,18 +46,18 @@ QWeather Pro  internationalized, providing a seamless localized experience for 
 
 ## 📦 Installation
 
-### Install via HACS (Recommended)
+### Using [HACS](https://hacs.xyz/) (Recommended)
 
-1. In HACS → “Integrations”, click the three-dot menu.
-2. Select **“Custom repositories”**.
-3. Enter:
-```yaml
-https://github.com/PraxiGEN/ha_qweather_pro
-```
-4. Choose category **Integration**.
-5. Click **Add**.
-6. Find **QWeather Pro** in HACS and install it.
-7. Restart Home Assistant.
+ One-click installation from HACS: 
+
+[![Open your Home Assistant instance and open the QWeather Pro inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=PraxiGEN&repository=ha_qweather_pro&category=integration)
+
+**Or manually:**
+
+1. Open Home Assistant
+2. Go to HACS
+3. In the search box, type **"QWeather Pro"**
+4. Click "Download"
 
 ### Manual Installation
 
