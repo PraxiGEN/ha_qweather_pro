@@ -1,10 +1,4 @@
-"""共享 fixtures：在真实 homeassistant 环境下运行（CI / GitHub Actions）。
-
-pytest 的 ``homeassistant`` 插件会自动提供标准 fixtures（``hass``、
-``enable_custom_integrations`` 等）。本文件补充集成特有的 ``mock_coordinator``
-与 ``mock_config_entry`` 两个 fixture。``MockConfigEntry`` 来自
-``pytest_homeassistant_custom_component.common``（自定义组件测试的标准来源）。
-"""
+"""共享 fixtures：mock_coordinator / mock_config_entry。"""
 from __future__ import annotations
 
 from unittest.mock import MagicMock
@@ -13,30 +7,50 @@ import pytest
 
 from custom_components.qweather_pro.const import DOMAIN
 
-
 @pytest.fixture
 def mock_coordinator():
-    """最小 coordinator 替身：提供 entity 构造所需的 ``data`` / ``device_info``。
-
-    测试内通常再覆盖 ``mock_coordinator.data = <测试数据>``。
-    """
+    """最小 coordinator 替身（data / device_info 供实体构造）."""
     coord = MagicMock()
     coord.data = {}
     coord.device_info = {"identifiers": {(DOMAIN, "test")}}
     return coord
 
-
 @pytest.fixture
 def mock_config_entry():
-    """提供实体/入口测试所需的 config entry 替身。
-
-    自定义组件测试应从 ``pytest_homeassistant_custom_component.common`` 导入
-    ``MockConfigEntry``（CI 装的 pytest-homeassistant-custom-component 提供；
-    该版本 homeassistant 的 ``homeassistant.config_entries`` 已不再导出它）。
-    """
+    """config entry 替身（MockConfigEntry 取自 pytest_homeassistant_custom_component）."""
     try:
         from pytest_homeassistant_custom_component.common import MockConfigEntry
     except Exception:  # pragma: no cover - 旧版回退
         from homeassistant.config_entries import MockConfigEntry  # type: ignore
 
     return MockConfigEntry(domain=DOMAIN, data={}, entry_id="test")
+
+def add_location_subentry(hass, entry, coords="120,30", title="测试城市"):
+    """为条目挂一个 location 子条目（坐标归一化与配置流一致）."""
+    from homeassistant.config_entries import ConfigSubentry
+
+    from custom_components.qweather_pro.const import (
+        CONF_LOCATION_ID,
+        SUBENTRY_TYPE_LOCATION,
+    )
+
+    lon, lat = coords.split(",")
+    std_coords = f"{round(float(lon), 2)},{round(float(lat), 2)}"
+    subentry = ConfigSubentry(
+        subentry_type=SUBENTRY_TYPE_LOCATION,
+        title=title,
+        data={CONF_LOCATION_ID: std_coords},
+        unique_id=f"qw_{std_coords.replace(',', '_')}",
+    )
+    hass.config_entries.async_add_subentry(entry, subentry)
+    return subentry
+    return subentry
+
+def stub_runtime_api(entry):
+    """为未真正 setup 的条目塞最小 runtime_data（子条目流经 entry.runtime_data.api 搜索城市）."""
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock
+
+    from custom_components.qweather_pro.api import QWeatherAPI
+
+    entry.runtime_data = SimpleNamespace(api=QWeatherAPI(MagicMock(), api_key="k"))

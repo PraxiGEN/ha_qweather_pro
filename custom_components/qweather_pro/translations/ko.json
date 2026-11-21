@@ -2,13 +2,6 @@
   "title": "QWeather Pro",
   "config": {
     "step": {
-      "user": {
-        "title": "새 도시 추가",
-        "description": "QWeather가 이미 구성된 것으로 보입니다. **‘새 계정 사용’** 또는 **‘기존 계정 재사용’**을 선택할 수 있습니다.\r\n**참고:** 동일한 **API Host** 아래에 여러 도시를 추가하면 요청량이 증가합니다. 제한을 초과하지 않도록 업데이트 간격을 적절히 늘려주세요.",
-        "data": {
-          "account_selection": "계정/자격 증명 재사용"
-        }
-      },
       "setup": {
         "title": "QWeather Pro 구성",
         "description": "### 설정 단계\r\n**[QWeather 콘솔]({qweather_console})로 이동하세요:**\r\n1. 설정에서 **API Host**를 복사하여 아래 **API Host** 입력란에 입력합니다.\r\n2. 프로젝트 관리 → 프로젝트를 생성한 후 프로젝트에 자격 증명을 추가합니다(**JSON Web Token** 및 **API KEY** 선택 사항).\r\n3. 위치는 위도와 경도(WGS-84) 또는 도시 이름으로 지정할 수 있습니다.\r\n4. 기본 위치는 HA의 위도와 경도입니다.\r\n#### 참고: API KEY 인증은 충분한 보안을 제공하지 않습니다。API KEY를 사용한 요청은 제한 대상입니다. JSON Web Token(JWT)을 권장합니다.",
@@ -26,13 +19,6 @@
           "iss": "개발자 ID",
           "project_id": "Project ID",
           "key_id": "Key ID"
-        }
-      },
-      "reuse_location": {
-        "title": "새 도시 추가",
-        "description": "기존 계정 정보가 성공적으로 불러와졌습니다. 새로 추가할 도시의 **지리적 위치(위도·경도)**를 입력하세요.",
-        "data": {
-          "location_id": "새 도시의 지리적 위치"
         }
       },
       "select_location": {
@@ -104,30 +90,10 @@
     }
   },
   "selector": {
-    "account_selection": {
-      "options": {
-        "new_account": "새 계정 / 새 자격 증명"
-      }
-    },
     "jwt_reconfigure_choice": {
       "options": {
         "keep_current": "현재 구성 유지 (키 쌍 재사용)",
         "regenerate": "JWT 재생성 (새 키 쌍)"
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "통합 옵션",
-        "description": "### 사용 안내\r\n일일 예보는 **3/7/10**일로 설정할 수 있습니다(V1 API는 최대 10일 지원).\r\n- 시간별 예보는 **24/72/168**시간으로 설정할 수 있습니다.\r\n- **사용자 정의 UI** 는 전역 리소스입니다. 어떤 인스턴스에서든 사용하면 모든 인스턴스에 적용됩니다. 상세 팝업 덮어쓰기는 인스턴스별입니다.",
-        "data": {
-          "update_interval": "업데이트 간격(분)",
-          "dailysteps": "일일 예보 일수(3-10)",
-          "hourlysteps": "시간별 예보 시간(24–168)",
-          "custom_ui": "사용자 정의 UI 지원 사용(전역)",
-          "custom_more_info": "기본 상세 팝업 대체"
-        }
       }
     }
   },
@@ -554,6 +520,60 @@
     },
     "auth_failed": {
       "message": "QWeather API 인증 실패({code}): {detail}"
+    }
+  },
+  "config_subentries": {
+    "location": {
+      "entry_type": "위치",
+      "initiate_flow": {
+        "user": "위치 추가",
+        "reconfigure": "옵션 편집"
+      },
+      "step": {
+        "user": {
+          "title": "위치 추가",
+          "description": "추가할 도시의 위치를 입력하세요(좌표, 도시 이름 또는 도시 ID). 자격 증명은 이 계정과 공유됩니다. 예보 옵션은 추가 후 '옵션 편집'에서 조정할 수 있습니다.",
+          "data": {
+            "location_id": "지리적 위치. 경도와 위도만 지원(경도 먼저)."
+          }
+        },
+        "select_location": {
+          "title": "도시 위치 확인",
+          "description": "여러 개의 일치하는 지역이 발견되었습니다. 가장 정확한 지역을 선택하세요:",
+          "data": {
+            "location_index": "일치하는 도시 목록"
+          }
+        },
+        "reconfigure": {
+          "title": "옵션 편집",
+          "description": "이 위치의 예보 옵션을 조정합니다. 위치 자체는 여기서 변경할 수 없으므로 필요한 경우 삭제 후 다시 추가하세요.",
+          "data": {
+            "update_interval": "업데이트 간격(분)",
+            "dailysteps": "일일 예보 일수(3-10)",
+            "hourlysteps": "시간별 예보 시간(24–168)",
+            "custom_ui": "사용자 정의 UI 지원 사용(전역)",
+            "custom_more_info": "기본 상세 팝업 대체"
+          }
+        }
+      },
+      "error": {
+        "invalid_parameter": "요청 매개변수가 잘못되었습니다. 입력 형식을 확인하세요",
+        "location_not_found": "위치를 찾을 수 없습니다. 정확한 “경도,위도”를 입력해 보세요",
+        "invalid_auth": "인증 실패, Key 또는 JWT 설정을 확인하세요",
+        "no_credit": "계정 크레딧 부족 또는 연체 상태입니다. HeWeather 콘솔의 청구서를 확인하세요",
+        "invalid_host": "API Host 오류입니다. 전용 인터페이스 주소를 사용하고 있는지 확인하세요",
+        "forbidden": "현재 요금제에서는 이 데이터를 요청할 권한이 없습니다",
+        "not_found": "API 경로 오류 또는 리소스 없음 (404)",
+        "too_many_requests": "요청이 너무 많거나 QPM 제한을 초과했습니다. 잠시 후 다시 시도하세요",
+        "server_error": "HeWeather 서버에서 알 수 없는 오류가 발생했습니다 (500)",
+        "cannot_connect": "API Host에 연결할 수 없습니다. 네트워크 또는 주소를 확인하세요",
+        "api_host_deprecated": "공용 도메인은 더 이상 사용할 수 없습니다. 개인 API Host를 사용하세요"
+      },
+      "abort": {
+        "config_entry_not_loaded": "통합이 아직 로드되지 않았습니다. 잠시 후 다시 시도하세요.",
+        "duplicate_location": "이 위치는 이미 이 계정에 추가되어 있습니다.",
+        "reconfigure_successful": "구성이 성공적으로 업데이트되었습니다!"
+      }
     }
   }
 }

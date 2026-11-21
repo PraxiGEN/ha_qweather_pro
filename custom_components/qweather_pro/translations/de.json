@@ -2,13 +2,6 @@
   "title": "QWeather Pro",
   "config": {
     "step": {
-      "user": {
-        "title": "Neue Stadt hinzufügen",
-        "description": "Es scheint, dass QWeather bereits konfiguriert wurde. Sie können **„Ein neues Konto verwenden“** oder direkt **„Vorhandenes Konto wiederverwenden“**.\r\n**Hinweis:** Das Hinzufügen mehrerer Städte unter demselben **API-Host** erhöht das Anfragevolumen. Bitte verlängern Sie das Aktualisierungsintervall entsprechend, um eine Überschreitung der Limits zu vermeiden.",
-        "data": {
-          "account_selection": "Kontowiederverwendung"
-        }
-      },
       "setup": {
         "title": "QWeather Pro konfigurieren",
         "description": "### Einrichtungsschritte\r\n**Öffnen Sie die [QWeather-Konsole]({qweather_console}):**\r\n1. Kopieren Sie in den Einstellungen den **API-Host** und tragen Sie ihn unten in das Feld **API Host** ein.\r\n2. Projektverwaltung → Projekt erstellen und dann dem Projekt Anmeldeinformationen hinzufügen: optional **JSON Web Token** und **API KEY**.\r\n3. Der Standort kann aus Breiten- und Längengrad (WGS-84) oder einem Stadtnamen bestehen.\r\n4. Der Standardstandort ist der Breiten- und Längengrad von Home Assistant.\r\n#### Hinweis: Die Authentifizierung mit API KEY bietet keine ausreichende Sicherheit. Anfragen mit API KEY unterliegen Limits. JSON Web Token (JWT) wird empfohlen!",
@@ -26,13 +19,6 @@
           "iss": "Entwickler-ID",
           "project_id": "Projekt-ID",
           "key_id": "Schlüssel-ID"
-        }
-      },
-      "reuse_location": {
-        "title": "Neue Stadt hinzufügen",
-        "description": "Vorhandene Kontoinformationen wurden erfolgreich geladen. Bitte geben Sie den **geografischen Standort** (Breiten- und Längengrad) der neuen Stadt ein.",
-        "data": {
-          "location_id": "Geografischer Standort der neuen Stadt"
         }
       },
       "select_location": {
@@ -104,30 +90,10 @@
     }
   },
   "selector": {
-    "account_selection": {
-      "options": {
-        "new_account": "Neues Konto / neue Anmeldeinformationen"
-      }
-    },
     "jwt_reconfigure_choice": {
       "options": {
         "keep_current": "Aktuelle Konfiguration beibehalten (Schlüsselpaar wiederverwenden)",
         "regenerate": "JWT neu generieren (neues Schlüsselpaar)"
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "Integrationsoptionen",
-        "description": "### Nutzungshinweise\r\nDie tägliche Wettervorhersage kann auf **3/7/10** Tage eingestellt werden (V1-API unterstützt maximal 10 Tage).\r\n- Die stündliche Vorhersage kann auf **24/72/168** Stunden eingestellt werden.\r\n- **Benutzerdefinierte UI** ist eine globale Ressource: Sie für eine beliebige Instanz zu aktivieren, gilt für alle Instanzen. Die Detail-Popup-Überschreibung ist instanzbezogen.",
-        "data": {
-          "update_interval": "Aktualisierungsintervall (Minuten)",
-          "dailysteps": "Tägliche Vorhersagetage (3-10)",
-          "hourlysteps": "Stündliche Vorhersagestunden (24–168)",
-          "custom_ui": "Benutzerdefinierte UI aktivieren (global)",
-          "custom_more_info": "Native Detail-Karte überschreiben"
-        }
       }
     }
   },
@@ -554,6 +520,60 @@
     },
     "auth_failed": {
       "message": "QWeather-API-Authentifizierung fehlgeschlagen ({code}): {detail}"
+    }
+  },
+  "config_subentries": {
+    "location": {
+      "entry_type": "Standort",
+      "initiate_flow": {
+        "user": "Standort hinzufügen",
+        "reconfigure": "Optionen bearbeiten"
+      },
+      "step": {
+        "user": {
+          "title": "Standort hinzufügen",
+          "description": "Gib den Standort der hinzuzufügenden Stadt ein (Koordinaten, Stadtname oder Stadt-ID). Die Zugangsdaten werden vom Konto übernommen. Die Vorhersageoptionen lassen sich danach über \"Optionen bearbeiten\" anpassen.",
+          "data": {
+            "location_id": "Geografischer Standort. Unterstützt nur Längen- und Breitengrad (zuerst Länge)."
+          }
+        },
+        "select_location": {
+          "title": "Standort bestätigen",
+          "description": "Mehrere passende Regionen wurden gefunden. Bitte wählen Sie die genaueste aus:",
+          "data": {
+            "location_index": "Liste der passenden Städte"
+          }
+        },
+        "reconfigure": {
+          "title": "Optionen bearbeiten",
+          "description": "Passe die Vorhersageoptionen für diesen Standort an. Der Standort selbst kann hier nicht geändert werden — lösche ihn und füge ihn bei Bedarf erneut hinzu.",
+          "data": {
+            "update_interval": "Aktualisierungsintervall (Minuten)",
+            "dailysteps": "Tägliche Vorhersagetage (3-10)",
+            "hourlysteps": "Stündliche Vorhersagestunden (24–168)",
+            "custom_ui": "Benutzerdefinierte UI aktivieren (global)",
+            "custom_more_info": "Native Detail-Karte überschreiben"
+          }
+        }
+      },
+      "error": {
+        "invalid_parameter": "Ungültige Anforderungsparameter, bitte überprüfen Sie das Eingabeformat",
+        "location_not_found": "Standort nicht gefunden, bitte versuchen Sie präzise „Längengrad,Breitengrad“ einzugeben",
+        "invalid_auth": "Authentifizierung fehlgeschlagen, bitte überprüfen Sie Ihren Key oder Ihre JWT-Konfiguration",
+        "no_credit": "Unzureichendes Guthaben oder überfälliges Konto, bitte prüfen Sie die Abrechnung in der HeWeather-Konsole",
+        "invalid_host": "API-Host-Fehler, bitte stellen Sie sicher, dass Sie Ihre exklusive Schnittstellenadresse verwenden",
+        "forbidden": "Ihr aktuelles Paket hat keine Berechtigung, diese Daten anzufordern",
+        "not_found": "Fehlerhafter API-Pfad oder Ressource nicht gefunden (404)",
+        "too_many_requests": "Zu viele Anfragen oder QPM-Limit überschritten, bitte versuchen Sie es später erneut",
+        "server_error": "Unbekannter Serverfehler bei HeWeather (500)",
+        "cannot_connect": "Verbindung zum API-Host nicht möglich, bitte prüfen Sie Netzwerk oder Adresse",
+        "api_host_deprecated": "Die öffentliche Domain ist ungültig, bitte verwenden Sie Ihren persönlichen API-Host"
+      },
+      "abort": {
+        "config_entry_not_loaded": "Die Integration ist noch nicht geladen. Bitte warte einen Moment und versuche es erneut.",
+        "duplicate_location": "Dieser Standort wurde für dieses Konto bereits hinzugefügt.",
+        "reconfigure_successful": "Konfiguration erfolgreich aktualisiert!"
+      }
     }
   }
 }

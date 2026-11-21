@@ -60,8 +60,7 @@ SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
             "aqi_level": aqi.get("level"),
             "primary_pollutant": aqi.get("primary", "none"),
 
-            # 污染物浓度 (带单位，且增加空值保护)
-            # 使用 get(..., '--') 确保在数据缺失时不会显示 'None μg/m3'
+            # 污染物浓度（带单位；get '--' 防空值显示 None μg/m3）
             "pm2p5": f"{aqi.get('pm2p5', '--')} {aqi.get('pm2p5_unit', 'μg/m3')}",
             "pm10": f"{aqi.get('pm10', '--')} {aqi.get('pm10_unit', 'μg/m3')}",
             "no2": f"{aqi.get('no2', '--')} {aqi.get('no2_unit', 'ppb')}",
@@ -111,10 +110,7 @@ SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
         icon="mdi:message-text-clock",
         value_fn=lambda data: data.get("minutely_summary"),
         attr_fn=lambda data: {
-            # 格式化时间为 HH:mm，作为属性名
-            # 结果示例： "15:40": "0.08mm", "15:45": "0.11mm" ...
-            # fxTime 缺失的脏数据逐条跳过：单条坏数据不得炸掉整个属性构建
-            # （否则异常被上层静默吞掉，precipitation_summary 属性全部消失）
+            # 时间属性 HH:mm → 浓度；单条脏数据跳过，不得炸掉整个属性构建
             (fx_time.split("T")[1] if "T" in fx_time else fx_time)[:5]: f"{item.get('precip')} mm"
             for item in data.get("minutely_detail", [])
             if (fx_time := item.get("fxTime"))
@@ -134,14 +130,16 @@ async def async_setup_entry(
     entry: QWeatherConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """设置平台实体."""
-    coordinator = entry.runtime_data
-
-    async_add_entities(
-        QWeatherSensor(coordinator, entry, description)
-        for description in SENSOR_DESCRIPTIONS
-    )
-
+    """设置平台实体（每位置一组）."""
+    runtime = entry.runtime_data
+    for subentry_id, coordinator in runtime.coordinators.items():
+        async_add_entities(
+            (
+                QWeatherSensor(coordinator, subentry_id, description)
+                for description in SENSOR_DESCRIPTIONS
+            ),
+            config_subentry_id=subentry_id,
+        )
 class QWeatherSensor(CoordinatorEntity[QWeatherUpdateCoordinator], SensorEntity):
     """和风天气传感器."""
 
@@ -150,13 +148,13 @@ class QWeatherSensor(CoordinatorEntity[QWeatherUpdateCoordinator], SensorEntity)
     def __init__(
         self,
         coordinator: QWeatherUpdateCoordinator,
-        entry: QWeatherConfigEntry,
+        subentry_id: str,
         description: QWeatherSensorEntityDescription,
     ) -> None:
         super().__init__(coordinator)
 
         self.entity_description = description
-        self._attr_unique_id = f"{entry.entry_id}_{description.key}"
+        self._attr_unique_id = f"{subentry_id}_{description.key}"
         self._attr_translation_key = description.translation_key
         self._attr_device_info = coordinator.device_info
 

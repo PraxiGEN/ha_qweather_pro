@@ -1,8 +1,4 @@
-"""集成入口单测：服务注册、setup_entry 全链路与 Repairs 迁移引导逻辑.
-
-依赖 homeassistant 完整集成加载，本地无依赖时自动 skip，由 CI 跑。
-运行：``pytest tests/test_init.py -v``。
-"""
+"""集成入口单测：服务注册、setup_entry 全链路与 Repairs 迁移引导逻辑. 依赖 homeassistant 完整集成加载，本地无依赖时自动 skip，由 CI 跑。 运行：``pytest tests/test_init.py -v``。"""
 from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -23,6 +19,7 @@ try:
         CONF_PROJECT_ID,
         CONF_KEY_ID,
         CONF_PRIVATE_KEY,
+        get_location_subentries,
     )
     from custom_components.qweather_pro.coordinator import (  # noqa: E402
         QWeatherUpdateCoordinator,
@@ -38,12 +35,11 @@ pytestmark = [
     pytest.mark.usefixtures("enable_custom_integrations"),
 ]
 
-
 async def test_setup_entry_registers_get_weather_service(hass):
     """服务随条目加载注册（幂等）；async_setup 不再注册服务."""
     entry = MockConfigEntry(
         domain=DOMAIN,
-        data={CONF_USE_TOKEN: False, CONF_API_KEY: "test", CONF_LOCATION_ID: "120,30"},
+        data={CONF_USE_TOKEN: False, CONF_API_KEY: "test"},
         entry_id="test",
     )
     entry.add_to_hass(hass)
@@ -60,18 +56,17 @@ async def test_setup_entry_registers_get_weather_service(hass):
         hass.config_entries, "async_forward_entry_setups", new=AsyncMock()
     ):
         assert await async_setup(hass, {}) is True
-        # 服务注册已移至 setup_entry（随末条目卸载注销）
+# 服务注册已移至 setup_entry（随末条目卸载注销）
         assert not hass.services.has_service(DOMAIN, "get_weather")
         assert await async_setup_entry(hass, entry) is True
 
     assert hass.services.has_service(DOMAIN, "get_weather")
 
-
 async def test_setup_entry_api_key_creates_repairs_issue(hass):
     """仍用 API KEY：应推送按条目隔离的 Repairs 引导迁移 JWT（is_fixable=False）。"""
     entry = MockConfigEntry(
         domain=DOMAIN,
-        data={CONF_USE_TOKEN: False, CONF_API_KEY: "test", CONF_LOCATION_ID: "120,30"},
+        data={CONF_USE_TOKEN: False, CONF_API_KEY: "test"},
         entry_id="test",
     )
     entry.add_to_hass(hass)
@@ -94,11 +89,10 @@ async def test_setup_entry_api_key_creates_repairs_issue(hass):
     create.assert_called_once()
     call_args = create.call_args
     assert call_args.args[1] == DOMAIN
-    # issue ID 按条目隔离：api_key_quota_<entry_id>
+# issue ID 按条目隔离：api_key_quota_<entry_id>
     assert call_args.args[2] == f"{ISSUE_API_KEY_QUOTA}_{entry.entry_id}"
-    # 旧版本全局固定 ID 会被无条件清理（跨版本升级兼容，幂等无害）
+# 旧版本全局固定 ID 会被无条件清理（跨版本升级兼容，幂等无害）
     delete.assert_called_once_with(hass, DOMAIN, ISSUE_API_KEY_QUOTA)
-
 
 async def test_setup_entry_jwt_deletes_repairs_issue(hass):
     """已用 JWT：应清理旧全局 ID 与本条目隔离 ID 两处 Repairs 引导."""
@@ -109,7 +103,6 @@ async def test_setup_entry_jwt_deletes_repairs_issue(hass):
             CONF_PROJECT_ID: "p",
             CONF_KEY_ID: "k",
             CONF_PRIVATE_KEY: "pk",
-            CONF_LOCATION_ID: "120,30",
         },
         entry_id="test",
     )
@@ -130,8 +123,46 @@ async def test_setup_entry_jwt_deletes_repairs_issue(hass):
     ):
         assert await async_setup_entry(hass, entry) is True
 
-    # 两次清理：旧版本全局固定 ID（兼容残留）+ 本条目隔离 ID
+# 两次清理：旧版本全局固定 ID（兼容残留）+ 本条目隔离 ID
     delete.assert_any_call(hass, DOMAIN, ISSUE_API_KEY_QUOTA)
     delete.assert_any_call(hass, DOMAIN, f"{ISSUE_API_KEY_QUOTA}_{entry.entry_id}")
     assert delete.call_count == 2
     create.assert_not_called()
+
+async def test_setup_entry_builds_per_location_coordinators(hass):
+    """v1.3.0：逐 location 子条目建协调器，runtime_data 挂 QWeatherRuntimeData."""
+    from custom_components.qweather_pro import QWeatherRuntimeData
+    from tests.conftest import add_location_subentry
+
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        data={CONF_USE_TOKEN: False, CONF_API_KEY: "test"},
+        entry_id="test",
+    )
+    entry.add_to_hass(hass)
+    add_location_subentry(hass, entry, coords="120,30", title="测试城市")
+
+    with patch(
+        "custom_components.qweather_pro.async_create_issue", new=MagicMock()
+    ), patch(
+        "custom_components.qweather_pro.async_delete_issue", new=MagicMock()
+    ), patch.object(
+        QWeatherUpdateCoordinator, "async_load_cache", new=AsyncMock()
+    ), patch.object(
+        QWeatherUpdateCoordinator, "async_config_entry_first_refresh", new=AsyncMock()
+    ), patch.object(
+        hass.config_entries, "async_forward_entry_setups", new=AsyncMock()
+    ):
+        assert await async_setup_entry(hass, entry) is True
+
+    runtime = entry.runtime_data
+    assert isinstance(runtime, QWeatherRuntimeData)
+    subs = get_location_subentries(entry)
+    assert len(runtime.coordinators) == 1
+    (subentry_id, coordinator), = runtime.coordinators.items()
+    assert subentry_id == subs[0].subentry_id
+    assert coordinator.location == "120.0,30.0"
+    assert coordinator.city_name == "测试城市"
+# 设备标识挂子条目
+    identifiers = coordinator.device_info["identifiers"]
+    assert identifiers == {("qweather_pro", subentry_id)}
