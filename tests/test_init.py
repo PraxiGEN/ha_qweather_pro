@@ -19,6 +19,7 @@ try:
         CONF_PROJECT_ID,
         CONF_KEY_ID,
         CONF_PRIVATE_KEY,
+        get_location_subentries,
     )
     from custom_components.qweather_pro.coordinator import (  # noqa: E402
         QWeatherUpdateCoordinator,
@@ -156,7 +157,7 @@ async def test_setup_entry_builds_per_location_coordinators(hass):
 
     runtime = entry.runtime_data
     assert isinstance(runtime, QWeatherRuntimeData)
-    subs = entry.get_subentries_of_type("location")
+    subs = get_location_subentries(entry)
     assert len(runtime.coordinators) == 1
     (subentry_id, coordinator), = runtime.coordinators.items()
     assert subentry_id == subs[0].subentry_id

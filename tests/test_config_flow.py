@@ -23,10 +23,11 @@ try:
         CONF_KEY_ID,
         CONF_PRIVATE_KEY,
         CONF_UPDATE_INTERVAL,
+        get_location_subentries,
     )
     from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-    from tests.conftest import add_location_subentry
+    from tests.conftest import add_location_subentry, stub_runtime_api
 
     _HA_OK = True
 except Exception:  # pragma: no cover - 本地缺依赖时跳过
@@ -103,7 +104,7 @@ async def test_full_jwt_setup_creates_entry(hass, _patch_citylookup):
 # v1.3.0：账号数据不含位置；首个位置随 subentries 落库
     assert CONF_LOCATION_ID not in result["data"]
     assert len(result["subentries"]) == 1
-    assert result["subentries"][0]["data"][CONF_LOCATION_ID] == "120,30"
+    assert result["subentries"][0]["data"][CONF_LOCATION_ID] == "120.0,30.0"
     assert result["subentries"][0]["title"] == "测试"
 # v1.3.0 R2：条目 title = host（账号名），options 全部下沉首个位置子条目
     assert result["title"] == HOST_OK
@@ -194,6 +195,7 @@ async def test_subentry_add_location(hass, _patch_citylookup):
     entry.add_to_hass(hass)
     add_location_subentry(hass, entry, coords="130,20")
     _mark_loaded(hass, entry)
+    stub_runtime_api(entry)
 
     result = await hass.config_entries.subentries.async_init(
         (entry.entry_id, "location"),
@@ -215,7 +217,7 @@ async def test_subentry_add_location(hass, _patch_citylookup):
     assert CONF_UPDATE_INTERVAL not in result["data"]
     assert result["data"][CONF_DAILYSTEPS] == "7"
 # flow manager 已把子条目挂到条目上
-    uids = {s.unique_id for s in entry.get_subentries_of_type("location")}
+    uids = {s.unique_id for s in get_location_subentries(entry)}
     assert uids == {"qw_130_20", "qw_120.0_30.0"}
 
 async def test_subentry_add_duplicate_location_aborts(hass, _patch_citylookup):
@@ -226,6 +228,7 @@ async def test_subentry_add_duplicate_location_aborts(hass, _patch_citylookup):
     entry.add_to_hass(hass)
     add_location_subentry(hass, entry, coords="120,30")
     _mark_loaded(hass, entry)
+    stub_runtime_api(entry)
 
     result = await hass.config_entries.subentries.async_init(
         (entry.entry_id, "location"),
@@ -247,6 +250,10 @@ async def test_subentry_add_aborts_when_entry_not_loaded(hass, _patch_citylookup
         (entry.entry_id, "location"),
         context={"source": SOURCE_USER},
     )
+# 部分版本 flow manager 在 init 即中止；否则中止发生在提交后
+    if result["type"] != "form":
+        assert result["reason"] == "config_entry_not_loaded"
+        return
     result = await hass.config_entries.subentries.async_configure(
         result["flow_id"], _location_form_input()
     )
@@ -262,7 +269,7 @@ async def test_subentry_reconfigure_updates_options_only(hass, _patch_citylookup
     entry.add_to_hass(hass)
     add_location_subentry(hass, entry, coords="120,30")
     _mark_loaded(hass, entry)
-    sub = entry.get_subentries_of_type("location")[0]
+    sub = get_location_subentries(entry)[0]
 
     result = await hass.config_entries.subentries.async_init(
         (entry.entry_id, "location"),

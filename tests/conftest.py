@@ -34,12 +34,21 @@ def add_location_subentry(hass, entry, coords="120,30", title="测试城市"):
         SUBENTRY_TYPE_LOCATION,
     )
 
-    hass.config_entries.async_add_subentry(
-        entry,
-        ConfigSubentry(
-            subentry_type=SUBENTRY_TYPE_LOCATION,
-            title=title,
-            data={CONF_LOCATION_ID: coords},
-            unique_id=f"qw_{coords.replace(',', '_')}",
-        ),
+    subentry = ConfigSubentry(
+        subentry_type=SUBENTRY_TYPE_LOCATION,
+        title=title,
+        data={CONF_LOCATION_ID: coords},
+        unique_id=f"qw_{coords.replace(',', '_')}",
     )
+    hass.config_entries.async_add_subentry(entry, subentry)
+    return subentry
+    return subentry
+
+def stub_runtime_api(entry):
+    """为未真正 setup 的条目塞最小 runtime_data（子条目流经 entry.runtime_data.api 搜索城市）."""
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock
+
+    from custom_components.qweather_pro.api import QWeatherAPI
+
+    entry.runtime_data = SimpleNamespace(api=QWeatherAPI(MagicMock(), api_key="k"))
