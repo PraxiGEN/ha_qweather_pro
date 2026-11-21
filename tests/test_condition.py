@@ -1,8 +1,4 @@
-"""condition 模块单测：和风天气代码 → HA 标准天气状态映射.
-
-CI（GitHub Actions）使用真实 homeassistant 运行；``ATTR_CONDITION_*`` 常量由真实 homeassistant 提供。
-运行：``pytest tests/test_condition.py -v``。
-"""
+"""condition 模块单测：和风天气代码 → HA 标准天气状态映射. CI（GitHub Actions）使用真实 homeassistant 运行；``ATTR_CONDITION_*`` 常量由真实 homeassistant 提供。 运行：``pytest tests/test_condition.py -v``。"""
 from __future__ import annotations
 
 from homeassistant.components.weather import (  # noqa: E402
@@ -22,7 +18,6 @@ from homeassistant.components.weather import (  # noqa: E402
 
 from custom_components.qweather_pro.condition import CONDITION_MAP  # noqa: E402
 
-
 class TestConditionMap:
     """验证关键天气代码映射到正确的 HA 状态常量."""
 
@@ -34,7 +29,7 @@ class TestConditionMap:
         assert CONDITION_MAP["103"] == ATTR_CONDITION_PARTLYCLOUDY
 
     def test_cloudy(self):
-        # 少云/阴 在 HA 中统一为 cloudy
+# 少云/阴 在 HA 中统一为 cloudy
         assert CONDITION_MAP["102"] == ATTR_CONDITION_CLOUDY
         assert CONDITION_MAP["104"] == ATTR_CONDITION_CLOUDY
 
@@ -49,7 +44,7 @@ class TestConditionMap:
         assert CONDITION_MAP["400"] == ATTR_CONDITION_SNOWY
 
     def test_unknown_code_falls_back_to_exceptional(self):
-        # "999" 在映射表中显式指向 exceptional；真正未收录的代码用 .get(code, exceptional) 兜底
+# "999" 在映射表中显式指向 exceptional；真正未收录的代码用 .get(code, exceptional) 兜底
         assert CONDITION_MAP["999"] == ATTR_CONDITION_EXCEPTIONAL
         assert "998" not in CONDITION_MAP
         assert CONDITION_MAP.get("998", ATTR_CONDITION_EXCEPTIONAL) == ATTR_CONDITION_EXCEPTIONAL
@@ -69,5 +64,5 @@ class TestConditionMap:
             ATTR_CONDITION_SNOWY_RAINY,
             ATTR_CONDITION_FOG,
         }
-        # 映射值要么是已知 HA 状态，要么是兜底 exceptional
+# 映射值要么是已知 HA 状态，要么是兜底 exceptional
         assert set(CONDITION_MAP.values()).issubset(valid)
