@@ -89,12 +89,72 @@
       "reauth_failed_entry_not_found": "Konfigurationseintrag nicht gefunden. Bitte fügen Sie die Integration erneut hinzu."
     }
   },
+  "config_subentries": {
+    "location": {
+      "entry_type": "Standort",
+      "initiate_flow": {
+        "user": "Standort hinzufügen",
+        "reconfigure": "Optionen bearbeiten"
+      },
+      "step": {
+        "user": {
+          "title": "Standort hinzufügen",
+          "description": "Gib den Standort der hinzuzufügenden Stadt ein (Koordinaten, Stadtname oder Stadt-ID). Die Zugangsdaten werden vom Konto übernommen. Die Vorhersageoptionen lassen sich danach über \"Optionen bearbeiten\" anpassen.",
+          "data": {
+            "location_id": "Geografischer Standort. Unterstützt nur Längen- und Breitengrad (zuerst Länge)."
+          }
+        },
+        "select_location": {
+          "title": "Standort bestätigen",
+          "description": "Mehrere passende Regionen wurden gefunden. Bitte wählen Sie die genaueste aus:",
+          "data": {
+            "location_index": "Liste der passenden Städte"
+          }
+        },
+        "reconfigure": {
+          "title": "Optionen bearbeiten",
+          "description": "Passe die Vorhersageoptionen für diesen Standort an. Der Standort selbst kann hier nicht geändert werden — lösche ihn und füge ihn bei Bedarf erneut hinzu.",
+          "data": {
+            "update_interval": "Aktualisierungsintervall (Minuten)",
+            "dailysteps": "Tägliche Vorhersagetage (3-10)",
+            "hourlysteps": "Stündliche Vorhersagestunden (24–168)",
+            "custom_ui": "Benutzerdefinierte UI aktivieren (global)",
+            "custom_more_info": "Native Detail-Karte überschreiben"
+          }
+        }
+      },
+      "error": {
+        "invalid_parameter": "Ungültige Anforderungsparameter, bitte überprüfen Sie das Eingabeformat",
+        "location_not_found": "Standort nicht gefunden, bitte versuchen Sie präzise „Längengrad,Breitengrad“ einzugeben",
+        "invalid_auth": "Authentifizierung fehlgeschlagen, bitte überprüfen Sie Ihren Key oder Ihre JWT-Konfiguration",
+        "no_credit": "Unzureichendes Guthaben oder überfälliges Konto, bitte prüfen Sie die Abrechnung in der HeWeather-Konsole",
+        "invalid_host": "API-Host-Fehler, bitte stellen Sie sicher, dass Sie Ihre exklusive Schnittstellenadresse verwenden",
+        "forbidden": "Ihr aktuelles Paket hat keine Berechtigung, diese Daten anzufordern",
+        "not_found": "Fehlerhafter API-Pfad oder Ressource nicht gefunden (404)",
+        "too_many_requests": "Zu viele Anfragen oder QPM-Limit überschritten, bitte versuchen Sie es später erneut",
+        "server_error": "Unbekannter Serverfehler bei HeWeather (500)",
+        "cannot_connect": "Verbindung zum API-Host nicht möglich, bitte prüfen Sie Netzwerk oder Adresse",
+        "api_host_deprecated": "Die öffentliche Domain ist ungültig, bitte verwenden Sie Ihren persönlichen API-Host"
+      },
+      "abort": {
+        "config_entry_not_loaded": "Die Integration ist noch nicht geladen. Bitte warte einen Moment und versuche es erneut.",
+        "duplicate_location": "Dieser Standort wurde für dieses Konto bereits hinzugefügt.",
+        "reconfigure_successful": "Konfiguration erfolgreich aktualisiert!"
+      }
+    }
+  },
   "selector": {
     "jwt_reconfigure_choice": {
       "options": {
         "keep_current": "Aktuelle Konfiguration beibehalten (Schlüsselpaar wiederverwenden)",
         "regenerate": "JWT neu generieren (neues Schlüsselpaar)"
       }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "QWeather API KEY Tageskontingent",
+      "description": "Ihre QWeather Pro-Integration verwendet noch die API KEY-Authentifizierung.\r\nHinweis: Die Authentifizierung mit API KEY bietet keine ausreichende Sicherheit. Ab dem 01.01.2027 wird QWeather die täglichen Anfragen mit API KEY begrenzen (genaue Zahl noch nicht bekannt), und SDK 5+ wird API KEY nicht mehr unterstützen; JWT ist unbegrenzt und wird empfohlen. Wenn Sie API KEY behalten, ist das Abfrageintervall fest auf 100 Minuten gesperrt und kann in den Eintrags-Optionen nicht geändert werden; wechseln Sie in „Neu konfigurieren“ zu JWT für unbegrenzte, schnellere Updates."
     }
   },
   "entity": {
@@ -496,12 +556,6 @@
       }
     }
   },
-  "issues": {
-    "api_key_quota": {
-      "title": "QWeather API KEY Tageskontingent",
-      "description": "Ihre QWeather Pro-Integration verwendet noch die API KEY-Authentifizierung.\r\nHinweis: Die Authentifizierung mit API KEY bietet keine ausreichende Sicherheit. Ab dem 01.01.2027 wird QWeather die täglichen Anfragen mit API KEY begrenzen (genaue Zahl noch nicht bekannt), und SDK 5+ wird API KEY nicht mehr unterstützen; JWT ist unbegrenzt und wird empfohlen. Wenn Sie API KEY behalten, ist das Abfrageintervall fest auf 100 Minuten gesperrt und kann in den Eintrags-Optionen nicht geändert werden; wechseln Sie in „Neu konfigurieren“ zu JWT für unbegrenzte, schnellere Updates."
-    }
-  },
   "exceptions": {
     "jwt_private_key_invalid": {
       "message": "Der Ed25519-Private-Key fehlt oder kann nicht gelesen werden. Bitte generiere den Schlüssel über „Neu konfigurieren“ oder „Erneut authentifizieren“ neu."
@@ -520,60 +574,6 @@
     },
     "auth_failed": {
       "message": "QWeather-API-Authentifizierung fehlgeschlagen ({code}): {detail}"
-    }
-  },
-  "config_subentries": {
-    "location": {
-      "entry_type": "Standort",
-      "initiate_flow": {
-        "user": "Standort hinzufügen",
-        "reconfigure": "Optionen bearbeiten"
-      },
-      "step": {
-        "user": {
-          "title": "Standort hinzufügen",
-          "description": "Gib den Standort der hinzuzufügenden Stadt ein (Koordinaten, Stadtname oder Stadt-ID). Die Zugangsdaten werden vom Konto übernommen. Die Vorhersageoptionen lassen sich danach über \"Optionen bearbeiten\" anpassen.",
-          "data": {
-            "location_id": "Geografischer Standort. Unterstützt nur Längen- und Breitengrad (zuerst Länge)."
-          }
-        },
-        "select_location": {
-          "title": "Standort bestätigen",
-          "description": "Mehrere passende Regionen wurden gefunden. Bitte wählen Sie die genaueste aus:",
-          "data": {
-            "location_index": "Liste der passenden Städte"
-          }
-        },
-        "reconfigure": {
-          "title": "Optionen bearbeiten",
-          "description": "Passe die Vorhersageoptionen für diesen Standort an. Der Standort selbst kann hier nicht geändert werden — lösche ihn und füge ihn bei Bedarf erneut hinzu.",
-          "data": {
-            "update_interval": "Aktualisierungsintervall (Minuten)",
-            "dailysteps": "Tägliche Vorhersagetage (3-10)",
-            "hourlysteps": "Stündliche Vorhersagestunden (24–168)",
-            "custom_ui": "Benutzerdefinierte UI aktivieren (global)",
-            "custom_more_info": "Native Detail-Karte überschreiben"
-          }
-        }
-      },
-      "error": {
-        "invalid_parameter": "Ungültige Anforderungsparameter, bitte überprüfen Sie das Eingabeformat",
-        "location_not_found": "Standort nicht gefunden, bitte versuchen Sie präzise „Längengrad,Breitengrad“ einzugeben",
-        "invalid_auth": "Authentifizierung fehlgeschlagen, bitte überprüfen Sie Ihren Key oder Ihre JWT-Konfiguration",
-        "no_credit": "Unzureichendes Guthaben oder überfälliges Konto, bitte prüfen Sie die Abrechnung in der HeWeather-Konsole",
-        "invalid_host": "API-Host-Fehler, bitte stellen Sie sicher, dass Sie Ihre exklusive Schnittstellenadresse verwenden",
-        "forbidden": "Ihr aktuelles Paket hat keine Berechtigung, diese Daten anzufordern",
-        "not_found": "Fehlerhafter API-Pfad oder Ressource nicht gefunden (404)",
-        "too_many_requests": "Zu viele Anfragen oder QPM-Limit überschritten, bitte versuchen Sie es später erneut",
-        "server_error": "Unbekannter Serverfehler bei HeWeather (500)",
-        "cannot_connect": "Verbindung zum API-Host nicht möglich, bitte prüfen Sie Netzwerk oder Adresse",
-        "api_host_deprecated": "Die öffentliche Domain ist ungültig, bitte verwenden Sie Ihren persönlichen API-Host"
-      },
-      "abort": {
-        "config_entry_not_loaded": "Die Integration ist noch nicht geladen. Bitte warte einen Moment und versuche es erneut.",
-        "duplicate_location": "Dieser Standort wurde für dieses Konto bereits hinzugefügt.",
-        "reconfigure_successful": "Konfiguration erfolgreich aktualisiert!"
-      }
     }
   }
 }
