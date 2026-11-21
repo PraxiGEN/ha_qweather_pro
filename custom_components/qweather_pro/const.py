@@ -2,35 +2,35 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Final, Mapping
+from typing import TYPE_CHECKING, Any, Final, Mapping
 from homeassistant.const import (
     Platform,
     CONF_API_KEY,
 )
 
-# --- 基础信息 ---
+# 基础信息
 DOMAIN: Final = "qweather_pro"
 LOGGER = logging.getLogger(__package__)
 MANUFACTURER: Final = "QWeather Pro"
 ATTRIBUTION: Final = "Data provided by QWeather Pro"
 
-# --- 支持的平台 ---
+# 支持的平台
 PLATFORMS: Final = [
     Platform.WEATHER,
     Platform.SENSOR,
 ]
 
-# --- 配置键名 (Config & Options) ---
+# 配置键名 (Config & Options)
 CONF_API_KEY: Final = CONF_API_KEY
 CONF_LOCATION_ID: Final = "location_id"
-CONF_LOCATION_NAME: Final = "location_name"
 CONF_USE_TOKEN: Final = "use_token"
 CONF_PROJECT_ID: Final = "project_id"
 CONF_KEY_ID: Final = "key_id"
 CONF_PRIVATE_KEY: Final = "private_key"
 CONF_ISS: Final = "iss"
 CONF_JWT_RECONFIGURE_CHOICE: Final = "jwt_reconfigure_choice"
-CONF_ACCOUNT_SELECT: Final = "account_selection"
+# 子条目类型：位置（v1.3.0 起 1 条目 = 1 账号，位置为子条目）
+SUBENTRY_TYPE_LOCATION: Final = "location"
 
 CONF_UPDATE_INTERVAL: Final = "update_interval"
 CONF_HOURLYSTEPS: Final = "hourlysteps"
@@ -38,25 +38,50 @@ CONF_DAILYSTEPS: Final = "dailysteps"
 CONF_CUSTOM_UI: Final = "custom_ui"
 CONF_CUSTOM_MORE_INFO: Final = "custom_more_info"
 
-# --- 属性扩展键名 ---
+# 位置级 options 键（v1.3.0 起下沉 location 子条目 data；父条目 options 弃用）
+LOCATION_OPTION_KEYS: Final = (
+    CONF_UPDATE_INTERVAL,
+    CONF_DAILYSTEPS,
+    CONF_HOURLYSTEPS,
+    CONF_CUSTOM_UI,
+    CONF_CUSTOM_MORE_INFO,
+)
+
+# 账号条目 data 白名单键：迁移/合并时只保留凭据，其余（位置、legacy 死键）全部剥离
+ACCOUNT_DATA_KEYS: Final = (
+    "host",
+    CONF_USE_TOKEN,
+    CONF_API_KEY,
+    CONF_PROJECT_ID,
+    CONF_KEY_ID,
+    CONF_PRIVATE_KEY,
+    CONF_ISS,
+)
+
+def location_options_data(use_token: bool, source: Mapping[str, Any]) -> dict[str, Any]:
+    """从 source 提取位置级 options 字段（API KEY 不落轮询间隔）."""
+    data: dict[str, Any] = {
+        CONF_DAILYSTEPS: source.get(CONF_DAILYSTEPS, "7"),
+        CONF_HOURLYSTEPS: source.get(CONF_HOURLYSTEPS, "24"),
+        CONF_CUSTOM_UI: source.get(CONF_CUSTOM_UI, False),
+        CONF_CUSTOM_MORE_INFO: source.get(CONF_CUSTOM_MORE_INFO, False),
+    }
+    if use_token:
+        data[CONF_UPDATE_INTERVAL] = source.get(CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL)
+    return data
+
 ATTR_UPDATE_TIME: Final = "update_time"
 ATTR_AQI: Final = "aqi"
 ATTR_SUGGESTION: Final = "suggestion"
 
-# --- 默认值 ---
 DEFAULT_NAME: Final = "和风天气Pro"
 DEFAULT_UPDATE_INTERVAL: Final = 15
 API_KEY_UPDATE_INTERVAL: Final = 100
 
-
 def resolve_update_interval(
     options: "Mapping[str, Any] | None", use_token: bool
 ) -> int:
-    """选择轮询间隔（分钟）。
-
-    API KEY 认证强制使用 ``API_KEY_UPDATE_INTERVAL``（100 分钟）——和风免费配额限制，
-    不可由用户更改（条目选项流也不暴露该控件）。JWT 认证使用用户配置值，未配置则回退默认 15 分钟。
-    """
+    """选择轮询间隔（分钟）。"""
     if not use_token:
         # API KEY：强制 100 分钟，忽略任何用户/残留配置
         return API_KEY_UPDATE_INTERVAL
@@ -70,7 +95,7 @@ def resolve_update_interval(
                 return value
     return DEFAULT_UPDATE_INTERVAL
 
-# --- 生活指数类型映射 (QWeather API v7) ---
+# 生活指数类型映射 (QWeather API v7)
 SUGGESTION_TYPE_MAP: Final[dict[str, str]] = {
     "1": "sport",    "2": "cw",       "3": "drsg",     "4": "fishing",
     "5": "uv",       "6": "trav",     "7": "ag",       "8": "comf",
@@ -78,8 +103,7 @@ SUGGESTION_TYPE_MAP: Final[dict[str, str]] = {
     "13": "mu",      "14": "dc",      "15": "ptfc",    "16": "fsh",
 }
 
-# HA 语言代码映射到和风天气语言代码
-# 涵盖了和风天气支持的所有 30+ 种语言
+# HA 语言代码 → 和风天气语言代码
 LANGUAGE_MAP: Final[dict[str, str]] = {
     # 中文系列
     "zh-Hans": "zh",       # 简体中文
@@ -128,3 +152,11 @@ LANGUAGE_MAP: Final[dict[str, str]] = {
     "bn": "bn",            # 孟加拉语
     "la": "la",            # 拉丁语
 }
+
+
+if TYPE_CHECKING:
+    from homeassistant.config_entries import ConfigEntry, ConfigSubentry
+
+def get_location_subentries(entry: "ConfigEntry") -> list["ConfigSubentry"]:
+    """取条目的全部 location 子条目（get_subentries_of_type 2026.5.0 才引入，低版本走本 helper）。"""
+    return [s for s in entry.subentries.values() if s.subentry_type == SUBENTRY_TYPE_LOCATION]
