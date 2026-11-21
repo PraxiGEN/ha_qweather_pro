@@ -89,12 +89,72 @@
       "reauth_failed_entry_not_found": "構成エントリが見つかりません。統合を再度追加してください。"
     }
   },
+  "config_subentries": {
+    "location": {
+      "entry_type": "場所",
+      "initiate_flow": {
+        "user": "場所を追加",
+        "reconfigure": "オプションを編集"
+      },
+      "step": {
+        "user": {
+          "title": "場所を追加",
+          "description": "追加する都市の位置を入力してください（経緯度、都市名、または都市ID）。認証情報はこのアカウントと共有されます。予報オプションは追加後「オプションを編集」から調整できます。",
+          "data": {
+            "location_id": "地理位置情報（経度・緯度。経度が先）"
+          }
+        },
+        "select_location": {
+          "title": "都市位置の確認",
+          "description": "複数の一致する地域が見つかりました。最も正確なものを選択してください:",
+          "data": {
+            "location_index": "一致した都市の一覧"
+          }
+        },
+        "reconfigure": {
+          "title": "オプションを編集",
+          "description": "この位置の予報オプションを調整します。位置自体はここでは変更できません。変更が必要な場合は削除して再度追加してください。",
+          "data": {
+            "update_interval": "更新間隔（分）",
+            "dailysteps": "日次予報（日数 3-10）",
+            "hourlysteps": "時間予報（24–168 時間）",
+            "custom_ui": "カスタム UI サポートを有効化（全体）",
+            "custom_more_info": "ネイティブ詳細カードを置換"
+          }
+        }
+      },
+      "error": {
+        "invalid_parameter": "リクエストパラメータが無効です。入力形式を確認してください",
+        "location_not_found": "位置が見つかりません。正確な「経度,緯度」を入力してください",
+        "invalid_auth": "認証に失敗しました。Key または JWT 設定を確認してください",
+        "no_credit": "アカウントの残高不足または期限切れです。HeWeather コンソールの請求情報を確認してください",
+        "invalid_host": "API ホストエラー。専用のインターフェースアドレスを使用していることを確認してください",
+        "forbidden": "現在のプランではこのデータを要求する権限がありません",
+        "not_found": "API パスが誤っているかリソースが存在しません (404)",
+        "too_many_requests": "リクエストが多すぎるか QPM 制限を超えています。後でもう一度試してください",
+        "server_error": "HeWeather サーバーで不明なエラーが発生しました (500)",
+        "cannot_connect": "API ホストに接続できません。ネットワークまたはアドレスを確認してください",
+        "api_host_deprecated": "公共ドメインは無効です。個人の API ホストを使用してください"
+      },
+      "abort": {
+        "config_entry_not_loaded": "統合がまだ読み込まれていません。しばらく待ってから再試行してください。",
+        "duplicate_location": "この位置は既にこのアカウントに追加されています。",
+        "reconfigure_successful": "設定が正常に更新されました！"
+      }
+    }
+  },
   "selector": {
     "jwt_reconfigure_choice": {
       "options": {
         "keep_current": "現在の設定を保持（キーペアを再利用）",
         "regenerate": "JWT を再生成（新しいキーペア）"
       }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "QWeather API KEY の1日あたり割り当て",
+      "description": "お使いの QWeather Pro 統合はまだ API KEY 認証を使用しています。\r\n注意: API KEY 認証は十分なセキュリティを提供しません。2027-01-01 以降、QWeather は API KEY で認証された1日あたりのリクエスト数を制限します（正確な数値は未定）、また SDK 5+ は API KEY をサポートしなくなります。JWT は無制限で推奨されます。API KEY を使い続ける場合、ポーリング間隔は強制的に 100 分に固定され、エントリの設定では変更できません。「再設定」で JWT に切り替えると、無制限でより高速な更新が得られます。"
     }
   },
   "entity": {
@@ -496,12 +556,6 @@
       }
     }
   },
-  "issues": {
-    "api_key_quota": {
-      "title": "QWeather API KEY の1日あたり割り当て",
-      "description": "お使いの QWeather Pro 統合はまだ API KEY 認証を使用しています。\r\n注意: API KEY 認証は十分なセキュリティを提供しません。2027-01-01 以降、QWeather は API KEY で認証された1日あたりのリクエスト数を制限します（正確な数値は未定）、また SDK 5+ は API KEY をサポートしなくなります。JWT は無制限で推奨されます。API KEY を使い続ける場合、ポーリング間隔は強制的に 100 分に固定され、エントリの設定では変更できません。「再設定」で JWT に切り替えると、無制限でより高速な更新が得られます。"
-    }
-  },
   "exceptions": {
     "jwt_private_key_invalid": {
       "message": "Ed25519 秘密鍵が見つからないか、解析できません。再設定または再認証で鍵を再生成してください。"
@@ -520,60 +574,6 @@
     },
     "auth_failed": {
       "message": "QWeather API の認証に失敗しました（{code}）：{detail}"
-    }
-  },
-  "config_subentries": {
-    "location": {
-      "entry_type": "場所",
-      "initiate_flow": {
-        "user": "場所を追加",
-        "reconfigure": "オプションを編集"
-      },
-      "step": {
-        "user": {
-          "title": "場所を追加",
-          "description": "追加する都市の位置を入力してください（経緯度、都市名、または都市ID）。認証情報はこのアカウントと共有されます。予報オプションは追加後「オプションを編集」から調整できます。",
-          "data": {
-            "location_id": "地理位置情報（経度・緯度。経度が先）"
-          }
-        },
-        "select_location": {
-          "title": "都市位置の確認",
-          "description": "複数の一致する地域が見つかりました。最も正確なものを選択してください:",
-          "data": {
-            "location_index": "一致した都市の一覧"
-          }
-        },
-        "reconfigure": {
-          "title": "オプションを編集",
-          "description": "この位置の予報オプションを調整します。位置自体はここでは変更できません。変更が必要な場合は削除して再度追加してください。",
-          "data": {
-            "update_interval": "更新間隔（分）",
-            "dailysteps": "日次予報（日数 3-10）",
-            "hourlysteps": "時間予報（24–168 時間）",
-            "custom_ui": "カスタム UI サポートを有効化（全体）",
-            "custom_more_info": "ネイティブ詳細カードを置換"
-          }
-        }
-      },
-      "error": {
-        "invalid_parameter": "リクエストパラメータが無効です。入力形式を確認してください",
-        "location_not_found": "位置が見つかりません。正確な「経度,緯度」を入力してください",
-        "invalid_auth": "認証に失敗しました。Key または JWT 設定を確認してください",
-        "no_credit": "アカウントの残高不足または期限切れです。HeWeather コンソールの請求情報を確認してください",
-        "invalid_host": "API ホストエラー。専用のインターフェースアドレスを使用していることを確認してください",
-        "forbidden": "現在のプランではこのデータを要求する権限がありません",
-        "not_found": "API パスが誤っているかリソースが存在しません (404)",
-        "too_many_requests": "リクエストが多すぎるか QPM 制限を超えています。後でもう一度試してください",
-        "server_error": "HeWeather サーバーで不明なエラーが発生しました (500)",
-        "cannot_connect": "API ホストに接続できません。ネットワークまたはアドレスを確認してください",
-        "api_host_deprecated": "公共ドメインは無効です。個人の API ホストを使用してください"
-      },
-      "abort": {
-        "config_entry_not_loaded": "統合がまだ読み込まれていません。しばらく待ってから再試行してください。",
-        "duplicate_location": "この位置は既にこのアカウントに追加されています。",
-        "reconfigure_successful": "設定が正常に更新されました！"
-      }
     }
   }
 }
