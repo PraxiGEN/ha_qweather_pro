@@ -2,13 +2,6 @@
   "title": "QWeather Pro",
   "config": {
     "step": {
-      "user": {
-        "title": "Nieuwe stad toevoegen",
-        "description": "Het lijkt erop dat QWeather al is geconfigureerd. Je kunt kiezen voor **‘Een nieuw account gebruiken’** of **‘Bestaand account hergebruiken’**.\r\n**Opmerking:** Het toevoegen van meerdere steden onder dezelfde **API Host** verhoogt het aantal verzoeken. Verleng het update-interval om te voorkomen dat je limieten overschrijdt.",
-        "data": {
-          "account_selection": "Account-/referentiehergebruik"
-        }
-      },
       "setup": {
         "title": "QWeather Pro configureren",
         "description": "### Installatiestappen\r\n**Ga naar de [QWeather-console]({qweather_console}):**\r\n1. Kopieer in Instellingen de **API Host** en vul deze in het veld **API Host** hieronder in.\r\n2. Projectbeheer → Maak een project aan en voeg vervolgens referenties toe aan het project: **JSON Web Token** en **API KEY** (optioneel).\r\n3. De locatie kan uit breedte- en lengtegraad (WGS-84) of een stadsnaam bestaan.\r\n4. De standaardlocatie is de breedte- en lengtegraad van HA.\r\n#### Opmerking: Authenticatie met API KEY biedt onvoldoende beveiliging. Verzoeken met API KEY zijn onderhevig aan limieten. JSON Web Token (JWT) wordt aanbevolen.",
@@ -26,13 +19,6 @@
           "iss": "Ontwikkelaars-ID",
           "project_id": "Project-ID",
           "key_id": "Key-ID"
-        }
-      },
-      "reuse_location": {
-        "title": "Nieuwe stad toevoegen",
-        "description": "Bestaande accountinformatie is succesvol geladen. Voer de **geografische locatie** (lengte- en breedtegraad) van de nieuwe stad in.",
-        "data": {
-          "location_id": "Geografische locatie van de nieuwe stad"
         }
       },
       "select_location": {
@@ -104,30 +90,10 @@
     }
   },
   "selector": {
-    "account_selection": {
-      "options": {
-        "new_account": "Nieuw account / nieuwe referenties"
-      }
-    },
     "jwt_reconfigure_choice": {
       "options": {
         "keep_current": "Huidige configuratie behouden (sleutelpaar hergebruiken)",
         "regenerate": "JWT opnieuw genereren (nieuw sleutelpaar)"
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "Integratie-opties",
-        "description": "### Gebruiksinstructies\r\nDe dagelijkse weersvoorspelling kan worden ingesteld op **3/7/10** dagen (de V1 API ondersteunt maximaal 10 dagen).\r\n- De uurlijkse voorspelling kan worden ingesteld op **24/72/168** uur.\r\n- De **aangepaste UI** is een globale resource: deze in één instance inschakelen geldt voor alle instances. Het overschrijven van de detailweergave is per instance.",
-        "data": {
-          "update_interval": "Update-interval (minuten)",
-          "dailysteps": "Dagen voor dagelijkse voorspelling (3-10)",
-          "hourlysteps": "Uren voor uurlijkse voorspelling (24–168)",
-          "custom_ui": "Aangepaste UI-ondersteuning inschakelen (globaal)",
-          "custom_more_info": "Systeemeigen detailkaart overschrijven"
-        }
       }
     }
   },
@@ -554,6 +520,60 @@
     },
     "auth_failed": {
       "message": "QWeather API-authenticatie mislukt ({code}): {detail}"
+    }
+  },
+  "config_subentries": {
+    "location": {
+      "entry_type": "Locatie",
+      "initiate_flow": {
+        "user": "Locatie toevoegen",
+        "reconfigure": "Opties bewerken"
+      },
+      "step": {
+        "user": {
+          "title": "Locatie toevoegen",
+          "description": "Voer de locatie in van de stad die je wilt toevoegen (coördinaten, stadsnaam of stad-ID). De inloggegevens worden gedeeld met dit account. De prognoseopties kunnen daarna via \"Opties bewerken\" worden aangepast.",
+          "data": {
+            "location_id": "Geografische locatie. Alleen lengte- en breedtegraad (lengte eerst)."
+          }
+        },
+        "select_location": {
+          "title": "Stadslocatie bevestigen",
+          "description": "Er zijn meerdere overeenkomende regio’s gevonden. Selecteer de meest nauwkeurige:",
+          "data": {
+            "location_index": "Lijst met overeenkomende steden"
+          }
+        },
+        "reconfigure": {
+          "title": "Opties bewerken",
+          "description": "Pas de prognoseopties voor deze locatie aan. De locatie zelf kan hier niet worden gewijzigd — verwijder deze en voeg deze zo nodig opnieuw toe.",
+          "data": {
+            "update_interval": "Update-interval (minuten)",
+            "dailysteps": "Dagen voor dagelijkse voorspelling (3-10)",
+            "hourlysteps": "Uren voor uurlijkse voorspelling (24–168)",
+            "custom_ui": "Aangepaste UI-ondersteuning inschakelen (globaal)",
+            "custom_more_info": "Systeemeigen detailkaart overschrijven"
+          }
+        }
+      },
+      "error": {
+        "invalid_parameter": "Ongeldige aanvraagparameters, controleer het invoerformaat",
+        "location_not_found": "Locatie niet gevonden, probeer nauwkeurig “lengtegraad,breedtegraad” in te voeren",
+        "invalid_auth": "Authenticatie mislukt, controleer uw Key of JWT-configuratie",
+        "no_credit": "Onvoldoende tegoed of achterstallige status, controleer de facturering in de HeWeather-console",
+        "invalid_host": "API-hostfout, zorg ervoor dat u uw exclusieve endpoint gebruikt",
+        "forbidden": "Uw huidige pakket heeft geen toestemming om deze gegevens op te vragen",
+        "not_found": "Onjuiste API-pad of bron niet gevonden (404)",
+        "too_many_requests": "Te veel aanvragen of QPM-limiet overschreden, probeer het later opnieuw",
+        "server_error": "Onbekende serverfout bij HeWeather (500)",
+        "cannot_connect": "Kan geen verbinding maken met API-host, controleer netwerk of adres",
+        "api_host_deprecated": "Openbare domein is vervallen, gebruik uw persoonlijke API-host"
+      },
+      "abort": {
+        "config_entry_not_loaded": "De integratie is nog niet geladen. Wacht even en probeer het opnieuw.",
+        "duplicate_location": "Deze locatie is al aan dit account toegevoegd.",
+        "reconfigure_successful": "Configuratie succesvol bijgewerkt!"
+      }
     }
   }
 }
