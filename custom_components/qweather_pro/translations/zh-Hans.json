@@ -89,12 +89,72 @@
       "reauth_failed_entry_not_found": "未找到配置条目，请重新添加集成。"
     }
   },
+  "config_subentries": {
+    "location": {
+      "entry_type": "位置",
+      "initiate_flow": {
+        "user": "添加位置",
+        "reconfigure": "修改选项"
+      },
+      "step": {
+        "user": {
+          "title": "添加位置",
+          "description": "输入要添加城市的地理位置（支持经纬度、城市名称或城市ID）。凭据沿用当前账号。预报选项可在添加后通过「修改选项」调整。",
+          "data": {
+            "location_id": "地理位置 支持城市名称、城市ID、经纬度(经度在前)。"
+          }
+        },
+        "select_location": {
+          "title": "确认城市位置",
+          "description": "搜索到以下多个匹配地区，请选择最准确的一个：",
+          "data": {
+            "location_index": "匹配的城市列表"
+          }
+        },
+        "reconfigure": {
+          "title": "修改选项",
+          "description": "调整该位置的预报选项。位置本身不可在此修改，如需更改请删除后重新添加。",
+          "data": {
+            "update_interval": "数据更新频率 (分钟)",
+            "dailysteps": "逐日预报天数 (3-10)",
+            "hourlysteps": "逐小时预报小时数 (24-168)",
+            "custom_ui": "启用自定义前端 UI 支持（全局）",
+            "custom_more_info": "覆盖原生详情弹窗"
+          }
+        }
+      },
+      "error": {
+        "invalid_parameter": "请求参数错误，请检查输入格式",
+        "location_not_found": "未找到该位置，请尝试输入精准的“经度,纬度”",
+        "invalid_auth": "身份认证失败，请检查您的 Key 或 JWT 配置",
+        "no_credit": "账号额度不足或已逾期，请检查和风控制台账单",
+        "invalid_host": "API Host 错误，请确保填写的是您的专属接口地址",
+        "forbidden": "您当前的套餐无权请求此数据",
+        "not_found": "接口路径错误或资源不存在 (404)",
+        "too_many_requests": "请求过于频繁或超过 QPM 限制，请稍后再试",
+        "server_error": "和风天气服务器发生未知故障 (500)",
+        "cannot_connect": "无法连接到 API Host，请检查网络或地址是否正确",
+        "api_host_deprecated": "公共域名已失效，请使用个人 API Host"
+      },
+      "abort": {
+        "config_entry_not_loaded": "集成尚未加载完成，请稍候重试。",
+        "duplicate_location": "该位置已在此账号下添加。",
+        "reconfigure_successful": "配置已成功更新！"
+      }
+    }
+  },
   "selector": {
     "jwt_reconfigure_choice": {
       "options": {
         "keep_current": "保留原配置（复用密钥对）",
         "regenerate": "重新生成 JWT（新密钥对）"
       }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "QWeather API KEY 即将限额",
+      "description": "您的 QWeather Pro 集成仍在使用 API KEY 鉴权。\r\n注意: API KEY 认证方式无法提供足够的安全性, 使用 API KEY 认证方式自 2027-01-01 起将限制每日请求量（具体数值未公布），且 SDK 5+ 不再支持 API KEY；JWT 无限制，推荐使用。若继续使用 API KEY，轮询将强制锁定为 100 分钟，且不可在条目配置中更改；在「重新配置」中切换到 JWT 即可获得无限额、更快的更新。"
     }
   },
   "entity": {
@@ -496,12 +556,6 @@
       }
     }
   },
-  "issues": {
-    "api_key_quota": {
-      "title": "QWeather API KEY 即将限额",
-      "description": "您的 QWeather Pro 集成仍在使用 API KEY 鉴权。\r\n注意: API KEY 认证方式无法提供足够的安全性, 使用 API KEY 认证方式自 2027-01-01 起将限制每日请求量（具体数值未公布），且 SDK 5+ 不再支持 API KEY；JWT 无限制，推荐使用。若继续使用 API KEY，轮询将强制锁定为 100 分钟，且不可在条目配置中更改；在「重新配置」中切换到 JWT 即可获得无限额、更快的更新。"
-    }
-  },
   "exceptions": {
     "jwt_private_key_invalid": {
       "message": "Ed25519 私钥缺失或无法解析，请在重新配置或重认证中重新生成密钥。"
@@ -520,60 +574,6 @@
     },
     "auth_failed": {
       "message": "和风天气 API 认证失败（{code}）：{detail}"
-    }
-  },
-  "config_subentries": {
-    "location": {
-      "entry_type": "位置",
-      "initiate_flow": {
-        "user": "添加位置",
-        "reconfigure": "修改选项"
-      },
-      "step": {
-        "user": {
-          "title": "添加位置",
-          "description": "输入要添加城市的地理位置（支持经纬度、城市名称或城市ID）。凭据沿用当前账号。预报选项可在添加后通过「修改选项」调整。",
-          "data": {
-            "location_id": "地理位置 支持城市名称、城市ID、经纬度(经度在前)。"
-          }
-        },
-        "select_location": {
-          "title": "确认城市位置",
-          "description": "搜索到以下多个匹配地区，请选择最准确的一个：",
-          "data": {
-            "location_index": "匹配的城市列表"
-          }
-        },
-        "reconfigure": {
-          "title": "修改选项",
-          "description": "调整该位置的预报选项。位置本身不可在此修改，如需更改请删除后重新添加。",
-          "data": {
-            "update_interval": "数据更新频率 (分钟)",
-            "dailysteps": "逐日预报天数 (3-10)",
-            "hourlysteps": "逐小时预报小时数 (24-168)",
-            "custom_ui": "启用自定义前端 UI 支持（全局）",
-            "custom_more_info": "覆盖原生详情弹窗"
-          }
-        }
-      },
-      "error": {
-        "invalid_parameter": "请求参数错误，请检查输入格式",
-        "location_not_found": "未找到该位置，请尝试输入精准的“经度,纬度”",
-        "invalid_auth": "身份认证失败，请检查您的 Key 或 JWT 配置",
-        "no_credit": "账号额度不足或已逾期，请检查和风控制台账单",
-        "invalid_host": "API Host 错误，请确保填写的是您的专属接口地址",
-        "forbidden": "您当前的套餐无权请求此数据",
-        "not_found": "接口路径错误或资源不存在 (404)",
-        "too_many_requests": "请求过于频繁或超过 QPM 限制，请稍后再试",
-        "server_error": "和风天气服务器发生未知故障 (500)",
-        "cannot_connect": "无法连接到 API Host，请检查网络或地址是否正确",
-        "api_host_deprecated": "公共域名已失效，请使用个人 API Host"
-      },
-      "abort": {
-        "config_entry_not_loaded": "集成尚未加载完成，请稍候重试。",
-        "duplicate_location": "该位置已在此账号下添加。",
-        "reconfigure_successful": "配置已成功更新！"
-      }
     }
   }
 }
