@@ -89,12 +89,72 @@
       "reauth_failed_entry_not_found": "Entrée de configuration introuvable. Veuillez ajouter à nouveau l'intégration."
     }
   },
+  "config_subentries": {
+    "location": {
+      "entry_type": "Emplacement",
+      "initiate_flow": {
+        "user": "Ajouter un emplacement",
+        "reconfigure": "Modifier les options"
+      },
+      "step": {
+        "user": {
+          "title": "Ajouter un emplacement",
+          "description": "Saisissez l'emplacement de la ville à ajouter (coordonnées, nom de ville ou ID de ville). Les identifiants sont partagés avec ce compte. Les options de prévision pourront être ajustées ensuite via « Modifier les options ».",
+          "data": {
+            "location_id": "Emplacement géographique. Uniquement longitude et latitude (longitude d’abord)."
+          }
+        },
+        "select_location": {
+          "title": "Confirmer l’emplacement de la ville",
+          "description": "Plusieurs régions correspondantes ont été trouvées. Veuillez sélectionner la plus précise :",
+          "data": {
+            "location_index": "Liste des villes correspondantes"
+          }
+        },
+        "reconfigure": {
+          "title": "Modifier les options",
+          "description": "Ajustez les options de prévision de cet emplacement. L'emplacement lui-même ne peut pas être modifié ici — supprimez-le puis ajoutez-le à nouveau si nécessaire.",
+          "data": {
+            "update_interval": "Intervalle de mise à jour (minutes)",
+            "dailysteps": "Jours de prévision quotidienne (3-10)",
+            "hourlysteps": "Heures de prévision horaire (24–168)",
+            "custom_ui": "Activer l'interface personnalisée (globale)",
+            "custom_more_info": "Remplacer la fenêtre de détails native"
+          }
+        }
+      },
+      "error": {
+        "invalid_parameter": "Paramètres de requête invalides, veuillez vérifier le format d’entrée",
+        "location_not_found": "Emplacement introuvable, essayez d’entrer « longitude,latitude » avec précision",
+        "invalid_auth": "Échec de l’authentification, veuillez vérifier votre Key ou configuration JWT",
+        "no_credit": "Crédit insuffisant ou compte en retard, vérifiez la facturation dans la console HeWeather",
+        "invalid_host": "Erreur d’hôte API, assurez-vous d’utiliser votre adresse dédiée",
+        "forbidden": "Votre forfait actuel ne permet pas d’accéder à ces données",
+        "not_found": "Chemin API incorrect ou ressource introuvable (404)",
+        "too_many_requests": "Trop de requêtes ou limite QPM dépassée, réessayez plus tard",
+        "server_error": "Erreur serveur inconnue chez HeWeather (500)",
+        "cannot_connect": "Impossible de se connecter à l’hôte API, vérifiez le réseau ou l’adresse",
+        "api_host_deprecated": "Le domaine public est obsolète, utilisez votre hôte API personnel"
+      },
+      "abort": {
+        "config_entry_not_loaded": "L'intégration n'est pas encore chargée. Veuillez patienter puis réessayer.",
+        "duplicate_location": "Cet emplacement a déjà été ajouté à ce compte.",
+        "reconfigure_successful": "Configuration mise à jour avec succès !"
+      }
+    }
+  },
   "selector": {
     "jwt_reconfigure_choice": {
       "options": {
         "keep_current": "Conserver la configuration actuelle (réutiliser la paire de clés)",
         "regenerate": "Régénérer JWT (nouvelle paire de clés)"
       }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "Quota quotidien de QWeather API KEY",
+      "description": "Votre intégration QWeather Pro utilise encore l'authentification par API KEY.\r\nNote : L'authentification par API KEY n'offre pas une sécurité suffisante. À partir du 01-01-2027, QWeather limitera les requêtes quotidiennes authentifiées par API KEY (montant exact à déterminer), et SDK 5+ abandonnera la prise en charge d'API KEY ; JWT est illimité et recommandé. Si vous conservez API KEY, l'intervalle d'interrogation est verrouillé de façon fixe à 100 minutes et ne peut pas être modifié dans les options de l'entrée ; passez à JWT dans « Reconfigurer » pour des mises à jour illimitées et plus rapides."
     }
   },
   "entity": {
@@ -496,12 +556,6 @@
       }
     }
   },
-  "issues": {
-    "api_key_quota": {
-      "title": "Quota quotidien de QWeather API KEY",
-      "description": "Votre intégration QWeather Pro utilise encore l'authentification par API KEY.\r\nNote : L'authentification par API KEY n'offre pas une sécurité suffisante. À partir du 01-01-2027, QWeather limitera les requêtes quotidiennes authentifiées par API KEY (montant exact à déterminer), et SDK 5+ abandonnera la prise en charge d'API KEY ; JWT est illimité et recommandé. Si vous conservez API KEY, l'intervalle d'interrogation est verrouillé de façon fixe à 100 minutes et ne peut pas être modifié dans les options de l'entrée ; passez à JWT dans « Reconfigurer » pour des mises à jour illimitées et plus rapides."
-    }
-  },
   "exceptions": {
     "jwt_private_key_invalid": {
       "message": "La clé privée Ed25519 est absente ou illisible. Régénérez la clé via Reconfigurer ou Réauthentification."
@@ -520,60 +574,6 @@
     },
     "auth_failed": {
       "message": "Échec de l'authentification à l'API QWeather ({code}) : {detail}"
-    }
-  },
-  "config_subentries": {
-    "location": {
-      "entry_type": "Emplacement",
-      "initiate_flow": {
-        "user": "Ajouter un emplacement",
-        "reconfigure": "Modifier les options"
-      },
-      "step": {
-        "user": {
-          "title": "Ajouter un emplacement",
-          "description": "Saisissez l'emplacement de la ville à ajouter (coordonnées, nom de ville ou ID de ville). Les identifiants sont partagés avec ce compte. Les options de prévision pourront être ajustées ensuite via « Modifier les options ».",
-          "data": {
-            "location_id": "Emplacement géographique. Uniquement longitude et latitude (longitude d’abord)."
-          }
-        },
-        "select_location": {
-          "title": "Confirmer l’emplacement de la ville",
-          "description": "Plusieurs régions correspondantes ont été trouvées. Veuillez sélectionner la plus précise :",
-          "data": {
-            "location_index": "Liste des villes correspondantes"
-          }
-        },
-        "reconfigure": {
-          "title": "Modifier les options",
-          "description": "Ajustez les options de prévision de cet emplacement. L'emplacement lui-même ne peut pas être modifié ici — supprimez-le puis ajoutez-le à nouveau si nécessaire.",
-          "data": {
-            "update_interval": "Intervalle de mise à jour (minutes)",
-            "dailysteps": "Jours de prévision quotidienne (3-10)",
-            "hourlysteps": "Heures de prévision horaire (24–168)",
-            "custom_ui": "Activer l'interface personnalisée (globale)",
-            "custom_more_info": "Remplacer la fenêtre de détails native"
-          }
-        }
-      },
-      "error": {
-        "invalid_parameter": "Paramètres de requête invalides, veuillez vérifier le format d’entrée",
-        "location_not_found": "Emplacement introuvable, essayez d’entrer « longitude,latitude » avec précision",
-        "invalid_auth": "Échec de l’authentification, veuillez vérifier votre Key ou configuration JWT",
-        "no_credit": "Crédit insuffisant ou compte en retard, vérifiez la facturation dans la console HeWeather",
-        "invalid_host": "Erreur d’hôte API, assurez-vous d’utiliser votre adresse dédiée",
-        "forbidden": "Votre forfait actuel ne permet pas d’accéder à ces données",
-        "not_found": "Chemin API incorrect ou ressource introuvable (404)",
-        "too_many_requests": "Trop de requêtes ou limite QPM dépassée, réessayez plus tard",
-        "server_error": "Erreur serveur inconnue chez HeWeather (500)",
-        "cannot_connect": "Impossible de se connecter à l’hôte API, vérifiez le réseau ou l’adresse",
-        "api_host_deprecated": "Le domaine public est obsolète, utilisez votre hôte API personnel"
-      },
-      "abort": {
-        "config_entry_not_loaded": "L'intégration n'est pas encore chargée. Veuillez patienter puis réessayer.",
-        "duplicate_location": "Cet emplacement a déjà été ajouté à ce compte.",
-        "reconfigure_successful": "Configuration mise à jour avec succès !"
-      }
     }
   }
 }
