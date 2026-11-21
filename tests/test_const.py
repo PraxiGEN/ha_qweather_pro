@@ -1,8 +1,4 @@
-"""const 模块单测：轮询间隔解析、语言映射、生活指数映射.
-
-CI（GitHub Actions）使用真实 homeassistant 运行；本文件为纯逻辑测试，不直接依赖 homeassistant 运行时。
-运行：``pytest tests/test_const.py -v``（或 ``python -m pytest tests``）。
-"""
+"""const 模块单测：轮询间隔解析、语言映射、生活指数映射. CI（GitHub Actions）使用真实 homeassistant 运行；本文件为纯逻辑测试，不直接依赖 homeassistant 运行时。 运行：``pytest tests/test_const.py -v``（或 ``python -m pytest tests``）。"""
 from __future__ import annotations
 
 from custom_components.qweather_pro.const import (  # noqa: E402
@@ -13,7 +9,6 @@ from custom_components.qweather_pro.const import (  # noqa: E402
     SUGGESTION_TYPE_MAP,
     resolve_update_interval,
 )
-
 
 class TestResolveUpdateInterval:
     """API KEY→强制锁定 100min（忽略用户 options）/ JWT→默认 15min 且用户可覆盖."""
@@ -28,8 +23,7 @@ class TestResolveUpdateInterval:
         assert resolve_update_interval({CONF_UPDATE_INTERVAL: 30}, True) == 30
 
     def test_api_key_override_ignored_locked_to_100(self):
-        # API KEY 认证强制锁定 100 分钟，用户在选项里填的 update_interval 必须被忽略，
-        # 条目配置流也不暴露该控件（coordinator 强制 API_KEY_UPDATE_INTERVAL）。
+# API KEY 认证强制锁定 100 分钟，用户在选项里填的 update_interval 必须被忽略， 条目配置流也不暴露该控件（coordinator 强制 API_KEY_UPDATE_INTERVAL）。
         assert resolve_update_interval({CONF_UPDATE_INTERVAL: 5}, False) == API_KEY_UPDATE_INTERVAL == 100
         assert resolve_update_interval({CONF_UPDATE_INTERVAL: 1}, False) == API_KEY_UPDATE_INTERVAL
 
@@ -37,10 +31,9 @@ class TestResolveUpdateInterval:
         assert resolve_update_interval(None, False) == API_KEY_UPDATE_INTERVAL
 
     def test_bad_override_falls_back(self):
-        # 非法间隔（字符串/越界）应回退到对应认证方式的默认，而非抛异常
+# 非法间隔（字符串/越界）应回退到对应认证方式的默认，而非抛异常
         assert resolve_update_interval({CONF_UPDATE_INTERVAL: "fast"}, False) == API_KEY_UPDATE_INTERVAL
         assert resolve_update_interval({CONF_UPDATE_INTERVAL: -3}, True) == DEFAULT_UPDATE_INTERVAL
-
 
 class TestLanguageMap:
     """HA 语言代码 → 和风语言代码映射."""
@@ -67,7 +60,6 @@ class TestLanguageMap:
         assert LANGUAGE_MAP["pt"] == "pt"
         assert LANGUAGE_MAP["pt-BR"] == "pt"
 
-
 class TestSuggestionTypeMap:
     """V7 生活指数 type 数字 → HA 命名."""
 
@@ -78,5 +70,5 @@ class TestSuggestionTypeMap:
         assert SUGGESTION_TYPE_MAP["15"] == "ptfc"
 
     def test_unknown_returns_unknown_key(self):
-        # coordinator 用 .get(type, "unknown")，未知数字落到 unknown
+# coordinator 用 .get(type, "unknown")，未知数字落到 unknown
         assert SUGGESTION_TYPE_MAP.get("99", "unknown") == "unknown"
