@@ -89,12 +89,72 @@
       "reauth_failed_entry_not_found": "Entrada de configuração não encontrada. Adicione a integração novamente."
     }
   },
+  "config_subentries": {
+    "location": {
+      "entry_type": "Local",
+      "initiate_flow": {
+        "user": "Adicionar local",
+        "reconfigure": "Editar opções"
+      },
+      "step": {
+        "user": {
+          "title": "Adicionar local",
+          "description": "Informe a localização da cidade a ser adicionada (coordenadas, nome da cidade ou ID da cidade). As credenciais são compartilhadas com esta conta. As opções de previsão podem ser ajustadas depois em \"Editar opções\".",
+          "data": {
+            "location_id": "Localização geográfica. Aceita apenas longitude e latitude (primeiro longitude)."
+          }
+        },
+        "select_location": {
+          "title": "Confirmar localização da cidade",
+          "description": "Foram encontradas várias regiões correspondentes. Selecione a mais precisa:",
+          "data": {
+            "location_index": "Lista de cidades correspondentes"
+          }
+        },
+        "reconfigure": {
+          "title": "Editar opções",
+          "description": "Ajuste as opções de previsão deste local. O local em si não pode ser alterado aqui — exclua-o e adicione-o novamente se necessário.",
+          "data": {
+            "update_interval": "Intervalo de atualização (minutos)",
+            "dailysteps": "Dias de previsão diária (3-10)",
+            "hourlysteps": "Horas de previsão por hora (24–168)",
+            "custom_ui": "Habilitar suporte de UI personalizada (global)",
+            "custom_more_info": "Substituir o popup de detalhes nativo"
+          }
+        }
+      },
+      "error": {
+        "invalid_parameter": "Parâmetros de solicitação inválidos, verifique o formato de entrada",
+        "location_not_found": "Local não encontrado, tente inserir “longitude,latitude” com precisão",
+        "invalid_auth": "Falha na autenticação, verifique sua Key ou configuração JWT",
+        "no_credit": "Crédito insuficiente ou conta vencida, verifique a fatura no console HeWeather",
+        "invalid_host": "Erro no API Host, certifique-se de usar seu endereço exclusivo",
+        "forbidden": "Seu plano atual não tem permissão para solicitar esses dados",
+        "not_found": "Caminho da API incorreto ou recurso inexistente (404)",
+        "too_many_requests": "Solicitações excessivas ou limite de QPM excedido, tente novamente mais tarde",
+        "server_error": "Erro desconhecido no servidor HeWeather (500)",
+        "cannot_connect": "Não foi possível conectar ao API Host, verifique a rede ou o endereço",
+        "api_host_deprecated": "O domínio público está obsoleto, use seu API Host pessoal"
+      },
+      "abort": {
+        "config_entry_not_loaded": "A integração ainda não foi carregada. Aguarde um momento e tente novamente.",
+        "duplicate_location": "Este local já foi adicionado a esta conta.",
+        "reconfigure_successful": "Configuração atualizada com sucesso!"
+      }
+    }
+  },
   "selector": {
     "jwt_reconfigure_choice": {
       "options": {
         "keep_current": "Manter configuração atual (reutilizar par de chaves)",
         "regenerate": "Regenerar JWT (novo par de chaves)"
       }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "Cota diária do QWeather API KEY",
+      "description": "Sua integração QWeather Pro ainda está usando autenticação por API KEY.\r\nObservação: A autenticação por API KEY não oferece segurança suficiente. A partir de 01-01-2027, a QWeather limitará as solicitações diárias autenticadas por API KEY (valor exato a definir), e o SDK 5+ deixará de oferecer suporte a API KEY; JWT é ilimitado e recomendado. Se você mantiver a API KEY, o intervalo de consulta é fixado obrigatoriamente em 100 minutos e não pode ser alterado nas opções da entrada; mude para JWT em «Reconfigurar» para obter atualizações ilimitadas e mais rápidas."
     }
   },
   "entity": {
@@ -496,12 +556,6 @@
       }
     }
   },
-  "issues": {
-    "api_key_quota": {
-      "title": "Cota diária do QWeather API KEY",
-      "description": "Sua integração QWeather Pro ainda está usando autenticação por API KEY.\r\nObservação: A autenticação por API KEY não oferece segurança suficiente. A partir de 01-01-2027, a QWeather limitará as solicitações diárias autenticadas por API KEY (valor exato a definir), e o SDK 5+ deixará de oferecer suporte a API KEY; JWT é ilimitado e recomendado. Se você mantiver a API KEY, o intervalo de consulta é fixado obrigatoriamente em 100 minutos e não pode ser alterado nas opções da entrada; mude para JWT em «Reconfigurar» para obter atualizações ilimitadas e mais rápidas."
-    }
-  },
   "exceptions": {
     "jwt_private_key_invalid": {
       "message": "A chave privada Ed25519 está ausente ou não pôde ser interpretada. Gere a chave novamente em Reconfigurar ou Reautenticar."
@@ -520,60 +574,6 @@
     },
     "auth_failed": {
       "message": "Falha na autenticação da API QWeather ({code}): {detail}"
-    }
-  },
-  "config_subentries": {
-    "location": {
-      "entry_type": "Local",
-      "initiate_flow": {
-        "user": "Adicionar local",
-        "reconfigure": "Editar opções"
-      },
-      "step": {
-        "user": {
-          "title": "Adicionar local",
-          "description": "Informe a localização da cidade a ser adicionada (coordenadas, nome da cidade ou ID da cidade). As credenciais são compartilhadas com esta conta. As opções de previsão podem ser ajustadas depois em \"Editar opções\".",
-          "data": {
-            "location_id": "Localização geográfica. Aceita apenas longitude e latitude (primeiro longitude)."
-          }
-        },
-        "select_location": {
-          "title": "Confirmar localização da cidade",
-          "description": "Foram encontradas várias regiões correspondentes. Selecione a mais precisa:",
-          "data": {
-            "location_index": "Lista de cidades correspondentes"
-          }
-        },
-        "reconfigure": {
-          "title": "Editar opções",
-          "description": "Ajuste as opções de previsão deste local. O local em si não pode ser alterado aqui — exclua-o e adicione-o novamente se necessário.",
-          "data": {
-            "update_interval": "Intervalo de atualização (minutos)",
-            "dailysteps": "Dias de previsão diária (3-10)",
-            "hourlysteps": "Horas de previsão por hora (24–168)",
-            "custom_ui": "Habilitar suporte de UI personalizada (global)",
-            "custom_more_info": "Substituir o popup de detalhes nativo"
-          }
-        }
-      },
-      "error": {
-        "invalid_parameter": "Parâmetros de solicitação inválidos, verifique o formato de entrada",
-        "location_not_found": "Local não encontrado, tente inserir “longitude,latitude” com precisão",
-        "invalid_auth": "Falha na autenticação, verifique sua Key ou configuração JWT",
-        "no_credit": "Crédito insuficiente ou conta vencida, verifique a fatura no console HeWeather",
-        "invalid_host": "Erro no API Host, certifique-se de usar seu endereço exclusivo",
-        "forbidden": "Seu plano atual não tem permissão para solicitar esses dados",
-        "not_found": "Caminho da API incorreto ou recurso inexistente (404)",
-        "too_many_requests": "Solicitações excessivas ou limite de QPM excedido, tente novamente mais tarde",
-        "server_error": "Erro desconhecido no servidor HeWeather (500)",
-        "cannot_connect": "Não foi possível conectar ao API Host, verifique a rede ou o endereço",
-        "api_host_deprecated": "O domínio público está obsoleto, use seu API Host pessoal"
-      },
-      "abort": {
-        "config_entry_not_loaded": "A integração ainda não foi carregada. Aguarde um momento e tente novamente.",
-        "duplicate_location": "Este local já foi adicionado a esta conta.",
-        "reconfigure_successful": "Configuração atualizada com sucesso!"
-      }
     }
   }
 }
