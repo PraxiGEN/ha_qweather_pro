@@ -2,13 +2,6 @@
   "title": "QWeather Pro",
   "config": {
     "step": {
-      "user": {
-        "title": "Add New City",
-        "description": "It appears that you have already configured QWeather. You may choose to **‘Use a new account’** or directly **‘Reuse the existing account’** information.\r\n**Note:** Adding multiple cities under the same **API Host** will multiply the request volume. Please extend the update interval appropriately to avoid exceeding limits.",
-        "data": {
-          "account_selection": "Account/Credential Reuse"
-        }
-      },
       "setup": {
         "title": "Configure QWeather Pro",
         "description": "### Setup Steps\r\n**Go to the [QWeather Console]({qweather_console}):**\r\n1. In Settings, copy the **API Host** and fill it into the **API Host** field below.\r\n2. Project Management → Create a project, then add credentials to the project: optional **JSON Web Token** and **API KEY**.\r\n3. The location can be latitude and longitude (WGS-84) or a city name.\r\n4. The default location is the HA latitude and longitude.\r\n#### Note: API KEY authentication does not provide sufficient security. API KEY authentication will be subject to request limits. JSON Web Token (JWT) is recommended!",
@@ -26,13 +19,6 @@
           "iss": "Developer ID",
           "project_id": "Project ID",
           "key_id": "Key ID"
-        }
-      },
-      "reuse_location": {
-        "title": "Add New City",
-        "description": "Existing account information has been successfully loaded. Please enter the **geographical location** (latitude and longitude) of the new city you want to add.",
-        "data": {
-          "location_id": "Geographical Location of New City"
         }
       },
       "select_location": {
@@ -104,30 +90,10 @@
     }
   },
   "selector": {
-    "account_selection": {
-      "options": {
-        "new_account": "New Account/Credentials"
-      }
-    },
     "jwt_reconfigure_choice": {
       "options": {
         "keep_current": "Keep current configuration (reuse key pair)",
         "regenerate": "Regenerate JWT (new key pair)"
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "Integration Options",
-        "description": "### Instructions for Use\r\n- The daily forecast can be set to **3/7/10** days (V1 API supports up to 10 days).\r\n- The hourly forecast can be set to **24/72/168** hours.\r\n- **Custom UI** is a global resource: enabling it in any one instance applies to all instances. The detail popup override is per-instance.",
-        "data": {
-          "update_interval": "Update Interval (minutes)",
-          "dailysteps": "Daily Forecast Days (3-10)",
-          "hourlysteps": "Hourly Forecast Hours (24-168)",
-          "custom_ui": "Enable Custom UI Support (global)",
-          "custom_more_info": "Replace native detail popup"
-        }
       }
     }
   },
@@ -554,6 +520,60 @@
     },
     "auth_failed": {
       "message": "QWeather API authentication failed ({code}): {detail}"
+    }
+  },
+  "config_subentries": {
+    "location": {
+      "entry_type": "Location",
+      "initiate_flow": {
+        "user": "Add location",
+        "reconfigure": "Edit options"
+      },
+      "step": {
+        "user": {
+          "title": "Add Location",
+          "description": "Enter the location of the city to add (coordinates, city name or city ID). Credentials are shared with this account. Forecast options can be adjusted afterwards via \"Edit options\".",
+          "data": {
+            "location_id": "Geographical location. Only supports latitude and longitude (longitude first)."
+          }
+        },
+        "select_location": {
+          "title": "Confirm City Location",
+          "description": "Multiple matching regions were found. Please select the most accurate one:",
+          "data": {
+            "location_index": "List of Matching Cities"
+          }
+        },
+        "reconfigure": {
+          "title": "Edit Options",
+          "description": "Adjust the forecast options for this location. The location itself cannot be changed here — delete the location and add it again if needed.",
+          "data": {
+            "update_interval": "Update Interval (minutes)",
+            "dailysteps": "Daily Forecast Days (3-10)",
+            "hourlysteps": "Hourly Forecast Hours (24-168)",
+            "custom_ui": "Enable Custom UI Support (global)",
+            "custom_more_info": "Replace native detail popup"
+          }
+        }
+      },
+      "error": {
+        "invalid_parameter": "Invalid request parameters, please check the input format",
+        "location_not_found": "Location not found, please try entering precise “longitude,latitude”",
+        "invalid_auth": "Authentication failed, please check your Key or JWT configuration",
+        "no_credit": "Insufficient account credit or overdue status, please check the billing in the HeWeather console",
+        "invalid_host": "API host error, please ensure you are using your dedicated endpoint",
+        "forbidden": "Your current plan does not have permission to request this data",
+        "not_found": "Incorrect API path or resource not found (404)",
+        "too_many_requests": "Too many requests or QPM limit exceeded, please try again later",
+        "server_error": "Unknown server error occurred on HeWeather (500)",
+        "cannot_connect": "Unable to connect to API host, please check network or address",
+        "api_host_deprecated": "Public domain is deprecated, please use your personal API host"
+      },
+      "abort": {
+        "config_entry_not_loaded": "The integration is not loaded yet. Please wait a moment and try again.",
+        "duplicate_location": "This location has already been added to this account.",
+        "reconfigure_successful": "Configuration updated successfully!"
+      }
     }
   }
 }
