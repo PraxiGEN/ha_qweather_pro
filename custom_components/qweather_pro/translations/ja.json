@@ -2,13 +2,6 @@
   "title": "和風天気 Pro",
   "config": {
     "step": {
-      "user": {
-        "title": "新しい都市を追加",
-        "description": "QWeather はすでに設定されています。**「新しいアカウントを使用」** または **「既存アカウントを再利用」** を選択できます。\r\n**注意:** 同じ **API Host** に複数の都市を追加すると、リクエスト量が増加します。制限超過を避けるため、更新間隔を適切に延長してください。",
-        "data": {
-          "account_selection": "アカウント／認証情報の再利用"
-        }
-      },
       "setup": {
         "title": "QWeather Pro の設定",
         "description": "### 設定手順\r\n**[QWeather コンソール]({qweather_console}) を開いてください:**\r\n1. 設定で **API Host** をコピーし、下の **API Host** 欄に入力します。\r\n2. プロジェクト管理 → プロジェクトを作成し、プロジェクトに認証情報を追加します（**JSON Web Token** と **API KEY** は任意）。\r\n3. 場所は緯度と経度（WGS-84）または都市名で指定できます。\r\n4. デフォルトの場所は HA の緯度と経度です。\r\n#### 注意: API KEY 認証は十分なセキュリティを提供しません。API KEY によるリクエストは制限の対象となります。JSON Web Token (JWT) を推奨します。",
@@ -26,13 +19,6 @@
           "iss": "開発者 ID",
           "project_id": "Project ID",
           "key_id": "Key ID"
-        }
-      },
-      "reuse_location": {
-        "title": "新しい都市を追加",
-        "description": "既存のアカウント情報が正常に読み込まれました。追加したい都市の **地理位置情報（緯度・経度）** を入力してください。",
-        "data": {
-          "location_id": "新しい都市の地理位置情報"
         }
       },
       "select_location": {
@@ -104,30 +90,10 @@
     }
   },
   "selector": {
-    "account_selection": {
-      "options": {
-        "new_account": "新しいアカウント／認証情報"
-      }
-    },
     "jwt_reconfigure_choice": {
       "options": {
         "keep_current": "現在の設定を保持（キーペアを再利用）",
         "regenerate": "JWT を再生成（新しいキーペア）"
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "統合オプション",
-        "description": "### 使用説明\r\n日次予報は **3/7/10** 日から選択できます（V1 API は最大 10 日に対応）。\r\n- 時間予報は **24/72/168** 時間から選択できます。\r\n- **カスタム UI** は全体リソースです。いずれかのインスタンスで有効にするとすべてのインスタンスに適用されます。詳細ポップアップの上書きはインスタンスごとです。",
-        "data": {
-          "update_interval": "更新間隔（分）",
-          "dailysteps": "日次予報（日数 3-10）",
-          "hourlysteps": "時間予報（24–168 時間）",
-          "custom_ui": "カスタム UI サポートを有効化（全体）",
-          "custom_more_info": "ネイティブ詳細カードを置換"
-        }
       }
     }
   },
@@ -554,6 +520,60 @@
     },
     "auth_failed": {
       "message": "QWeather API の認証に失敗しました（{code}）：{detail}"
+    }
+  },
+  "config_subentries": {
+    "location": {
+      "entry_type": "場所",
+      "initiate_flow": {
+        "user": "場所を追加",
+        "reconfigure": "オプションを編集"
+      },
+      "step": {
+        "user": {
+          "title": "場所を追加",
+          "description": "追加する都市の位置を入力してください（経緯度、都市名、または都市ID）。認証情報はこのアカウントと共有されます。予報オプションは追加後「オプションを編集」から調整できます。",
+          "data": {
+            "location_id": "地理位置情報（経度・緯度。経度が先）"
+          }
+        },
+        "select_location": {
+          "title": "都市位置の確認",
+          "description": "複数の一致する地域が見つかりました。最も正確なものを選択してください:",
+          "data": {
+            "location_index": "一致した都市の一覧"
+          }
+        },
+        "reconfigure": {
+          "title": "オプションを編集",
+          "description": "この位置の予報オプションを調整します。位置自体はここでは変更できません。変更が必要な場合は削除して再度追加してください。",
+          "data": {
+            "update_interval": "更新間隔（分）",
+            "dailysteps": "日次予報（日数 3-10）",
+            "hourlysteps": "時間予報（24–168 時間）",
+            "custom_ui": "カスタム UI サポートを有効化（全体）",
+            "custom_more_info": "ネイティブ詳細カードを置換"
+          }
+        }
+      },
+      "error": {
+        "invalid_parameter": "リクエストパラメータが無効です。入力形式を確認してください",
+        "location_not_found": "位置が見つかりません。正確な「経度,緯度」を入力してください",
+        "invalid_auth": "認証に失敗しました。Key または JWT 設定を確認してください",
+        "no_credit": "アカウントの残高不足または期限切れです。HeWeather コンソールの請求情報を確認してください",
+        "invalid_host": "API ホストエラー。専用のインターフェースアドレスを使用していることを確認してください",
+        "forbidden": "現在のプランではこのデータを要求する権限がありません",
+        "not_found": "API パスが誤っているかリソースが存在しません (404)",
+        "too_many_requests": "リクエストが多すぎるか QPM 制限を超えています。後でもう一度試してください",
+        "server_error": "HeWeather サーバーで不明なエラーが発生しました (500)",
+        "cannot_connect": "API ホストに接続できません。ネットワークまたはアドレスを確認してください",
+        "api_host_deprecated": "公共ドメインは無効です。個人の API ホストを使用してください"
+      },
+      "abort": {
+        "config_entry_not_loaded": "統合がまだ読み込まれていません。しばらく待ってから再試行してください。",
+        "duplicate_location": "この位置は既にこのアカウントに追加されています。",
+        "reconfigure_successful": "設定が正常に更新されました！"
+      }
     }
   }
 }
