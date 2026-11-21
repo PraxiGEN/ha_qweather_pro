@@ -161,7 +161,7 @@ async def test_setup_entry_builds_per_location_coordinators(hass):
     assert len(runtime.coordinators) == 1
     (subentry_id, coordinator), = runtime.coordinators.items()
     assert subentry_id == subs[0].subentry_id
-    assert coordinator.location == "120,30"
+    assert coordinator.location == "120.0,30.0"
     assert coordinator.city_name == "测试城市"
 # 设备标识挂子条目
     identifiers = coordinator.device_info["identifiers"]

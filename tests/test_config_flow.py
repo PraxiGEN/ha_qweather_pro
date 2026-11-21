@@ -218,7 +218,7 @@ async def test_subentry_add_location(hass, _patch_citylookup):
     assert result["data"][CONF_DAILYSTEPS] == "7"
 # flow manager 已把子条目挂到条目上
     uids = {s.unique_id for s in get_location_subentries(entry)}
-    assert uids == {"qw_130_20", "qw_120.0_30.0"}
+    assert uids == {"qw_130.0_20.0", "qw_120.0_30.0"}
 
 async def test_subentry_add_duplicate_location_aborts(hass, _patch_citylookup):
     entry = MockConfigEntry(

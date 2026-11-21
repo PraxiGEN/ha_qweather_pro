@@ -26,7 +26,7 @@ def mock_config_entry():
     return MockConfigEntry(domain=DOMAIN, data={}, entry_id="test")
 
 def add_location_subentry(hass, entry, coords="120,30", title="测试城市"):
-    """为条目挂一个 location 子条目（v1.3.0 起 1 条目 = 1 账号 + N 位置）。"""
+    """为条目挂一个 location 子条目（坐标归一化与配置流一致）."""
     from homeassistant.config_entries import ConfigSubentry
 
     from custom_components.qweather_pro.const import (
@@ -34,11 +34,13 @@ def add_location_subentry(hass, entry, coords="120,30", title="测试城市"):
         SUBENTRY_TYPE_LOCATION,
     )
 
+    lon, lat = coords.split(",")
+    std_coords = f"{round(float(lon), 2)},{round(float(lat), 2)}"
     subentry = ConfigSubentry(
         subentry_type=SUBENTRY_TYPE_LOCATION,
         title=title,
-        data={CONF_LOCATION_ID: coords},
-        unique_id=f"qw_{coords.replace(',', '_')}",
+        data={CONF_LOCATION_ID: std_coords},
+        unique_id=f"qw_{std_coords.replace(',', '_')}",
     )
     hass.config_entries.async_add_subentry(entry, subentry)
     return subentry
