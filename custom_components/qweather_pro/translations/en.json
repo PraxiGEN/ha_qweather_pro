@@ -89,12 +89,72 @@
       "reauth_failed_entry_not_found": "Configuration entry not found. Please add the integration again."
     }
   },
+  "config_subentries": {
+    "location": {
+      "entry_type": "Location",
+      "initiate_flow": {
+        "user": "Add location",
+        "reconfigure": "Edit options"
+      },
+      "step": {
+        "user": {
+          "title": "Add Location",
+          "description": "Enter the location of the city to add (coordinates, city name or city ID). Credentials are shared with this account. Forecast options can be adjusted afterwards via \"Edit options\".",
+          "data": {
+            "location_id": "Geographical location. Only supports latitude and longitude (longitude first)."
+          }
+        },
+        "select_location": {
+          "title": "Confirm City Location",
+          "description": "Multiple matching regions were found. Please select the most accurate one:",
+          "data": {
+            "location_index": "List of Matching Cities"
+          }
+        },
+        "reconfigure": {
+          "title": "Edit Options",
+          "description": "Adjust the forecast options for this location. The location itself cannot be changed here — delete the location and add it again if needed.",
+          "data": {
+            "update_interval": "Update Interval (minutes)",
+            "dailysteps": "Daily Forecast Days (3-10)",
+            "hourlysteps": "Hourly Forecast Hours (24-168)",
+            "custom_ui": "Enable Custom UI Support (global)",
+            "custom_more_info": "Replace native detail popup"
+          }
+        }
+      },
+      "error": {
+        "invalid_parameter": "Invalid request parameters, please check the input format",
+        "location_not_found": "Location not found, please try entering precise “longitude,latitude”",
+        "invalid_auth": "Authentication failed, please check your Key or JWT configuration",
+        "no_credit": "Insufficient account credit or overdue status, please check the billing in the HeWeather console",
+        "invalid_host": "API host error, please ensure you are using your dedicated endpoint",
+        "forbidden": "Your current plan does not have permission to request this data",
+        "not_found": "Incorrect API path or resource not found (404)",
+        "too_many_requests": "Too many requests or QPM limit exceeded, please try again later",
+        "server_error": "Unknown server error occurred on HeWeather (500)",
+        "cannot_connect": "Unable to connect to API host, please check network or address",
+        "api_host_deprecated": "Public domain is deprecated, please use your personal API host"
+      },
+      "abort": {
+        "config_entry_not_loaded": "The integration is not loaded yet. Please wait a moment and try again.",
+        "duplicate_location": "This location has already been added to this account.",
+        "reconfigure_successful": "Configuration updated successfully!"
+      }
+    }
+  },
   "selector": {
     "jwt_reconfigure_choice": {
       "options": {
         "keep_current": "Keep current configuration (reuse key pair)",
         "regenerate": "Regenerate JWT (new key pair)"
       }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "QWeather API KEY daily quota",
+      "description": "Your QWeather Pro integration is still using API KEY authentication.\r\nNote: API KEY authentication does not provide sufficient security. Starting 2027-01-01, QWeather will limit daily requests for API KEY authentication (exact amount TBD), and SDK 5+ will drop API KEY support; JWT is unlimited and recommended. If you keep API KEY, polling is locked to 100 minutes and cannot be changed in the entry configuration; switch to JWT in \"Reconfigure\" for unlimited, faster updates."
     }
   },
   "entity": {
@@ -496,12 +556,6 @@
       }
     }
   },
-  "issues": {
-    "api_key_quota": {
-      "title": "QWeather API KEY daily quota",
-      "description": "Your QWeather Pro integration is still using API KEY authentication.\r\nNote: API KEY authentication does not provide sufficient security. Starting 2027-01-01, QWeather will limit daily requests for API KEY authentication (exact amount TBD), and SDK 5+ will drop API KEY support; JWT is unlimited and recommended. If you keep API KEY, polling is locked to 100 minutes and cannot be changed in the entry configuration; switch to JWT in \"Reconfigure\" for unlimited, faster updates."
-    }
-  },
   "exceptions": {
     "jwt_private_key_invalid": {
       "message": "The Ed25519 private key is missing or cannot be parsed. Re-generate the key via Reconfigure or Re-authentication."
@@ -520,60 +574,6 @@
     },
     "auth_failed": {
       "message": "QWeather API authentication failed ({code}): {detail}"
-    }
-  },
-  "config_subentries": {
-    "location": {
-      "entry_type": "Location",
-      "initiate_flow": {
-        "user": "Add location",
-        "reconfigure": "Edit options"
-      },
-      "step": {
-        "user": {
-          "title": "Add Location",
-          "description": "Enter the location of the city to add (coordinates, city name or city ID). Credentials are shared with this account. Forecast options can be adjusted afterwards via \"Edit options\".",
-          "data": {
-            "location_id": "Geographical location. Only supports latitude and longitude (longitude first)."
-          }
-        },
-        "select_location": {
-          "title": "Confirm City Location",
-          "description": "Multiple matching regions were found. Please select the most accurate one:",
-          "data": {
-            "location_index": "List of Matching Cities"
-          }
-        },
-        "reconfigure": {
-          "title": "Edit Options",
-          "description": "Adjust the forecast options for this location. The location itself cannot be changed here — delete the location and add it again if needed.",
-          "data": {
-            "update_interval": "Update Interval (minutes)",
-            "dailysteps": "Daily Forecast Days (3-10)",
-            "hourlysteps": "Hourly Forecast Hours (24-168)",
-            "custom_ui": "Enable Custom UI Support (global)",
-            "custom_more_info": "Replace native detail popup"
-          }
-        }
-      },
-      "error": {
-        "invalid_parameter": "Invalid request parameters, please check the input format",
-        "location_not_found": "Location not found, please try entering precise “longitude,latitude”",
-        "invalid_auth": "Authentication failed, please check your Key or JWT configuration",
-        "no_credit": "Insufficient account credit or overdue status, please check the billing in the HeWeather console",
-        "invalid_host": "API host error, please ensure you are using your dedicated endpoint",
-        "forbidden": "Your current plan does not have permission to request this data",
-        "not_found": "Incorrect API path or resource not found (404)",
-        "too_many_requests": "Too many requests or QPM limit exceeded, please try again later",
-        "server_error": "Unknown server error occurred on HeWeather (500)",
-        "cannot_connect": "Unable to connect to API host, please check network or address",
-        "api_host_deprecated": "Public domain is deprecated, please use your personal API host"
-      },
-      "abort": {
-        "config_entry_not_loaded": "The integration is not loaded yet. Please wait a moment and try again.",
-        "duplicate_location": "This location has already been added to this account.",
-        "reconfigure_successful": "Configuration updated successfully!"
-      }
     }
   }
 }
