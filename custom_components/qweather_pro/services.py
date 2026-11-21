@@ -141,7 +141,12 @@ async def async_setup_services(hass: HomeAssistant) -> None:
                 translation_placeholders={"entity_id": entity_id},
             )
 
-        coordinator = entry.runtime_data
+        runtime = entry.runtime_data
+        coordinators = getattr(runtime, "coordinators", None) or {}
+        # 实体归属位置：优先按注册表的 config_subentry_id 定位；异常情况回退唯一协调器
+        coordinator = coordinators.get(entity.config_subentry_id)
+        if coordinator is None and len(coordinators) == 1:
+            coordinator = next(iter(coordinators.values()))
         if coordinator is None or not coordinator.data:
             raise ServiceValidationError(
                 translation_domain=DOMAIN,
