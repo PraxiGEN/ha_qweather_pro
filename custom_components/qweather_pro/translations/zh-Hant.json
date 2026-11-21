@@ -2,13 +2,6 @@
   "title": "和風天氣 Pro",
   "config": {
     "step": {
-      "user": {
-        "title": "新增城市",
-        "description": "看起來你已經設定過 QWeather。你可以選擇 **「使用新帳號」** 或直接 **「重複使用現有帳號」**。\r\n**注意：** 在相同 **API Host** 下新增多個城市會增加請求量。請適當延長更新間隔以避免超出限制。",
-        "data": {
-          "account_selection": "帳號／憑證重複使用"
-        }
-      },
       "setup": {
         "title": "設定 QWeather Pro",
         "description": "### 新增步驟\r\n**前往 [和風天氣控制台]({qweather_console}):**\r\n1. 在設定中複製 **API Host** 並填入下方的 **API Host** 欄位。\r\n2. 專案管理 → 建立專案，然後在專案中新增憑證：可選 **JSON Web Token** 與 **API KEY**。\r\n3. 地理位置可輸入經緯度（WGS-84）或城市名稱。\r\n4. 預設位置為 HA 的經緯度。\r\n#### 注意：API KEY 認證方式無法提供足夠的安全性，使用 API KEY 認證方式將受請求量的限制，推薦使用 JSON Web Token(JWT)。",
@@ -26,13 +19,6 @@
           "iss": "開發者 ID",
           "project_id": "Project ID",
           "key_id": "Key ID"
-        }
-      },
-      "reuse_location": {
-        "title": "新增城市",
-        "description": "已成功載入現有帳號資訊。請輸入你想新增城市的 **地理位置（經緯度）**。",
-        "data": {
-          "location_id": "新城市的地理位置"
         }
       },
       "select_location": {
@@ -104,30 +90,10 @@
     }
   },
   "selector": {
-    "account_selection": {
-      "options": {
-        "new_account": "新增帳號／新增憑證"
-      }
-    },
     "jwt_reconfigure_choice": {
       "options": {
         "keep_current": "保留原設定（復用金鑰對）",
         "regenerate": "重新產生 JWT（新金鑰對）"
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "整合選項",
-        "description": "### 使用說明\r\n每日天氣預報可設定為 **3/7/10** 天（V1 API 最長支援 10 天）。\r\n- 每小時預報可設定為 **24/72/168** 小時。\r\n- **自訂前端 UI** 為全域資源：任一整合執行個體啟用即對所有執行個體生效；詳情彈窗覆蓋為依執行個體獨立設定。",
-        "data": {
-          "update_interval": "更新間隔（分鐘）",
-          "dailysteps": "每日預報天數（3-10）",
-          "hourlysteps": "每小時預報時數（24–168）",
-          "custom_ui": "啟用自訂前端 UI 支援（全域）",
-          "custom_more_info": "覆蓋原生詳情彈窗"
-        }
       }
     }
   },
@@ -554,6 +520,60 @@
     },
     "auth_failed": {
       "message": "和風天氣 API 認證失敗（{code}）：{detail}"
+    }
+  },
+  "config_subentries": {
+    "location": {
+      "entry_type": "位置",
+      "initiate_flow": {
+        "user": "新增位置",
+        "reconfigure": "編輯選項"
+      },
+      "step": {
+        "user": {
+          "title": "新增位置",
+          "description": "輸入要新增城市的地理位置（支援經緯度、城市名稱或城市ID）。憑證沿用目前帳號。預報選項可在新增後透過「編輯選項」調整。",
+          "data": {
+            "location_id": "地理位置。僅支援經緯度（先經度後緯度）。"
+          }
+        },
+        "select_location": {
+          "title": "確認城市位置",
+          "description": "找到多個符合的地區。請選擇最準確的一項：",
+          "data": {
+            "location_index": "符合的城市列表"
+          }
+        },
+        "reconfigure": {
+          "title": "編輯選項",
+          "description": "調整該位置的預報選項。位置本身無法在此修改，如需變更請刪除後重新新增。",
+          "data": {
+            "update_interval": "更新間隔（分鐘）",
+            "dailysteps": "每日預報天數（3-10）",
+            "hourlysteps": "每小時預報時數（24–168）",
+            "custom_ui": "啟用自訂前端 UI 支援（全域）",
+            "custom_more_info": "覆蓋原生詳情彈窗"
+          }
+        }
+      },
+      "error": {
+        "invalid_parameter": "請求參數錯誤，請檢查輸入格式是否正確",
+        "location_not_found": "未找到該位置，請試試輸入更精准的“經度,緯度”",
+        "invalid_auth": "身份驗證失敗，請檢查您的 Key 或 JWT 配置",
+        "no_credit": "账号额度不足或已逾期，請檢查您的和風控制台账单",
+        "invalid_host": "API Host 錯誤，請確保您輸入的地址是您的專屬接口地址",
+        "forbidden": "您當前的套餐無法請求此數據",
+        "not_found": "接口路徑錯誤或資源不存在 (404)",
+        "too_many_requests": "请求过于频繁或超过 QPM 限制，请稍后再试",
+        "server_error": "和風天氣伺服器發生未知故障 (500)",
+        "cannot_connect": "無法連線到 API Host，請檢查網路或地址是否正確",
+        "api_host_deprecated": "公共域名已失效，請使用個人 API Host。"
+      },
+      "abort": {
+        "config_entry_not_loaded": "整合尚未載入完成，請稍後再試。",
+        "duplicate_location": "該位置已在此帳號下新增。",
+        "reconfigure_successful": "設定已成功更新！"
+      }
     }
   }
 }
