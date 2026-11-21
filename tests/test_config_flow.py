@@ -26,7 +26,7 @@ try:
     )
     from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-    from conftest import add_location_subentry
+    from tests.conftest import add_location_subentry
 
     _HA_OK = True
 except Exception:  # pragma: no cover - 本地缺依赖时跳过

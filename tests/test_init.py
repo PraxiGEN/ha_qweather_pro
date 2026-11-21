@@ -131,7 +131,7 @@ async def test_setup_entry_jwt_deletes_repairs_issue(hass):
 async def test_setup_entry_builds_per_location_coordinators(hass):
     """v1.3.0：逐 location 子条目建协调器，runtime_data 挂 QWeatherRuntimeData."""
     from custom_components.qweather_pro import QWeatherRuntimeData
-    from conftest import add_location_subentry
+    from tests.conftest import add_location_subentry
 
     entry = MockConfigEntry(
         domain=DOMAIN,
