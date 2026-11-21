@@ -89,12 +89,72 @@
       "reauth_failed_entry_not_found": "Configuratie-item niet gevonden. Voeg de integratie opnieuw toe."
     }
   },
+  "config_subentries": {
+    "location": {
+      "entry_type": "Locatie",
+      "initiate_flow": {
+        "user": "Locatie toevoegen",
+        "reconfigure": "Opties bewerken"
+      },
+      "step": {
+        "user": {
+          "title": "Locatie toevoegen",
+          "description": "Voer de locatie in van de stad die je wilt toevoegen (coördinaten, stadsnaam of stad-ID). De inloggegevens worden gedeeld met dit account. De prognoseopties kunnen daarna via \"Opties bewerken\" worden aangepast.",
+          "data": {
+            "location_id": "Geografische locatie. Alleen lengte- en breedtegraad (lengte eerst)."
+          }
+        },
+        "select_location": {
+          "title": "Stadslocatie bevestigen",
+          "description": "Er zijn meerdere overeenkomende regio’s gevonden. Selecteer de meest nauwkeurige:",
+          "data": {
+            "location_index": "Lijst met overeenkomende steden"
+          }
+        },
+        "reconfigure": {
+          "title": "Opties bewerken",
+          "description": "Pas de prognoseopties voor deze locatie aan. De locatie zelf kan hier niet worden gewijzigd — verwijder deze en voeg deze zo nodig opnieuw toe.",
+          "data": {
+            "update_interval": "Update-interval (minuten)",
+            "dailysteps": "Dagen voor dagelijkse voorspelling (3-10)",
+            "hourlysteps": "Uren voor uurlijkse voorspelling (24–168)",
+            "custom_ui": "Aangepaste UI-ondersteuning inschakelen (globaal)",
+            "custom_more_info": "Systeemeigen detailkaart overschrijven"
+          }
+        }
+      },
+      "error": {
+        "invalid_parameter": "Ongeldige aanvraagparameters, controleer het invoerformaat",
+        "location_not_found": "Locatie niet gevonden, probeer nauwkeurig “lengtegraad,breedtegraad” in te voeren",
+        "invalid_auth": "Authenticatie mislukt, controleer uw Key of JWT-configuratie",
+        "no_credit": "Onvoldoende tegoed of achterstallige status, controleer de facturering in de HeWeather-console",
+        "invalid_host": "API-hostfout, zorg ervoor dat u uw exclusieve endpoint gebruikt",
+        "forbidden": "Uw huidige pakket heeft geen toestemming om deze gegevens op te vragen",
+        "not_found": "Onjuiste API-pad of bron niet gevonden (404)",
+        "too_many_requests": "Te veel aanvragen of QPM-limiet overschreden, probeer het later opnieuw",
+        "server_error": "Onbekende serverfout bij HeWeather (500)",
+        "cannot_connect": "Kan geen verbinding maken met API-host, controleer netwerk of adres",
+        "api_host_deprecated": "Openbare domein is vervallen, gebruik uw persoonlijke API-host"
+      },
+      "abort": {
+        "config_entry_not_loaded": "De integratie is nog niet geladen. Wacht even en probeer het opnieuw.",
+        "duplicate_location": "Deze locatie is al aan dit account toegevoegd.",
+        "reconfigure_successful": "Configuratie succesvol bijgewerkt!"
+      }
+    }
+  },
   "selector": {
     "jwt_reconfigure_choice": {
       "options": {
         "keep_current": "Huidige configuratie behouden (sleutelpaar hergebruiken)",
         "regenerate": "JWT opnieuw genereren (nieuw sleutelpaar)"
       }
+    }
+  },
+  "issues": {
+    "api_key_quota": {
+      "title": "QWeather API KEY dagelijkse quota",
+      "description": "Uw QWeather Pro-integratie gebruikt nog steeds API KEY-authenticatie.\r\nOpmerking: Authenticatie met API KEY biedt onvoldoende beveiliging. Vanaf 01-01-2027 zal QWeather de dagelijkse verzoeken met API KEY beperken (exact bedrag nog onbekend), en SDK 5+ zal API KEY niet langer ondersteunen; JWT is onbeperkt en aanbevolen. Als u API KEY behoudt, is het polsinterval vast vergrendeld op 100 minuten en kan niet worden gewijzigd in de entry-opties; schakel over naar JWT in «Opnieuw configureren» voor onbeperkte, snellere updates."
     }
   },
   "entity": {
@@ -496,12 +556,6 @@
       }
     }
   },
-  "issues": {
-    "api_key_quota": {
-      "title": "QWeather API KEY dagelijkse quota",
-      "description": "Uw QWeather Pro-integratie gebruikt nog steeds API KEY-authenticatie.\r\nOpmerking: Authenticatie met API KEY biedt onvoldoende beveiliging. Vanaf 01-01-2027 zal QWeather de dagelijkse verzoeken met API KEY beperken (exact bedrag nog onbekend), en SDK 5+ zal API KEY niet langer ondersteunen; JWT is onbeperkt en aanbevolen. Als u API KEY behoudt, is het polsinterval vast vergrendeld op 100 minuten en kan niet worden gewijzigd in de entry-opties; schakel over naar JWT in «Opnieuw configureren» voor onbeperkte, snellere updates."
-    }
-  },
   "exceptions": {
     "jwt_private_key_invalid": {
       "message": "De Ed25519 privésleutel ontbreekt of kan niet worden gelezen. Genereer de sleutel opnieuw via Herconfigureren of Hervalidatie."
@@ -520,60 +574,6 @@
     },
     "auth_failed": {
       "message": "QWeather API-authenticatie mislukt ({code}): {detail}"
-    }
-  },
-  "config_subentries": {
-    "location": {
-      "entry_type": "Locatie",
-      "initiate_flow": {
-        "user": "Locatie toevoegen",
-        "reconfigure": "Opties bewerken"
-      },
-      "step": {
-        "user": {
-          "title": "Locatie toevoegen",
-          "description": "Voer de locatie in van de stad die je wilt toevoegen (coördinaten, stadsnaam of stad-ID). De inloggegevens worden gedeeld met dit account. De prognoseopties kunnen daarna via \"Opties bewerken\" worden aangepast.",
-          "data": {
-            "location_id": "Geografische locatie. Alleen lengte- en breedtegraad (lengte eerst)."
-          }
-        },
-        "select_location": {
-          "title": "Stadslocatie bevestigen",
-          "description": "Er zijn meerdere overeenkomende regio’s gevonden. Selecteer de meest nauwkeurige:",
-          "data": {
-            "location_index": "Lijst met overeenkomende steden"
-          }
-        },
-        "reconfigure": {
-          "title": "Opties bewerken",
-          "description": "Pas de prognoseopties voor deze locatie aan. De locatie zelf kan hier niet worden gewijzigd — verwijder deze en voeg deze zo nodig opnieuw toe.",
-          "data": {
-            "update_interval": "Update-interval (minuten)",
-            "dailysteps": "Dagen voor dagelijkse voorspelling (3-10)",
-            "hourlysteps": "Uren voor uurlijkse voorspelling (24–168)",
-            "custom_ui": "Aangepaste UI-ondersteuning inschakelen (globaal)",
-            "custom_more_info": "Systeemeigen detailkaart overschrijven"
-          }
-        }
-      },
-      "error": {
-        "invalid_parameter": "Ongeldige aanvraagparameters, controleer het invoerformaat",
-        "location_not_found": "Locatie niet gevonden, probeer nauwkeurig “lengtegraad,breedtegraad” in te voeren",
-        "invalid_auth": "Authenticatie mislukt, controleer uw Key of JWT-configuratie",
-        "no_credit": "Onvoldoende tegoed of achterstallige status, controleer de facturering in de HeWeather-console",
-        "invalid_host": "API-hostfout, zorg ervoor dat u uw exclusieve endpoint gebruikt",
-        "forbidden": "Uw huidige pakket heeft geen toestemming om deze gegevens op te vragen",
-        "not_found": "Onjuiste API-pad of bron niet gevonden (404)",
-        "too_many_requests": "Te veel aanvragen of QPM-limiet overschreden, probeer het later opnieuw",
-        "server_error": "Onbekende serverfout bij HeWeather (500)",
-        "cannot_connect": "Kan geen verbinding maken met API-host, controleer netwerk of adres",
-        "api_host_deprecated": "Openbare domein is vervallen, gebruik uw persoonlijke API-host"
-      },
-      "abort": {
-        "config_entry_not_loaded": "De integratie is nog niet geladen. Wacht even en probeer het opnieuw.",
-        "duplicate_location": "Deze locatie is al aan dit account toegevoegd.",
-        "reconfigure_successful": "Configuratie succesvol bijgewerkt!"
-      }
     }
   }
 }
