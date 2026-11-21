@@ -1,8 +1,4 @@
-"""weather 平台单测：当前天气属性、三种预报（daily/hourly/twice_daily）、扩展属性.
-
-依赖 cryptography/aiohttp，本地无 homeassistant 时自动 skip，由 CI 跑。
-运行：``pytest tests/test_weather.py -v``。
-"""
+"""weather 平台单测：当前天气属性、三种预报（daily/hourly/twice_daily）、扩展属性. 依赖 cryptography/aiohttp，本地无 homeassistant 时自动 skip，由 CI 跑。 运行：``pytest tests/test_weather.py -v``。"""
 from __future__ import annotations
 
 import pytest
@@ -18,7 +14,6 @@ except Exception:  # pragma: no cover - 本地缺依赖时跳过
     _HA_OK = False
 
 pytestmark = pytest.mark.skipif(not _HA_OK, reason="requires homeassistant environment")
-
 
 @pytest.fixture
 def weather_data() -> dict:
@@ -136,28 +131,22 @@ def weather_data() -> dict:
         "minutely_detail": [],
     }
 
-
 @pytest.fixture
 def weather_entity(mock_coordinator, mock_config_entry, weather_data):
     mock_coordinator.data = weather_data
-    return HeFengWeather(mock_coordinator, mock_config_entry, QWEATHER_WEATHER_DESCRIPTION)
-
+    return HeFengWeather(mock_coordinator, "test", QWEATHER_WEATHER_DESCRIPTION)
 
 def test_current_condition(weather_entity):
     assert weather_entity.condition == "sunny"
 
-
 def test_native_temperature(weather_entity):
     assert weather_entity.native_temperature == 25.0
-
 
 def test_native_apparent_temperature(weather_entity):
     assert weather_entity.native_apparent_temperature == 27.0
 
-
 def test_wind_bearing_from_now(weather_entity):
     assert weather_entity.wind_bearing == 180
-
 
 def test_supported_features_include_all_forecasts(weather_entity):
     from homeassistant.components.weather import WeatherEntityFeature
@@ -167,32 +156,29 @@ def test_supported_features_include_all_forecasts(weather_entity):
     assert feats & WeatherEntityFeature.FORECAST_HOURLY
     assert feats & WeatherEntityFeature.FORECAST_TWICE_DAILY
 
-
 async def test_forecast_daily_nested_keys(hass, weather_entity):
     fc = await weather_entity.async_forecast_daily()
     assert isinstance(fc, list) and len(fc) == 1
     day = fc[0]
-    # HA 标准键
+# HA 标准键
     assert day["condition"] == "sunny"
     assert day["native_temperature"] == 30.0
     assert day["native_templow"] == 22.0
     assert day["temperature"] == 30.0
     assert day["templow"] == 22.0
-    # V1 昼夜嵌套自定义键
+# V1 昼夜嵌套自定义键
     assert day["icon_night"] == "150"
     assert day["text_night"] == "晴"
     assert day["wind_scale_day"] == "3"
     assert day["wind_scale_night"] == "2"
     assert day["wind_dir_day"] == "南风"
-    # wind_compass 已映射到 wind_dir_day / wind_dir_night，forecast 顶层无独立 wind_compass 键
-
+# wind_compass 已映射到 wind_dir_day / wind_dir_night，forecast 顶层无独立 wind_compass 键
 
 async def test_forecast_hourly(hass, weather_entity):
     fc = await weather_entity.async_forecast_hourly()
     assert len(fc) == 1
     assert fc[0]["condition"] == "sunny"
     assert fc[0]["native_temperature"] == 26.0
-
 
 async def test_forecast_twice_daily_day_and_night(hass, weather_entity):
     fc = await weather_entity.async_forecast_twice_daily()
@@ -202,20 +188,18 @@ async def test_forecast_twice_daily_day_and_night(hass, weather_entity):
     assert fc[0]["native_temperature"] == 30.0
     assert fc[1]["native_temperature"] == 24.0
 
-
 async def test_extra_state_attributes(hass, weather_entity):
     attrs = weather_entity.extra_state_attributes
     assert attrs["attribution"]
     assert attrs["city"] == "测试城市"
     assert attrs["update_time"] == "2026-08-16 08:00:00"
-    # 今日预报扩展属性
+# 今日预报扩展属性
     assert attrs["wind_scale_day"] == "3"
     assert attrs["icon_night"] == "150"
     assert attrs["moon_phase"] == "WaxingGibbous"
     assert attrs["sunrise"] == "05:30"
 
-
 async def test_extra_state_attributes_empty_when_no_data(hass, mock_coordinator, mock_config_entry):
     mock_coordinator.data = {}
-    entity = HeFengWeather(mock_coordinator, mock_config_entry, QWEATHER_WEATHER_DESCRIPTION)
+    entity = HeFengWeather(mock_coordinator, "test", QWEATHER_WEATHER_DESCRIPTION)
     assert entity.extra_state_attributes == {}
