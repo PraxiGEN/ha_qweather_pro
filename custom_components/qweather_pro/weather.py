@@ -23,9 +23,7 @@ from . import QWeatherConfigEntry
 from .const import ATTRIBUTION, CONF_CUSTOM_UI, CONF_CUSTOM_MORE_INFO
 from .coordinator import QWeatherUpdateCoordinator
 
-# HA 天气平台 WeatherEntity.async_update_listeners(forecast_types) 在 2026.1.0 的签名中
-# forecast_types 默认即为 None（传 None 表示刷新 daily/hourly/twice_daily 全部类型）。
-# 本项目最低支持 2026.1.0，调用处直接传 None 即可，无需兼容旧签名。
+# 2026.1.0 起 async_update_listeners 传 None 即刷新全部预报类型
 
 # 定义天气描述符
 QWEATHER_WEATHER_DESCRIPTION = WeatherEntityDescription(
@@ -39,11 +37,13 @@ async def async_setup_entry(
     entry: QWeatherConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """通过配置条目设置天气实体."""
-    coordinator: QWeatherUpdateCoordinator = entry.runtime_data
-    async_add_entities([
-        HeFengWeather(coordinator, entry, QWEATHER_WEATHER_DESCRIPTION)
-    ])
+    """通过配置条目设置天气实体（每位置一个）."""
+    runtime = entry.runtime_data
+    for subentry_id, coordinator in runtime.coordinators.items():
+        async_add_entities(
+            [HeFengWeather(coordinator, subentry_id, QWEATHER_WEATHER_DESCRIPTION)],
+            config_subentry_id=subentry_id,
+        )
 
 class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity):
     """和风天气实体类."""
@@ -59,12 +59,12 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
     def __init__(
         self,
         coordinator: QWeatherUpdateCoordinator,
-        entry: QWeatherConfigEntry,
+        subentry_id: str,
         description: WeatherEntityDescription,
     ) -> None:
         super().__init__(coordinator)
         self.entity_description = description
-        self._attr_unique_id = f"{entry.entry_id}_{description.key}"
+        self._attr_unique_id = f"{subentry_id}_{description.key}"
         self._attr_translation_key = description.translation_key
         self._attr_device_info = coordinator.device_info
         self._attr_supported_features = (
@@ -73,7 +73,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
             WeatherEntityFeature.FORECAST_TWICE_DAILY
         )
 
-    # --- 当前天气核心数据 (映射自 coordinator.py now 字典) ---
+    # 当前天气核心数据 (映射自 coordinator.py now 字典)
     @property
     def condition(self) -> str | None:
         return self.coordinator.data.get("now", {}).get("condition")
@@ -142,7 +142,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
             night = d.get("nighttime", {})
             astro = d.get("astro", {})
             forecasts.append({
-                # --- HA 标准字段（默认卡片 / weather.get_forecasts 服务兼容） ---
+                # HA 标准字段（默认卡片 / weather.get_forecasts 服务兼容）
                 "datetime": d.get("datetime"),
                 "is_daytime": True,
                 "condition": day.get("condition"),
@@ -256,7 +256,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
 
         return twice_daily_forecast
 
-    # --- 扩展属性 (键序与各 API 文档返回顺序同步，便于对照维护) ---
+    # 扩展属性 (键序与各 API 文档返回顺序同步，便于对照维护)
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         data = self.coordinator.data
@@ -267,7 +267,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
         daily = data.get("daily", [])
         hourly = data.get("hourly", [])
 
-        # ===== [集成元数据] (API 文档之外的自有字段，统一置顶) =====
+        # [集成元数据] (API 文档之外的自有字段，统一置顶)
         attrs = {
             "attribution": ATTRIBUTION,
             "city": data.get("city"),
@@ -276,7 +276,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
             # (V1 实况无 obsTime 观测时间戳，该属性已剔除，由 update_time 兜底)
         }
 
-        # ===== 实时天气 (weather-v1-current 文档序) =====
+        # 实时天气 (weather-v1-current 文档序)
         attrs["condition_cn"] = now.get("text_cn")
         attrs["feels_like"] = now.get("feelsLike")
         attrs["humidity"] = now.get("humidity")
@@ -292,7 +292,7 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
         attrs["precip_type"] = now.get("precipType")
         attrs["precip_intensity"] = now.get("precipIntensity")
 
-        # ===== 今日预报 (weather-v1-daily 文档序, daily[0]) =====
+        # 今日预报 (weather-v1-daily 文档序, daily[0])
         if daily:
             today = daily[0]
             astro = today.get("astro", {})
@@ -322,17 +322,16 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
             attrs["wind_scale_night"] = night_seg.get("wind_scale")
             attrs["wind_dir_night"] = night_seg.get("wind_compass")
 
-        # ===== 临近降水摘要 (weather-v1-minutely) =====
+        # 临近降水摘要 (weather-v1-minutely)
         attrs["minutely_summary"] = data.get("minutely_summary")
 
-        # ===== 逐小时预报首条 (weather-v1-hourly 文档序) =====
+        # 逐小时预报首条 (weather-v1-hourly 文档序)
         if hourly:
             # precipitation.probability
             attrs["precip_probability"] = hourly[0].get("precipitation_probability")
 
-        # ===== [卡片兼容] 自定义 UI 触发标志 (Lovelace 卡片) =====
-        # 仅当「覆盖原生详情弹窗」开关开启时，才让 HA 用自定义 more-info 卡片替换原生弹窗
-        if self.coordinator.entry.options.get(CONF_CUSTOM_MORE_INFO):
+        # 卡片兼容：仅「覆盖原生详情弹窗」开启时替换 more-info（读 subentry.data）
+        if self.coordinator.subentry.data.get(CONF_CUSTOM_MORE_INFO):
             attrs["custom_ui_more_info"] = "qweather-pro-more-info"
 
         return attrs
