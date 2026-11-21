@@ -293,7 +293,7 @@ async def test_subentry_reconfigure_updates_options_only(hass, _patch_citylookup
     assert result["type"] == "abort"
     assert result["reason"] == "reconfigure_successful"
 # 位置数据不变（R5），options 已更新（R4）
-    assert sub.data[CONF_LOCATION_ID] == "120,30"
+    assert sub.data[CONF_LOCATION_ID] == "120.0,30.0"
     assert sub.data[CONF_DAILYSTEPS] == "10"
     assert sub.data[CONF_HOURLYSTEPS] == "72"
     assert sub.data[CONF_CUSTOM_UI] is True
