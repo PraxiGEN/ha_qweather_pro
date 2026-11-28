@@ -1,7 +1,6 @@
 {
   "name": "QWeather Pro",
-  "render_readme": true,
-  "homeassistant": "2026.1.0",
+  "homeassistant": "2026.9.0",
   "zip_release": true,
   "filename": "qweather_pro.zip",
   "hide_default_branch": true
