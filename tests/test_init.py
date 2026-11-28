@@ -163,6 +163,7 @@ async def test_setup_entry_builds_per_location_coordinators(hass):
     assert subentry_id == subs[0].subentry_id
     assert coordinator.location == "120.0,30.0"
     assert coordinator.city_name == "测试城市"
-# 设备标识挂子条目
-    identifiers = coordinator.device_info["identifiers"]
+    # 设备标识挂子条目（2026.11+ DeviceInfo 为 dataclass，旧版仍是 TypedDict）
+    info = coordinator.device_info
+    identifiers = info["identifiers"] if isinstance(info, dict) else info.identifiers
     assert identifiers == {("qweather_pro", subentry_id)}

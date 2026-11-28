@@ -1,5 +1,15 @@
 ## Release Notes: QWeather Pro 2026
 
+### 🛠 [1.3.1] - 2026-11-28
+
+Maintenance release on top of 1.3.0 (subentry architecture + automatic v1→v2 migration). No user action required.
+
+- Adopt `async_unload_platforms_or_raise` on HA 2026.11+ with fallback for older versions.
+- Attach Repairs issues to their config entry on HA 2026.11+ so unload no longer deletes them; old versions keep manual cleanup.
+- Use `UpdateFailedUnreachable` on HA 2026.12+ (info-level failure log); fallback to `UpdateFailed` on older versions.
+- Pass `config_entry` to the data coordinator; switch entity callback types to `AddConfigEntryEntitiesCallback` and subentry flow result type to `SubentryFlowResult` (type-only, no behavior change).
+- Fix a test that read `DeviceInfo` with dict-style access (deprecated in 2026.12).
+
 ### 🛠 [1.2.6] - 2026-08-31
 
 First stable release built on the 1.2.0-beta series. This release resolves all blockers raised in the HACS review (coordinator stale-data, missing reauth, global JS injection) and introduces JWT auth plus a fully rewritten zero-dependency SVG card.
