@@ -616,7 +616,9 @@ class LocationSubentryFlow(config_entries.ConfigSubentryFlow):
         """初始化临时变量."""
         self._discovered_locations: list[dict[str, Any]] = []
 
-    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+    async def async_step_user(
+        self, user_input: dict[str, Any] | None = None
+    ) -> config_entries.SubentryFlowResult:
         """添加位置（纯位置搜索）."""
         entry = self._get_entry()
         if entry.state is not config_entries.ConfigEntryState.LOADED:
@@ -630,7 +632,7 @@ class LocationSubentryFlow(config_entries.ConfigSubentryFlow):
             }),
         )
 
-    async def _async_search(self, query: str) -> FlowResult:
+    async def _async_search(self, query: str) -> config_entries.SubentryFlowResult:
         entry = self._get_entry()
         if entry.state is not config_entries.ConfigEntryState.LOADED:
             return self.async_abort(reason="config_entry_not_loaded")
@@ -650,7 +652,7 @@ class LocationSubentryFlow(config_entries.ConfigSubentryFlow):
             return self._async_create_location(locations[0])
         return await self.async_step_select_location()
 
-    async def async_step_select_location(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+    async def async_step_select_location(self, user_input: dict[str, Any] | None = None) -> config_entries.SubentryFlowResult:
         """从多个搜索结果中确认城市."""
         if user_input is not None:
             location = next(
@@ -677,7 +679,7 @@ class LocationSubentryFlow(config_entries.ConfigSubentryFlow):
             })
         )
 
-    def _async_create_location(self, location_info: dict[str, Any]) -> FlowResult:
+    def _async_create_location(self, location_info: dict[str, Any]) -> config_entries.SubentryFlowResult:
         """标准化坐标、查重并创建位置子条目（options 落默认值，编辑走 reconfigure）."""
         std_lon = round(float(location_info["lon"]), 2)
         std_lat = round(float(location_info["lat"]), 2)
@@ -695,7 +697,7 @@ class LocationSubentryFlow(config_entries.ConfigSubentryFlow):
             unique_id=uid,
         )
 
-    async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+    async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None) -> config_entries.SubentryFlowResult:
         """修改位置 options（位置本身不可改；改位置请删除后重新添加）."""
         entry = self._get_entry()
         subentry = self._get_reconfigure_subentry()
