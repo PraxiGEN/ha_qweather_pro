@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any, Final, Mapping
+from typing import Any, Final, Mapping
 from homeassistant.const import (
     Platform,
     CONF_API_KEY,
@@ -153,10 +153,3 @@ LANGUAGE_MAP: Final[dict[str, str]] = {
     "la": "la",            # 拉丁语
 }
 
-
-if TYPE_CHECKING:
-    from homeassistant.config_entries import ConfigEntry, ConfigSubentry
-
-def get_location_subentries(entry: "ConfigEntry") -> list["ConfigSubentry"]:
-    """取条目的全部 location 子条目（get_subentries_of_type 2026.5.0 才引入，低版本走本 helper）。"""
-    return [s for s in entry.subentries.values() if s.subentry_type == SUBENTRY_TYPE_LOCATION]
