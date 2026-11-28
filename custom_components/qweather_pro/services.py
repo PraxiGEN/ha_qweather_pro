@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import json
-import voluptuous as vol
+import probatio
 
 from homeassistant.core import HomeAssistant, ServiceCall, SupportsResponse
 from homeassistant.exceptions import ServiceValidationError
@@ -34,15 +34,15 @@ VALID_KEYS: frozenset[str] = frozenset(
 
 # 纯内部诊断字段，不对外暴露
 INTERNAL_KEYS: frozenset[str] = frozenset({"cache_freshness"})
-SERVICE_GET_WEATHER_SCHEMA = vol.Schema(
+SERVICE_GET_WEATHER_SCHEMA = probatio.Schema(
     {
-        vol.Optional("entity_id"): cv.entity_ids,
-        vol.Optional("device_id"): vol.Any(str, [str]),
-        vol.Optional("area_id"): vol.Any(str, [str]),
-        vol.Optional("keys"): vol.All(
-            vol.Any(str, [str]),
+        probatio.Optional("entity_id"): cv.entity_ids,
+        probatio.Optional("device_id"): probatio.Any(str, [str]),
+        probatio.Optional("area_id"): probatio.Any(str, [str]),
+        probatio.Optional("keys"): probatio.All(
+            probatio.Any(str, [str]),
             lambda v: [v] if isinstance(v, str) else v,
-            [vol.In(VALID_KEYS)],
+            [probatio.In(VALID_KEYS)],
         ),
     }
 )

@@ -4,7 +4,7 @@ from __future__ import annotations
 import hashlib
 from typing import Any, Final, Mapping
 
-import voluptuous as vol
+import probatio
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
 
@@ -68,13 +68,13 @@ def _location_options_schema_fields(
     fields: dict = {}
     # API KEY 认证下轮询间隔强制为 100 分钟（coordinator 强制），不暴露控件
     if use_token:
-        fields[vol.Required(
+        fields[probatio.Required(
             CONF_UPDATE_INTERVAL,
             default=current.get(CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL),
         )] = selector.NumberSelector(
             selector.NumberSelectorConfig(min=5, max=1440, step=1, mode=selector.NumberSelectorMode.BOX)
         )
-    fields[vol.Required(
+    fields[probatio.Required(
         CONF_DAILYSTEPS,
         default=str(current.get(CONF_DAILYSTEPS, 7)),
     )] = selector.SelectSelector(
@@ -84,7 +84,7 @@ def _location_options_schema_fields(
             mode=selector.SelectSelectorMode.DROPDOWN
         )
     )
-    fields[vol.Required(
+    fields[probatio.Required(
         CONF_HOURLYSTEPS,
         default=str(current.get(CONF_HOURLYSTEPS, 24)),
     )] = selector.SelectSelector(
@@ -93,8 +93,8 @@ def _location_options_schema_fields(
             mode=selector.SelectSelectorMode.DROPDOWN
         )
     )
-    fields[vol.Required(CONF_CUSTOM_UI, default=current.get(CONF_CUSTOM_UI, False))] = selector.BooleanSelector()
-    fields[vol.Required(CONF_CUSTOM_MORE_INFO, default=current.get(CONF_CUSTOM_MORE_INFO, False))] = selector.BooleanSelector()
+    fields[probatio.Required(CONF_CUSTOM_UI, default=current.get(CONF_CUSTOM_UI, False))] = selector.BooleanSelector()
+    fields[probatio.Required(CONF_CUSTOM_MORE_INFO, default=current.get(CONF_CUSTOM_MORE_INFO, False))] = selector.BooleanSelector()
     return fields
 
 
@@ -218,11 +218,11 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="setup",
-            data_schema=vol.Schema({
-                vol.Required(CONF_HOST): selector.TextSelector(),
-                vol.Required(CONF_LOCATION_ID, default=_default_location(self.hass)): selector.TextSelector(),
-                vol.Required(CONF_USE_TOKEN, default=True): selector.BooleanSelector(),
-                vol.Optional(CONF_API_KEY): selector.TextSelector(
+            data_schema=probatio.Schema({
+                probatio.Required(CONF_HOST): selector.TextSelector(),
+                probatio.Required(CONF_LOCATION_ID, default=_default_location(self.hass)): selector.TextSelector(),
+                probatio.Required(CONF_USE_TOKEN, default=True): selector.BooleanSelector(),
+                probatio.Optional(CONF_API_KEY): selector.TextSelector(
                     selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
                 ),
             }),
@@ -270,14 +270,14 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
 
         schema_fields: dict = {
-            vol.Optional(CONF_ISS, default=self._temp_data.get(CONF_ISS, "")): selector.TextSelector(),
-            vol.Required(CONF_PROJECT_ID, default=self._temp_data.get(CONF_PROJECT_ID, "")): selector.TextSelector(),
-            vol.Required(CONF_KEY_ID, default=self._temp_data.get(CONF_KEY_ID, "")): selector.TextSelector(),
+            probatio.Optional(CONF_ISS, default=self._temp_data.get(CONF_ISS, "")): selector.TextSelector(),
+            probatio.Required(CONF_PROJECT_ID, default=self._temp_data.get(CONF_PROJECT_ID, "")): selector.TextSelector(),
+            probatio.Required(CONF_KEY_ID, default=self._temp_data.get(CONF_KEY_ID, "")): selector.TextSelector(),
         }
         # 公钥说明内联进 translations：step 级 schema 不接受自定义键（hassfest 拒绝）
         return self.async_show_form(
             step_id="jwt_setup",
-            data_schema=vol.Schema(schema_fields),
+            data_schema=probatio.Schema(schema_fields),
             description_placeholders=self._key_block_placeholders(),
             errors=self._jwt_form_errors,
         )
@@ -345,8 +345,8 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="select_location",
-            data_schema=vol.Schema({
-                vol.Required("location_index"): selector.SelectSelector(
+            data_schema=probatio.Schema({
+                probatio.Required("location_index"): selector.SelectSelector(
                     selector.SelectSelectorConfig(
                         options=options,
                         mode=selector.SelectSelectorMode.LIST
@@ -388,23 +388,23 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             }],
         )
 
-    def _setup_schema(self, data: dict) -> vol.Schema:
+    def _setup_schema(self, data: dict) -> probatio.Schema:
         """新建条目全量回显（含 host：host/连接类错误只有这里能改 host）."""
-        return vol.Schema({
-            vol.Required(CONF_HOST, default=data.get(CONF_HOST)): selector.TextSelector(),
-            vol.Required(CONF_LOCATION_ID, default=data.get(CONF_LOCATION_ID)): selector.TextSelector(),
-            vol.Required(CONF_USE_TOKEN, default=data.get(CONF_USE_TOKEN)): selector.BooleanSelector(),
-            vol.Optional(CONF_API_KEY, default=data.get(CONF_API_KEY)): selector.TextSelector(
+        return probatio.Schema({
+            probatio.Required(CONF_HOST, default=data.get(CONF_HOST)): selector.TextSelector(),
+            probatio.Required(CONF_LOCATION_ID, default=data.get(CONF_LOCATION_ID)): selector.TextSelector(),
+            probatio.Required(CONF_USE_TOKEN, default=data.get(CONF_USE_TOKEN)): selector.BooleanSelector(),
+            probatio.Optional(CONF_API_KEY, default=data.get(CONF_API_KEY)): selector.TextSelector(
                 selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
             ),
         })
 
-    def _account_reconfigure_schema(self, data: dict) -> vol.Schema:
+    def _account_reconfigure_schema(self, data: dict) -> probatio.Schema:
         """账号重配表单（无位置字段；凭据变更对全部位置生效）."""
-        return vol.Schema({
-            vol.Required(CONF_HOST, default=data.get(CONF_HOST, "")): selector.TextSelector(),
-            vol.Required(CONF_USE_TOKEN, default=data.get(CONF_USE_TOKEN, False)): selector.BooleanSelector(),
-            vol.Optional(CONF_API_KEY, default=data.get(CONF_API_KEY, "")): selector.TextSelector(
+        return probatio.Schema({
+            probatio.Required(CONF_HOST, default=data.get(CONF_HOST, "")): selector.TextSelector(),
+            probatio.Required(CONF_USE_TOKEN, default=data.get(CONF_USE_TOKEN, False)): selector.BooleanSelector(),
+            probatio.Optional(CONF_API_KEY, default=data.get(CONF_API_KEY, "")): selector.TextSelector(
                 selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
             ),
         })
@@ -479,8 +479,8 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="reconfigure_jwt_choice",
-            data_schema=vol.Schema({
-                vol.Required(CONF_JWT_RECONFIGURE_CHOICE, default="keep_current"): selector.SelectSelector(
+            data_schema=probatio.Schema({
+                probatio.Required(CONF_JWT_RECONFIGURE_CHOICE, default="keep_current"): selector.SelectSelector(
                     selector.SelectSelectorConfig(
                         options=[
                             {"value": "keep_current", "label": "keep_current"},
@@ -545,18 +545,18 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             description_placeholders=self._key_block_placeholders(),
         )
 
-    def _reauth_schema(self) -> vol.Schema:
+    def _reauth_schema(self) -> probatio.Schema:
         """重认证表单：按认证方式动态构造 (不包含地理位置字段)."""
         if self._temp_data.get(CONF_USE_TOKEN):
-            return vol.Schema({
-                vol.Optional(CONF_ISS, default=self._temp_data.get(CONF_ISS, "")): selector.TextSelector(),
-                vol.Required(CONF_PROJECT_ID, default=self._temp_data.get(CONF_PROJECT_ID, "")): selector.TextSelector(),
-                vol.Required(CONF_KEY_ID, default=self._temp_data.get(CONF_KEY_ID, "")): selector.TextSelector(),
+            return probatio.Schema({
+                probatio.Optional(CONF_ISS, default=self._temp_data.get(CONF_ISS, "")): selector.TextSelector(),
+                probatio.Required(CONF_PROJECT_ID, default=self._temp_data.get(CONF_PROJECT_ID, "")): selector.TextSelector(),
+                probatio.Required(CONF_KEY_ID, default=self._temp_data.get(CONF_KEY_ID, "")): selector.TextSelector(),
             })
-        return vol.Schema({
-            vol.Required(CONF_HOST, default=self._temp_data.get(CONF_HOST, "")): selector.TextSelector(),
-            vol.Required(CONF_USE_TOKEN, default=self._temp_data.get(CONF_USE_TOKEN, False)): selector.BooleanSelector(),
-            vol.Optional(CONF_API_KEY, default=self._temp_data.get(CONF_API_KEY, "")): selector.TextSelector(
+        return probatio.Schema({
+            probatio.Required(CONF_HOST, default=self._temp_data.get(CONF_HOST, "")): selector.TextSelector(),
+            probatio.Required(CONF_USE_TOKEN, default=self._temp_data.get(CONF_USE_TOKEN, False)): selector.BooleanSelector(),
+            probatio.Optional(CONF_API_KEY, default=self._temp_data.get(CONF_API_KEY, "")): selector.TextSelector(
                 selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
             ),
         })
@@ -626,8 +626,8 @@ class LocationSubentryFlow(config_entries.ConfigSubentryFlow):
             return await self._async_search(user_input[CONF_LOCATION_ID])
         return self.async_show_form(
             step_id="user",
-            data_schema=vol.Schema({
-                vol.Required(CONF_LOCATION_ID, default=_default_location(self.hass)): selector.TextSelector(),
+            data_schema=probatio.Schema({
+                probatio.Required(CONF_LOCATION_ID, default=_default_location(self.hass)): selector.TextSelector(),
             }),
         )
 
@@ -641,8 +641,8 @@ class LocationSubentryFlow(config_entries.ConfigSubentryFlow):
         if errors:
             return self.async_show_form(
                 step_id="user",
-                data_schema=vol.Schema({
-                    vol.Required(CONF_LOCATION_ID, default=query): selector.TextSelector(),
+                data_schema=probatio.Schema({
+                    probatio.Required(CONF_LOCATION_ID, default=query): selector.TextSelector(),
                 }),
                 errors=errors,
             )
@@ -668,8 +668,8 @@ class LocationSubentryFlow(config_entries.ConfigSubentryFlow):
         ]
         return self.async_show_form(
             step_id="select_location",
-            data_schema=vol.Schema({
-                vol.Required("location_index"): selector.SelectSelector(
+            data_schema=probatio.Schema({
+                probatio.Required("location_index"): selector.SelectSelector(
                     selector.SelectSelectorConfig(
                         options=options_list,
                         mode=selector.SelectSelectorMode.LIST
@@ -714,7 +714,7 @@ class LocationSubentryFlow(config_entries.ConfigSubentryFlow):
             )
         return self.async_show_form(
             step_id="reconfigure",
-            data_schema=vol.Schema(
+            data_schema=probatio.Schema(
                 _location_options_schema_fields(
                     bool(entry.data.get(CONF_USE_TOKEN)), subentry.data
                 )
