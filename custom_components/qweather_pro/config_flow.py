@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+import inspect
 from typing import Any, Final, Mapping
 
 import probatio
@@ -60,6 +61,13 @@ def _location_unique_id(coords: str) -> str:
 def _account_unique_id(data: dict[str, Any]) -> str:
     """账号条目 unique_id：专属 API Host 每账号唯一（同 host 禁止重复添加）."""
     return data[CONF_HOST].strip()
+
+
+def _explicit_abort_reason(flow) -> dict[str, Any]:
+    """HA 2026.10+ 未传 reason 时会挂 homeassistant 翻译域，需显式传入回落集成翻译."""
+    if "reason" in inspect.signature(flow.async_update_and_abort).parameters:
+        return {"reason": "reconfigure_successful"}
+    return {}
 
 
 def _location_options_schema_fields(
@@ -452,6 +460,7 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if not errors:
             return self.async_update_and_abort(
                 entry,
+                **_explicit_abort_reason(self),
                 data={k: v for k, v in self._temp_data.items() if k != CONF_LOCATION_ID},
             )
 
@@ -708,6 +717,7 @@ class LocationSubentryFlow(config_entries.ConfigSubentryFlow):
             return self.async_update_and_abort(
                 entry,
                 subentry,
+                **_explicit_abort_reason(self),
                 data={
                     **subentry.data,
                     **location_options_data(bool(entry.data.get(CONF_USE_TOKEN)), user_input),
