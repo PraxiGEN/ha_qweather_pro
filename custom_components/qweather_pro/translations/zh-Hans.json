@@ -155,6 +155,10 @@
     "api_key_quota": {
       "title": "QWeather API KEY 即将限额",
       "description": "您的 QWeather Pro 集成仍在使用 API KEY 鉴权。\r\n注意: API KEY 认证方式无法提供足够的安全性, 使用 API KEY 认证方式自 2027-01-01 起将限制每日请求量（具体数值未公布），且 SDK 5+ 不再支持 API KEY；JWT 无限制，推荐使用。若继续使用 API KEY，轮询将强制锁定为 100 分钟，且不可在条目配置中更改；在「重新配置」中切换到 JWT 即可获得无限额、更快的更新。"
+    },
+    "legacy_entry": {
+      "title": "QWeather 旧版条目不受支持",
+      "description": "此 QWeather Pro 条目仍为 v1 旧版数据格式。2.0.0 起不再支持从 1.2.x 直接升级：请先安装 1.3.x 完成数据迁移，再升级到 2.0.0。"
     }
   },
   "entity": {

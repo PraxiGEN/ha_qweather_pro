@@ -32,7 +32,6 @@ from .const import (
     CONF_CUSTOM_UI,
     CONF_CUSTOM_MORE_INFO,
     SUBENTRY_TYPE_LOCATION,
-    get_location_subentries,
     DEFAULT_UPDATE_INTERVAL,
     LANGUAGE_MAP,
     location_options_data,
@@ -412,7 +411,7 @@ class QWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     def _first_probe_location(self, entry: config_entries.ConfigEntry) -> str | None:
         """取首个位置坐标作凭据验证探针（账号流无位置字段后唯一的探测手段）。"""
-        subentries = get_location_subentries(entry)
+        subentries = entry.get_subentries_of_type(SUBENTRY_TYPE_LOCATION)
         return subentries[0].data[CONF_LOCATION_ID] if subentries else None
 
     async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None) -> FlowResult:
@@ -686,7 +685,7 @@ class LocationSubentryFlow(config_entries.ConfigSubentryFlow):
         coords = f"{std_lon},{std_lat}"
         uid = _location_unique_id(coords)
         entry = self._get_entry()
-        if uid in {s.unique_id for s in get_location_subentries(entry)}:
+        if uid in {s.unique_id for s in entry.get_subentries_of_type(SUBENTRY_TYPE_LOCATION)}:
             return self.async_abort(reason="duplicate_location")
         return self.async_create_entry(
             title=location_info["name"],

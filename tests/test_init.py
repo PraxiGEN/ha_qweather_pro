@@ -19,7 +19,7 @@ try:
         CONF_PROJECT_ID,
         CONF_KEY_ID,
         CONF_PRIVATE_KEY,
-        get_location_subentries,
+        SUBENTRY_TYPE_LOCATION,
     )
     from custom_components.qweather_pro.coordinator import (  # noqa: E402
         QWeatherUpdateCoordinator,
@@ -92,7 +92,10 @@ async def test_setup_entry_api_key_creates_repairs_issue(hass):
 # issue ID 按条目隔离：api_key_quota_<entry_id>
     assert call_args.args[2] == f"{ISSUE_API_KEY_QUOTA}_{entry.entry_id}"
 # 旧版本全局固定 ID 会被无条件清理（跨版本升级兼容，幂等无害）
-    delete.assert_called_once_with(hass, DOMAIN, ISSUE_API_KEY_QUOTA)
+    delete.assert_any_call(hass, DOMAIN, ISSUE_API_KEY_QUOTA)
+# v1 拒绝 issue 历史残留一并幂等清理
+    delete.assert_any_call(hass, DOMAIN, f"legacy_entry_{entry.entry_id}")
+    assert delete.call_count == 2
 
 async def test_setup_entry_jwt_deletes_repairs_issue(hass):
     """已用 JWT：应清理旧全局 ID 与本条目隔离 ID 两处 Repairs 引导."""
@@ -123,10 +126,11 @@ async def test_setup_entry_jwt_deletes_repairs_issue(hass):
     ):
         assert await async_setup_entry(hass, entry) is True
 
-# 两次清理：旧版本全局固定 ID（兼容残留）+ 本条目隔离 ID
+# 三次清理：旧版本全局固定 ID（兼容残留）+ 本条目隔离 ID + v1 拒绝 issue 历史残留
     delete.assert_any_call(hass, DOMAIN, ISSUE_API_KEY_QUOTA)
     delete.assert_any_call(hass, DOMAIN, f"{ISSUE_API_KEY_QUOTA}_{entry.entry_id}")
-    assert delete.call_count == 2
+    delete.assert_any_call(hass, DOMAIN, f"legacy_entry_{entry.entry_id}")
+    assert delete.call_count == 3
     create.assert_not_called()
 
 async def test_setup_entry_builds_per_location_coordinators(hass):
@@ -157,7 +161,7 @@ async def test_setup_entry_builds_per_location_coordinators(hass):
 
     runtime = entry.runtime_data
     assert isinstance(runtime, QWeatherRuntimeData)
-    subs = get_location_subentries(entry)
+    subs = entry.get_subentries_of_type(SUBENTRY_TYPE_LOCATION)
     assert len(runtime.coordinators) == 1
     (subentry_id, coordinator), = runtime.coordinators.items()
     assert subentry_id == subs[0].subentry_id
