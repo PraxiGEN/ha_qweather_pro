@@ -155,6 +155,10 @@
     "api_key_quota": {
       "title": "QWeather API KEY daily quota",
       "description": "Your QWeather Pro integration is still using API KEY authentication.\r\nNote: API KEY authentication does not provide sufficient security. Starting 2027-01-01, QWeather will limit daily requests for API KEY authentication (exact amount TBD), and SDK 5+ will drop API KEY support; JWT is unlimited and recommended. If you keep API KEY, polling is locked to 100 minutes and cannot be changed in the entry configuration; switch to JWT in \"Reconfigure\" for unlimited, faster updates."
+    },
+    "legacy_entry": {
+      "title": "QWeather legacy entry not supported",
+      "description": "This QWeather Pro entry still uses the legacy v1 data format. Version 2.0.0 no longer supports upgrading directly from 1.2.x. Install version 1.3.x first to complete the migration, then upgrade to 2.0.0."
     }
   },
   "entity": {
