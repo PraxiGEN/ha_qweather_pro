@@ -9,6 +9,7 @@ from typing import Any
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers import update_coordinator as uc
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.storage import Store
@@ -65,6 +66,7 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         super().__init__(
             hass, LOGGER, name=DOMAIN,
+            config_entry=entry,
             update_interval=self._base_interval,
         )
 
@@ -365,7 +367,9 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 # 落盘缓存（含时间戳），供下次重启复用
                 await self.async_save_cache()
             else:
-                raise UpdateFailed("所有 API 抓取任务均失败")
+                # 2026.12+ 用 UpdateFailedUnreachable（失败日志降 info 级）；旧版回退 UpdateFailed
+                unreachable = getattr(uc, "UpdateFailedUnreachable", UpdateFailed)
+                raise unreachable("所有 API 抓取任务均失败")
 
         except ConfigEntryAuthFailed:
             # 认证失效：不进入退避逻辑，直接上抛以触发 reauth 流程
