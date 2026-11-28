@@ -23,7 +23,7 @@ try:
         CONF_KEY_ID,
         CONF_PRIVATE_KEY,
         CONF_UPDATE_INTERVAL,
-        get_location_subentries,
+        SUBENTRY_TYPE_LOCATION,
     )
     from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -217,7 +217,7 @@ async def test_subentry_add_location(hass, _patch_citylookup):
     assert CONF_UPDATE_INTERVAL not in result["data"]
     assert result["data"][CONF_DAILYSTEPS] == "7"
 # flow manager 已把子条目挂到条目上
-    uids = {s.unique_id for s in get_location_subentries(entry)}
+    uids = {s.unique_id for s in entry.get_subentries_of_type(SUBENTRY_TYPE_LOCATION)}
     assert uids == {"qw_130.0_20.0", "qw_120.0_30.0"}
 
 async def test_subentry_add_duplicate_location_aborts(hass, _patch_citylookup):
@@ -269,7 +269,7 @@ async def test_subentry_reconfigure_updates_options_only(hass, _patch_citylookup
     entry.add_to_hass(hass)
     add_location_subentry(hass, entry, coords="120,30")
     _mark_loaded(hass, entry)
-    sub = get_location_subentries(entry)[0]
+    sub = entry.get_subentries_of_type(SUBENTRY_TYPE_LOCATION)[0]
 
     result = await hass.config_entries.subentries.async_init(
         (entry.entry_id, "location"),
