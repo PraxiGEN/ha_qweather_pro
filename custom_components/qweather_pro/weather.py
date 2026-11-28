@@ -16,7 +16,7 @@ from homeassistant.const import (
     UnitOfTemperature,
 )
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import QWeatherConfigEntry
@@ -35,7 +35,7 @@ QWEATHER_WEATHER_DESCRIPTION = WeatherEntityDescription(
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: QWeatherConfigEntry,
-    async_add_entities: AddEntitiesCallback,
+    async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """通过配置条目设置天气实体（每位置一个）."""
     runtime = entry.runtime_data
