@@ -155,6 +155,10 @@
     "api_key_quota": {
       "title": "Cota diária do QWeather API KEY",
       "description": "Sua integração QWeather Pro ainda está usando autenticação por API KEY.\r\nObservação: A autenticação por API KEY não oferece segurança suficiente. A partir de 01-01-2027, a QWeather limitará as solicitações diárias autenticadas por API KEY (valor exato a definir), e o SDK 5+ deixará de oferecer suporte a API KEY; JWT é ilimitado e recomendado. Se você mantiver a API KEY, o intervalo de consulta é fixado obrigatoriamente em 100 minutos e não pode ser alterado nas opções da entrada; mude para JWT em «Reconfigurar» para obter atualizações ilimitadas e mais rápidas."
+    },
+    "legacy_entry": {
+      "title": "Entrada herdada do QWeather não suportada",
+      "description": "Esta entrada do QWeather Pro ainda usa o formato de dados antigo v1. A partir da versão 2.0.0, a atualização direta a partir do 1.2.x não é mais suportada: instale primeiro a versão 1.3.x para concluir a migração e depois atualize para a 2.0.0."
     }
   },
   "entity": {
