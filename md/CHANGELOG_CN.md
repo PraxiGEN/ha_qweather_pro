@@ -1,5 +1,15 @@
 ## 更新说明：和风天气 Pro 2026
 
+### 🛠 [1.3.1] - 2026-11-28
+
+基于 1.3.0（子条目架构 + v1→v2 自动迁移）的维护版本，用户无需任何操作。
+
+- HA 2026.11+ 改用 `async_unload_platforms_or_raise`，旧版本保留原卸载路径。
+- HA 2026.11+ Repairs 条目归属到配置条目，卸载时不再删除；旧版本保留手动清理。
+- HA 2026.12+ 改用 `UpdateFailedUnreachable`（失败日志降为 info 级），旧版本回退 `UpdateFailed`。
+- 数据协调器补传 `config_entry`；实体回调类型改 `AddConfigEntryEntitiesCallback`、子条目流返回类型改 `SubentryFlowResult`（仅类型，无行为变化）。
+- 修复测试中 `DeviceInfo` 的字典式访问（2026.12 起弃用）。
+
 ### 🛠 [1.2.6] - 2026-08-31
 
 基于 1.2.0-beta 系列构建的首个稳定版。本版解决了 HACS 审查中提出的全部 blocker（协调器陈旧数据、缺失 reauth、全局 JS 注入），并引入 JWT 鉴权与全面重写的零依赖原生 SVG 卡片。
