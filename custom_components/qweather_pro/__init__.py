@@ -5,6 +5,7 @@ import asyncio
 import inspect
 import os
 from dataclasses import dataclass, field
+from typing import Any
 
 from homeassistant.config_entries import (
     ConfigEntry,
@@ -416,6 +417,10 @@ async def _async_refresh_api_key_issue(hass: HomeAssistant, entry: QWeatherConfi
     if entry.data.get(CONF_USE_TOKEN):
         async_delete_issue(hass, DOMAIN, issue_id)
         return
+    # 2026.11+ issue 可归属条目，由 core 随条目删除自动清理（unload 不再删）；旧版仍须手动清理
+    create_kwargs: dict[str, Any] = {}
+    if "config_entry_id" in inspect.signature(async_create_issue).parameters:
+        create_kwargs["config_entry_id"] = entry.entry_id
     async_create_issue(
         hass,
         DOMAIN,
@@ -424,6 +429,7 @@ async def _async_refresh_api_key_issue(hass: HomeAssistant, entry: QWeatherConfi
         severity=IssueSeverity.WARNING,
         is_persistent=True,
         translation_key="api_key_quota",
+        **create_kwargs,
     )
 
 async def async_reload_entry(hass: HomeAssistant, entry: QWeatherConfigEntry) -> None:
@@ -440,7 +446,11 @@ async def async_reload_entry(hass: HomeAssistant, entry: QWeatherConfigEntry) ->
 async def async_unload_entry(hass: HomeAssistant, entry: QWeatherConfigEntry) -> bool:
     """卸载集成实例；自定义 UI 为注入到整个前端的全局资源，仅当无其他实例启用时聚合注销。"""
     # 先卸载所有平台 (sensor, weather)，成功后再做全局清理
-    if not await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
+    # 2026.11+ 用 or_raise 抛翻译化 ConfigEntryError；旧版保留布尔返回
+    ce = hass.config_entries
+    if hasattr(ce, "async_unload_platforms_or_raise"):
+        await ce.async_unload_platforms_or_raise(entry, PLATFORMS)
+    elif not await ce.async_unload_platforms(entry, PLATFORMS):
         return False
 
     # 全局前端资源：本条目卸载时若无其他条目启用则清理，避免污染全部前端
@@ -460,6 +470,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: QWeatherConfigEntry) ->
     if not other_entries and hass.services.has_service(DOMAIN, "get_weather"):
         hass.services.async_remove(DOMAIN, "get_weather")
         LOGGER.debug("QWeather get_weather 服务已随末条目卸载注销")
-    # 清理本条目的 API KEY 迁移引导（禁用/卸载后不应残留；reload 时 setup 会重建）
-    async_delete_issue(hass, DOMAIN, _api_key_issue_id(entry))
+    # 旧版本 issue 不归属条目，须手动清理；2026.11+ 由 core 随条目删除自动管理，unload 不删
+    if "config_entry_id" not in inspect.signature(async_create_issue).parameters:
+        async_delete_issue(hass, DOMAIN, _api_key_issue_id(entry))
     return True
